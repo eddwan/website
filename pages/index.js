@@ -1,65 +1,182 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-
+import Head from "next/head";
+import MainLayout, { siteTitle } from "../components/mainLayout";
+import utilStyles from "../styles/utils.module.css";
+import {
+  Button,
+  Layout,
+  Card,
+  Typography,
+  Row,
+  Col,
+  Space,
+  List,
+  Tag,
+} from "antd";
+const { Header, Footer, Sider, Content } = Layout;
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <MainLayout home>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{siteTitle}</title>
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
+      <section className={utilStyles.section1}>
+        <div className={utilStyles.item1}>
+          <h2 className={utilStyles.hello}>
+            Hi, I am Eddwan, Consulting Engineer
+          </h2>
+          <p className={utilStyles.helloText}>
+            Experienced Software Developer and Collaboration Consulting Engineer
+            adept in bringing forth expertise in design, installation, testing
+            and maintenance of software systems and platforms.
+          </p>
+          <Button
+            type="primary"
+            size="large"
+            danger
+            className={utilStyles.button}
           >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+            Download Resume
+          </Button>
         </div>
-      </main>
+        <div className={utilStyles.item2}>
+          <div className={utilStyles.pictureBack}></div>
+          <div className={utilStyles.picture}></div>
+        </div>
+      </section>
+      <section className={utilStyles.section2}>
+        <Layout>
+          <Header className={utilStyles.postsBack}>
+            <Row>
+              <Col span={8}>
+                <Typography.Text className={utilStyles.recentPostsTitle}>
+                  Recent Posts
+                </Typography.Text>
+              </Col>
+              <Col span={8} offset={8} style={{ textAlign: "right" }}>
+                <Typography.Link>View All</Typography.Link>
+              </Col>
+            </Row>
+          </Header>
+          <Content className={utilStyles.postsBack}>
+            <Space>
+              <Card hoverable className={utilStyles.postCard}>
+                <Space direction="vertical" size="large">
+                  <Card.Meta
+                    title="Europe Street beat"
+                    description={
+                      <Row>
+                        <Col flex="100px">20 Dez 2020</Col>
+                        <Col flex="auto">Programming, Testing</Col>
+                      </Row>
+                    }
+                  />
+                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do
+                  amet sint. Velit officia consequat duis enim velit mollit.
+                  Exercitation veniam consequat sunt nostrud amet.
+                </Space>
+              </Card>
+              <Card hoverable className={utilStyles.postCard}>
+                <Space direction="vertical" size="large">
+                  <Card.Meta
+                    title="Europe Street beat"
+                    description={
+                      <Row>
+                        <Col flex="100px">20 Dez 2020</Col>
+                        <Col flex="auto">Programming, Testing</Col>
+                      </Row>
+                    }
+                  />
+                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do
+                  amet sint. Velit officia consequat duis enim velit mollit.
+                  Exercitation veniam consequat sunt nostrud amet.
+                </Space>
+              </Card>
+            </Space>
+          </Content>
+        </Layout>
+      </section>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+      <section className={utilStyles.section3}>
+        <Layout>
+          <Header className={utilStyles.sectionBackground}>
+            <Row>
+              <Col span={8}>
+                <Typography.Text className={utilStyles.sectionTitle}>
+                  Featured Works
+                </Typography.Text>
+              </Col>
+              <Col span={8} offset={8} style={{ textAlign: "right" }}>
+                <Typography.Link>View All</Typography.Link>
+              </Col>
+            </Row>
+          </Header>
+          <Content className={utilStyles.sectionBackground}>
+            <List>
+              <List.Item>
+                <Card
+                  hoverable
+                  className={utilStyles.featuredCard}
+                  bordered={false}
+                >
+                  <Space size="large">
+                    <img src="/Rectangle30.png"></img>
+                    <Space direction="vertical" size="large">
+                      <Card.Meta
+                        title="Europe Street beat"
+                        description={
+                          <Row>
+                            <Col flex="100px">
+                              <Tag className={utilStyles.featuredCardTag}>
+                                2020
+                              </Tag>
+                            </Col>
+                            <Col flex="auto">Programming, Testing</Col>
+                          </Row>
+                        }
+                      />
+                      Amet minim mollit non deserunt ullamco est sit aliqua
+                      dolor do amet sint. Velit officia consequat duis enim
+                      velit mollit. Exercitation veniam consequat sunt nostrud
+                      amet.
+                    </Space>
+                  </Space>
+                </Card>
+              </List.Item>
+              <List.Item>
+                <Card
+                  hoverable
+                  className={utilStyles.featuredCard}
+                  bordered={false}
+                >
+                  <Space size="large">
+                    <img src="/Rectangle30.png"></img>
+
+                    <Space direction="vertical" size="large">
+                      <Card.Meta
+                        title="Europe Street beat"
+                        description={
+                          <Row>
+                            <Col flex="100px">
+                              <Tag className={utilStyles.featuredCardTag}>
+                                2020
+                              </Tag>
+                            </Col>
+                            <Col flex="auto">Programming, Testing</Col>
+                          </Row>
+                        }
+                      />
+                      Amet minim mollit non deserunt ullamco est sit aliqua
+                      dolor do amet sint. Velit officia consequat duis enim
+                      velit mollit. Exercitation veniam consequat sunt nostrud
+                      amet.
+                    </Space>
+                  </Space>
+                </Card>
+              </List.Item>
+            </List>
+          </Content>
+        </Layout>
+      </section>
+    </MainLayout>
+  );
 }

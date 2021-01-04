@@ -1,0 +1,181 @@
+.section1 {
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    height: 500px;
+}
+
+.section1>div {
+    flex: 0 50%;
+    box-sizing: border-box;
+}
+
+.item1 {
+    width: 100%;
+}
+
+.item2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hello {
+    font-family: Heebo;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 44px;
+    line-height: 60px;
+    color: #21243D;
+    width: 506px;
+    padding-left: 100px;
+}
+
+.helloText {
+    font-family: Heebo;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    padding-left: 100px;
+    color: #21243D;
+}
+
+.button {
+
+    font-family: Heebo,
+        sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 29px;
+    color: #FFFFFF;
+    border-radius: 2px;
+    background-color: #FF6464;
+    margin-left: 100px;
+}
+
+.pictureBack {
+    width: 243px;
+    height: 243px;
+    background: #EDF7FA;
+    border-radius: 100%;
+}
+
+.picture {
+    position: absolute;
+    width: 243px;
+    height: 243px;
+    border-radius: 100%;
+    background-image: url("/picture.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    transform: translateX(10px) translateY(-10px);
+}
+
+.section2 {
+    background-color: #EDF7FA;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    height: 400px;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.postsBack {
+    background-color: #EDF7FA;
+}
+
+.recentPostsTitle {
+    color: #21243D;
+    font-family: Heebo;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 22px;
+    line-height: 60px;
+}
+
+.postCard {
+    width: 472px;
+    height: 295px;
+    border-radius: 4px;
+    font-family: Heebo;
+    font-style: normal;
+    color: #21243D;
+}
+
+.postCard :global .ant-card-meta-title {
+
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 38px;
+    color: #21243D;
+}
+
+.postCard :global .ant-card-body {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+
+.section3 {
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    height: auto;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 20px;
+}
+
+.sectionBackground {
+    background-color: white;
+}
+
+.sectionTitle {
+    color: #21243D;
+    font-family: Heebo;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 22px;
+    line-height: 60px;
+}
+
+.featuredCard {
+    width: 100%;
+    border-radius: 4px;
+    font-family: Heebo;
+    font-style: normal;
+    color: #21243D;
+}
+
+.featuredCard :global .ant-card-meta-title {
+
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 38px;
+    color: #21243D;
+}
+
+.featuredCard :global .ant-card-body {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.featuredCardTag {
+    width: 62px;
+    height: 25px;
+    background: #142850;
+    border-radius: 16px;
+    border-color: #142850;
+    font-family: Heebo;
+    font-style: normal;
+    color: white;
+    font-weight: 900;
+    font-size: 16px;
+    text-align: center;
+    height: 20px;
+}

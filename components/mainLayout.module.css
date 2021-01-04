@@ -1,0 +1,13 @@
+.container {
+    max-width: 1152px;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.headerColor {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    align-items: flex-end;
+}
