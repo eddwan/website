@@ -1,5 +1,5 @@
 import Head from "next/head";
-import styles from "./MainLayout.module.css";
+import styles from "./mainLayout.module.css";
 import utilStyles from "../styles/utils.module.css";
 import Link from "next/link";
 import { Layout, Menu, Breadcrumb } from "antd";
