@@ -9,7 +9,7 @@ export default function Home() {
         <div className="justify-center m-8 xl:m-0">
           <img className="rounded-full shadow-2xl w-96" src="/picture.png" />
         </div>
-        <div className="xl:pl-28 md:pl-0 md:pt-12 p-8 justify-center">
+        <div className="flex flex-col xl:pl-28 md:pl-0 md:pt-12 p-8 justify-center space-y-8">
           <h1 className="font-extrabold xl:text-left text-3xl md:text-5xl tracking-tight mb-4 text-black dark:text-white text-center">
             Hi, I'm Eddwan Hallen
           </h1>
@@ -18,17 +18,27 @@ export default function Home() {
             Cisco as a Consulting Engineer. You’ve found my personal slice of
             the internet – everything you want to know and more is here.
           </h2>
+          <div>
+            <button
+              type="button"
+              className="w-full inline-flex justify-center border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Download Resumé
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex flex-col justify-evenly mb-16 bg-blue-50 dark:bg-gray-600 xl:px-60 md:mb-16 md:px-60 xl:flex-nowrap md:justify-center">
-        <div className="flex flex-row justify-between p-8">
-          <h1 class="text-xl dark:text-white">Recent posts</h1>
+        <div className="flex flex-row justify-between p-4 pt-8 2xl:px-28">
+          <h2 className="text-xl font-light dark:text-white">Recent posts</h2>
           <NextLink href="/blog">
-            <a className="text-gray-900 dark:text-gray-100">View all</a>
+            <a className="text-gray-900 dark:text-gray-100 text-blue-400 hover:text-blue-600 dark:hover:text-yellow-600">
+              View all
+            </a>
           </NextLink>
         </div>
 
-        <div className="flex flex-row flex-wrap">
+        <div className="flex flex-row flex-wrap justify-center">
           <Card />
           <Card />
           <Card />
