@@ -6,12 +6,12 @@ export default function UsesLayout({ children }) {
   return (
     <Container>
       <NextSeo
-        title="Uses – Lee Robinson"
+        title="Uses – Eddwan Hallen"
         description={`Here's what tech I'm currently using for coding, videos, and music.`}
-        canonical="https://leerob.io/uses"
+        canonical="https://eddwan.com/uses"
         openGraph={{
-          url: 'https://leerob.io/uses',
-          title: 'Uses – Lee Robinson',
+          url: 'https://eddwan.com/uses',
+          title: 'Uses – Eddwan Hallen',
           description: `Here's what tech I'm currently using for coding, videos, and music.`
         }}
       />
@@ -21,8 +21,6 @@ export default function UsesLayout({ children }) {
         </h1>
         <p className="text-gray-700 dark:text-gray-300 mt-2 mb-8">
           Here's what tech I'm currently using for coding, videos, and music.
-          Most of these have been accumulated over the past few years, with a
-          recent office upgrade in 2020.
         </p>
         <div className="prose dark:prose-dark w-full">{children}</div>
       </article>

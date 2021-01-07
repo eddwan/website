@@ -7,11 +7,11 @@ export default function NotFound() {
   return (
     <Container>
       <NextSeo
-        title="404 – Lee Robinson"
-        canonical="https://leerob.io/404"
+        title="404 – Eddwan Hallen"
+        canonical="https://eddwan.com/404"
         openGraph={{
-          url: 'https://leerob.io/404',
-          title: '404 – Lee Robinson'
+          url: 'https://eddwan.com/404',
+          title: '404 – Eddwan Hallen'
         }}
       />
       <div className="flex flex-col justify-center items-start max-w-2xl mx-auto mb-16">

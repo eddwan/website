@@ -1,0 +1,151 @@
+---
+title: 'How to upload/download from Amazon S3 using API Gateway without Lambda function'
+publishedAt: '2020-06-18'
+summary: 'The main idea of this post is to use only the AWS products to provide an REST API that allows users to upload their own profile picture and read that from the same URL For this reason we have to isolate the components/steps on this post to make the understanding easy.'
+image: '/static/images/blog/upload-download-from-s3-using-apigateway/cover.png'
+category: 'Cloud, AWS'
+---
+
+There is some time I’m looking for a solution that could allow me to upload or download from Amazon S3 using the API gateway without a lambda function, with a plus: Restricting access based on Cognito Authorizer.
+
+The main idea of this post is to use only the AWS products to provide an REST API that allows users to upload their own profile picture and read that from the same URL For this reason we have to isolate the components/steps on this post to make the understanding easy.
+
+## Table of Contents
+
+- [Create and configure IAM Role](/blog/upload-download-from-s3-using-apigateway#create-and-configure-iam-role)
+- [Create a Cognito User Pool](/blog/upload-download-from-s3-using-apigateway#configure-cognito-user-pool)
+- [Configure a Custom Authorizer on API Gateway](/blog/upload-download-from-s3-using-apigateway#configure-a-custom-authorizer-on-api-gateway)
+- [Configure the Resources and Methods on API Gateway](/blog/upload-download-from-s3-using-apigateway#configure-the-resources-and-methods-on-api-gateway)
+
+## Create and configure IAM Role
+
+Navigate to IAM Roles panel (IAM > Roles > Create Role). The screen below will be shown. Select **AWS Services** under **Select type of trusted entity**. Then will be shown the bottom part of the screen, select **S3** then under **Select your use case**, select **S3** again. Now you can click on button **Next:Permissions** on the bottom of the page.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image.png)
+
+The screen **Attach permission policies** will be shown. Search by the **s3** word and then select **AmazonS3FullAccess** in the list.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-1.png)
+
+Click **Next:tags** where you can define your tags and then click **Next: Review**. In the review screen you can determine the Role name and review the recent associated policies.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-3.png)
+
+Click the button **Create Role** on the bottom. It will go to the IAM Roles page and you can see your recent created role is present in the list.
+
+Now we need to configure the trust relationship between the IAM Role and the **apigateway.amazonaws.com** service. To perform this step, click on the Role you just have created. In the shown screen, click the tab **Trust relationship** then click **Edit trust relationship.**
+
+Also, it’s important to take note of your **Role ARN**. That will be necessary few steps ahead. Here is my Role ARN **arn:aws:iam::{account_id}:role/my-apigateway-s3-full-access-role**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-6.png)
+
+The default trust relationship is something like this:
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-5.png)
+
+Now we need to allow the Service **apigateway.amazonaws.com** under the Service element. We need to add it inside the brackets because we need to retain the current service too. The final file will be like this:
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": ["s3.amazonaws.com", "apigateway.amazonaws.com"]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+Now you can click the button **Update Trust Policy.**
+
+The next will explain how to create and configure a Cognito User Pool.
+
+## Configure Cognito User Pool
+
+I’m not going through the steps of the User Pool creation on Cognito, but basically you just need a standard user pool. On AWS Panel, navigate to Cognito and click **Manage User Pools**. Then, on the top click on **Create a user pool**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-7.png)
+
+Give to your UserPool a name and click **Step through settings**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-8.png)
+
+## Configure a Custom Authorizer on API Gateway
+
+The same happens here, I’m assuming you already know the steps to create and configure a REST API on AWS Console. The steps described here I will show how to configure the custom authorizer and how to create the resources and methods as well.
+
+Navigate to **Services > API Gateway.** Click on the API that you want to configure the custom authorizer and the S3 proxy. In the left panel click **Authorizers** then click **Create New Authorizer**
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-12.png)
+
+Under the **Create Authorizer** form, you need to define the name, the type (Cognito), then select the user pool under the box **Cognito User Pool** and define the **Token Source** as **\*Authorization\***, that is the HTTP header that contains the JWT token provided by the cognito authentication process. Click **Create**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-14.png)
+
+## Configure the Resources and Methods on API Gateway
+
+On the left menu click **Resources.** Here we will create new path to allow the user to upload their own picture and read it as well. Click **Actions** menu then **Create Resource**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-16.png)
+
+Define the **Resource name and Resource Path** then click **Create Resource**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-17.png)
+
+I will create another resource under the /profile path called **picture**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-18.png)
+
+Now under the /profile/picture path I will create a method by clicking **Actions** menu then **Create Method**
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-19.png)
+
+It will show a select box under the tree, select PUT method then click the confirmation icon.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-21.png)
+
+Click the newly created method and it will redirect to a basic configuration screen. Here is where the magic begins. Lets configure the PUT method to use the **AWS Service** as **Integration Type,** then we select our **region**, followed the service **(Simple Storage Service (S3))**.
+
+The **HTTP Method** that will be forwarded to the S3 API we select **PUT**.
+
+The Action Type we must change it to **User Path Override** that will allow us to determine the bucket name and keys as well.
+
+In the **Path Override** field we will configure the path inside our bucket. The nice thing here is that we can use a variable that will not be available to the user in the REST API. We create a variable {userID} that will have the value of the **Cognito sub** attribute that is the primary key on there. This value will be provided by the JWT Payload token after it is authorized.
+
+The **Execution Role** we will fill with the Role ARN we copied few steps before. The role we created to allow this kind of intergration.
+
+The last field is **Content Handling** that in my case I want to convert the base64 to binary since it will be a JPG image.
+
+Below you can see how I filled my form. Then click **Save**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-22.png)
+
+It is now created, now we have more steps to perform before it’s ready to test. Click on **Method Request**.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-24.png)
+
+In the **Authorization** Field select the Authorizer we created before then click in the confirm button right after the field to save it.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-26.png)
+
+Once it’s back to the previous screen, click on **Integration Request**. Scroll down to **URL Path Parameters** and defined the variable name as **\*userId\*** (that is the variable {userId} we created before) and in the field **Mapped from** insert the information **_context.authorizer.claims.sub_** (this is the **sub** attribute from Cognito that allow us to determine the user primary key). Click the confirmation button at the end of the line to save it.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-27.png)
+
+Now you can deploy and do the first test with the Postman or similar. It’s not possible to test with the method test button because it doesn’t have the cognito Authorization header information and it will fail. Here is my example with Postman. I inserted a BASE64 JPG image in the body then I configured the Authorization header with the JWT ID Token provided by Cognito and also, the important thing is the Content-Type as image/jpeg that allows the API Gateway convert it to binary while writing in S3 Bucket.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-28.png)
+
+In S3 Bucket I see the folder with the user sub attribute was created and there is a file picture.jpg inside it.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-29.png)
+
+Now the users can upload their own picture profile using a single route and there is also a security factor that doesn’t allow the user to change the sub header, if it happens the idToken will be invalidated and the Custom Authorizer will deny the PUT method.
+
+To allow the user retrieve their own picture, we need to create a method GET under the /profile/picture and follow the same as explained few steps above only changing the HTTP Method GET when configuring the AWS Service.
+
+![img](/static/images/blog/upload-download-from-s3-using-apigateway/image-31.png)

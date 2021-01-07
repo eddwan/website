@@ -1,20 +1,20 @@
-const title = 'Lee Robinson – Developer, writer, creator.';
+const title = 'Eddwan Hallen – Developer, writer, creator.';
 const description =
   'Front-end developer, JavaScript enthusiast, and course creator.';
 
 const SEO = {
   title,
   description,
-  canonical: 'https://leerob.io',
+  canonical: 'https://eddwan.com',
   openGraph: {
     type: 'website',
     locale: 'en_IE',
-    url: 'https://leerob.io',
+    url: 'https://eddwan.com',
     title,
     description,
     images: [
       {
-        url: 'https://leerob.io/static/images/banner.jpg',
+        url: 'https://eddwan.com/static/images/banner.jpg',
         alt: title,
         width: 1280,
         height: 720

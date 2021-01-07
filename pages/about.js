@@ -39,11 +39,11 @@ export default function About() {
   return (
     <Container>
       <NextSeo
-        title="About Me – Lee Robinson"
-        canonical="https://leerob.io/about"
+        title="About Me – Eddwan Hallen"
+        canonical="https://eddwan.com/about"
         openGraph={{
-          url: 'https://leerob.io/about',
-          title: 'About Me – Lee Robinson'
+          url: 'https://eddwan.com/about',
+          title: 'About Me – Eddwan Hallen'
         }}
       />
       <div className="flex flex-col justify-center items-start max-w-2xl mx-auto mb-16">

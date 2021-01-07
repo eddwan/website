@@ -1,38 +1,388 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://leerob.io/404</loc>
+    <loc>https://eddwan.com/404</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io/about</loc>
+    <loc>https://eddwan.com/about</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io/blog</loc>
+    <loc>https://eddwan.com/blog</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io/dashboard</loc>
+    <loc>https://eddwan.com/dashboard</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io</loc>
+    <loc>https://eddwan.com</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io/newsletter</loc>
+    <loc>https://eddwan.com/newsletter</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io/uses</loc>
+    <loc>https://eddwan.com/uses</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io/uses</loc>
+    <loc>https://eddwan.com/uses</loc>
   </url>
 
   <url>
-    <loc>https://leerob.io/blog/backend</loc>
+    <loc>https://eddwan.com/newsletter/1</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/buttondown-subscribers</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/buttondown</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/crud-api-route</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/email-query-params</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/firebase</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/google-analytics</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/google-sheets</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/gradient-border</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/gumroad-product</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/gumroad</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/loading-progress</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/mailchimp</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/mailgun</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/search</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/sendgrid</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/slack</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/spotify-top-tracks</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/spotify</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/sticky-nav</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/stripe</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/snippets/youtube</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/10-days-in-norway</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/2019</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/analyzing-10-years-of-facebook-data</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/backend</loc>
+  </url>
+
+  <url>
+    <loc
+      >https://eddwan.com/blog/beginners-guide-to-the-programming-portfolio</loc
+    >
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/benefits-i-care-about-in-2019</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/best-bars-in-des-moines</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/build-vs-buy</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/building-my-first-electron-app</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/calibrate-san-francisco</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/configuring-sentry-for-nextjs-apps</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/content-marketing-personal-brand</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/css-with-react</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/fetching-data-with-swr</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/getting-started-with-dart-and-react</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/github-actions</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/google-analytics-api-nextjs</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/google-yelp-foursquare-apis-python</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/graphql-at-hy-vee</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/gumroad-node-api</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/how-stripe-designs-beautiful-websites</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/how-to-be-the-best-developer</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/how-to-fix-technical-recruiting</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/how-to-print-in-react-using-iframes</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/iowa-caucuses</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/italy</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/joining-hy-vee</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/learn-nextjs</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/learning-css-animations-by-example</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/life-at-workiva</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/loading-placeholder-with-sass</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/mailchimp-next-js</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/mdx</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/migrating-to-hugo</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/monorepo-lerna-yarn-workspaces</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/my-essential-software-hardware-list</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/my-life-behind-the-lens</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/next-prisma</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/nextjs-authentication</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/nextjs-firebase-serverless</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/nextjs-gatsby-create-react-app</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/nextjs-sitemap-robots</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/optimizing-my-digital-content-consumption</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/purpose-driven-work</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/real-time-post-views</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/resume</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/space-invaders-with-python</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/spotify-api-nextjs</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/stop-wasting-your-time</loc>
+  </url>
+
+  <url>
+    <loc
+      >https://eddwan.com/blog/style-guides-component-libraries-design-systems</loc
+    >
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/tailwind</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/teach-online</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/technical-recruiting-is-broken</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/the-search-for-everything</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/things-ive-learned-building-nextjs-apps</loc>
+  </url>
+
+  <url>
+    <loc
+      >https://eddwan.com/blog/ui-component-library-with-styled-components</loc
+    >
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/unplanned-roadtrips-and-expectations</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/unsplash-api-nextjs</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/using-mapbox-with-next-js</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/vercel-env-variables-size-limit</loc>
+  </url>
+
+  <url>
+    <loc
+      >https://eddwan.com/blog/what-ive-learned-from-4-or-5-years-of-college</loc
+    >
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/why-i-create-open-source-software</loc>
+  </url>
+
+  <url>
+    <loc>https://eddwan.com/blog/youtube-api-nextjs</loc>
+  </url>
+
+  <url>
+    <loc
+      >https://eddwan.com/blog/zero-programming-experience-to-three-internships</loc
+    >
   </url>
 </urlset>

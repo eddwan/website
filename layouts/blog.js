@@ -10,14 +10,14 @@ const editUrl = (slug) =>
   `https://github.com/leerob/leerob.io/edit/master/data/blog/${slug}.mdx`;
 const discussUrl = (slug) =>
   `https://mobile.twitter.com/search?q=${encodeURIComponent(
-    `https://leerob.io/blog/${slug}`
+    `https://eddwan.com/blog/${slug}`
   )}`;
 
 export default function BlogLayout({ children, frontMatter }) {
   return (
     <Container>
       <BlogSeo
-        url={`https://leerob.io/blog/${frontMatter.slug}`}
+        url={`https://eddwan.com/blog/${frontMatter.slug}`}
         {...frontMatter}
       />
       <article className="flex flex-col justify-center items-start max-w-2xl mx-auto mb-16 w-full">
@@ -27,7 +27,7 @@ export default function BlogLayout({ children, frontMatter }) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full mt-2 mb-8">
           <div className="flex items-center">
             <Image
-              alt="Lee Robinson"
+              alt="Eddwan Hallen"
               height={24}
               width={24}
               src="/avatar.jpg"
@@ -35,7 +35,7 @@ export default function BlogLayout({ children, frontMatter }) {
             />
             <p className="text-sm text-gray-700 dark:text-gray-300 ml-2">
               {frontMatter.by}
-              {'Lee Robinson / '}
+              {'Eddwan Hallen / '}
               {format(parseISO(frontMatter.publishedAt), 'MMMM dd, yyyy')}
             </p>
           </div>

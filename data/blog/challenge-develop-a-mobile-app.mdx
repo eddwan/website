@@ -1,0 +1,32 @@
+---
+title: 'Challenge: Develop a mobile app!'
+publishedAt: '2019-05-19'
+summary: 'Few weeks ago I started to develop a special mobile app for my wife. This mobile app will connect her to her patients. I will not provide details about how is the app, instead I will provide technical details how I had thought its architecture and which products I am picking in the service providers.'
+image: '/static/images/blog/challenge-develop-a-mobile-app/cover.png'
+category: 'Dev, Mobile, App'
+---
+
+Few weeks ago I started to develop a special mobile app for my wife. This mobile app will connect her to her patients. I will not provide details about how is the app, instead I will provide technical details how I had thought its architecture and which products I am picking in the service providers.
+
+# What does the AWS offer?
+
+As far as we know, today we can host and develop many things using the cloud service providers. Of course we have different products from different providers but at the end they are basically the same with small differences.
+
+Since I was familiar and it has a great adoption by the developers, I chose the AWS (Amazon Web Services) to host the entire solution, or at least the most part of it. Below there is a simple list with the basic components I’ve chose for now:
+
+- **Cognito**: for authentication and authorization.
+- **S3**: to store the static files as captured pictures, user’s profile picture.
+- **Lambda**: To keep the serverless solution using Node.js or Python. I chose Node.js.
+- **API Gateway**: To create easily an API that integrates everything.
+
+Even with AWS offering the Amplify product that makes the app development easy, I preferred to do all the setup by myself, instead using the Amplify automation.
+
+# What does not the AWS offer?
+
+Since the idea is develop a mobile app, the AWS does not offer a solution for the app itself, it provides an SDK for many different languages but not a language itself. Of course it happens because the mobile brands have their own language.
+
+Since few time ago, Ionic Framework is showing its power and making the mobile app development easier. This is why I chose it to develop the app.
+
+# What next()?
+
+This is the first scratch of this development journey. I will share more details in the next posts here. Stay tuned!

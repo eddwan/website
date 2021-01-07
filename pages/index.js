@@ -1,10 +1,19 @@
-import Container from '../components/Container';
+import Container from '@/components/Container';
 import Card from '@/components/Card';
 import NextLink from 'next/link';
+import { NextSeo } from 'next-seo';
+import { getAllFilesFrontMatter } from '@/lib/mdx';
+import Subscribe from '../components/Subscribe';
+import Timeline from '../components/Timeline';
 
-export default function Home() {
+export default function Home({ posts }) {
   return (
     <Container>
+      <NextSeo
+        title="Home - Eddwan Hallen"
+        description={`Here's what tech I'm currently using for coding, videos, and music.`}
+        canonical="https://eddwan.com"
+      />
       <div className="flex flex-col xl:flex-row xl:px-60 md:mb-16 md:px-60 xl:flex-nowrap md:justify-center">
         <div className="justify-center m-8 xl:m-0">
           <img className="rounded-full shadow-2xl w-96" src="/picture.png" />
@@ -30,7 +39,9 @@ export default function Home() {
       </div>
       <div className="flex flex-col justify-evenly mb-16 bg-blue-50 dark:bg-gray-600 xl:px-60 md:mb-16 md:px-60 xl:flex-nowrap md:justify-center">
         <div className="flex flex-row justify-between p-4 pt-8 2xl:px-28">
-          <h2 className="text-xl font-light dark:text-white">Recent posts</h2>
+          <h2 className="text-xl text-black font-light dark:text-white">
+            Recent posts
+          </h2>
           <NextLink href="/blog">
             <a className="text-gray-900 dark:text-gray-100 text-blue-400 hover:text-blue-600 dark:hover:text-yellow-600">
               View all
@@ -39,16 +50,29 @@ export default function Home() {
         </div>
 
         <div className="flex flex-row flex-wrap justify-center">
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          {posts
+            .sort(
+              (a, b) =>
+                Number(new Date(b.publishedAt)) -
+                Number(new Date(a.publishedAt))
+            )
+            .slice(0, 8)
+            .map((frontMatter) => (
+              <Card key={frontMatter.title} {...frontMatter} />
+            ))}
+        </div>
+      </div>
+      <div className="flex flex-col xl:flex-row xl:px-60 md:mb-16 md:px-60 xl:flex-nowrap md:justify-center">
+        <div className="justify-center m-8 xl:m-0">
+          <Subscribe />
         </div>
       </div>
     </Container>
   );
+}
+
+export async function getStaticProps() {
+  const posts = await getAllFilesFrontMatter('blog');
+
+  return { props: { posts } };
 }
