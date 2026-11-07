@@ -92,9 +92,24 @@ Tema escuro, tipografia grande e as cores da Hallen Tech: laranja `#FFC301 → #
 
 ## Dados do canal
 
-`src/data/canal.ts` guarda os vídeos públicos do @eddwan (ID, título, data, série), as séries com as playlists e os números da página inicial.
-É de lá que saem a grade filtrável de `/videos`, os “mais recentes” e os mosaicos das séries na página inicial.
-**Saiu vídeo novo?** Acrescente uma linha em `LISTA` (e atualize `NUMEROS` quando mudar a contagem). Se o vídeo tiver post, o post usa o mesmo ID em `youtube.id` e o cartão passa a abrir o post.
+`src/data/canal.ts` guarda as séries com as playlists e a `LISTA` dos vídeos conferidos à mão (ID, título, data, série, rótulo).
+
+**Vídeos novos entram sozinhos.** A cada build, `src/data/youtube.ts` lê o feed público do canal no YouTube (playlist de uploads só com vídeos longos, os 15 últimos, sem chave de API) e acrescenta o que não está na `LISTA`. A série e o rótulo saem do fim do título:
+
+| Fim do título | Série | Rótulo |
+| --- | --- | --- |
+| `| Vol. 25` | Open source do GitHub | Vol. 25 |
+| `| Git e GitHub do zero #11` | Git e GitHub do zero | Ep. 11 |
+| `| Programando com IA do zero #1` | Programando com IA do zero | Ep. 1 |
+| `| Especial #2` | Especiais | Especial #2 |
+| qualquer outro | Especiais | Vídeo |
+
+- O deploy roda de 3 em 3 horas (`schedule` no `deploy.yml`), então um vídeo publicado aparece no site em até 3 horas. Para antecipar: `gh workflow run deploy.yml -R eddwan/website`.
+- Os números da home (volumes e episódios) são calculados da lista.
+- Se o feed falhar, o build segue só com a `LISTA` (aviso `[youtube]` no log). `SEM_FEED_YOUTUBE=1 npm run build` desliga o feed.
+- Para corrigir título ou rótulo de um vídeo que veio do feed, copie-o para a `LISTA`: a `LISTA` sempre vence.
+- Shorts não entram na grade; os da página `/videos` vêm dos posts do blog (`youtube.formato: short`).
+- Vídeo com post: o post usa o mesmo ID em `youtube.id`, e o cartão passa a abrir o post.
 
 ## Fluxo de trabalho e deploy automático
 

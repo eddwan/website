@@ -15,7 +15,9 @@ const [ultimo] = VIDEOS;
 const contagem = (s: Serie) => VIDEOS.filter((v) => v.serie === s).length;
 const filtros: { id: 'todos' | Serie; nome: string; total: number }[] = [
   { id: 'todos', nome: 'Todos', total: VIDEOS.length },
-  ...(Object.keys(SERIES) as Serie[]).map((s) => ({ id: s, nome: SERIES[s].nome, total: contagem(s) })),
+  ...(Object.keys(SERIES) as Serie[])
+    .map((s) => ({ id: s, nome: SERIES[s].nome, total: contagem(s) }))
+    .filter((f) => f.total > 0),
 ];
 ---
 

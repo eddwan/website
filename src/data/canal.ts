@@ -1,7 +1,11 @@
-// Vídeos públicos do canal @eddwan (IDs e títulos tirados de youtube-channel/video/publicar/<id>/).
-// Para um vídeo novo: acrescente uma linha aqui; se ele tiver post no blog, o post aponta para o mesmo ID.
+// Vídeos públicos do canal @eddwan.
+// - LISTA: os vídeos conferidos à mão (títulos e rótulos revisados).
+// - Vídeos novos entram sozinhos: a cada build, src/data/youtube.ts lê o feed do canal no YouTube (só vídeos
+//   longos) e acrescenta o que não está na LISTA. O deploy roda de 3 em 3 horas (.github/workflows/deploy.yml).
+// Se o vídeo tiver post no blog, o post aponta para o mesmo ID em youtube.id.
+import { videosDoFeed } from './youtube';
 
-export type Serie = 'open-source' | 'git' | 'especiais';
+export type Serie = 'open-source' | 'git' | 'ia' | 'especiais';
 
 export interface VideoCanal {
   id: string;
@@ -25,6 +29,11 @@ export const SERIES: Record<
     nome: 'Git e GitHub do zero',
     resumo: 'Do primeiro commit ao pull request, conflitos, Actions e segredos vazados. Para quem está começando.',
     playlist: 'https://www.youtube.com/playlist?list=PLXVQXkiUR9po',
+    cor: 'azul',
+  },
+  ia: {
+    nome: 'Programando com IA do zero',
+    resumo: 'Programar com agentes de código, do primeiro projeto ao pull request, com o Claude Code e companhia.',
     cor: 'azul',
   },
   especiais: {
@@ -74,12 +83,19 @@ const LISTA: VideoCanal[] = [
 ];
 
 // Do mais novo para o mais antigo (sem data vai para o fim)
-export const VIDEOS: VideoCanal[] = [...LISTA].sort((a, b) => (b.data ?? '').localeCompare(a.data ?? ''));
+const conhecidos = new Set(LISTA.map((v) => v.id));
+const novos = (await videosDoFeed()).filter((v) => !conhecidos.has(v.id));
 
-// Números do canal (conferidos em 07/11/2026; atualize quando sair volume ou episódio novo)
+export const VIDEOS: VideoCanal[] = [...LISTA, ...novos].sort((a, b) => (b.data ?? '').localeCompare(a.data ?? ''));
+
+// Números do canal, calculados a partir da lista (o último volume e os episódios publicados)
+const ultimoVolume = Math.max(0, ...VIDEOS.map((v) => Number(v.rotulo?.match(/^Vol\. (\d+)/)?.[1] ?? 0)));
+const episodios = (s: Serie) => VIDEOS.filter((v) => v.serie === s && v.rotulo?.startsWith('Ep.')).length;
 export const NUMEROS = [
-  { valor: '24', rotulo: 'volumes de open source' },
-  { valor: '10', rotulo: 'episódios de Git do zero' },
+  { valor: String(ultimoVolume), rotulo: 'volumes de open source' },
+  episodios('ia') > 0
+    ? { valor: String(episodios('git') + episodios('ia')), rotulo: 'episódios de Git e IA do zero' }
+    : { valor: String(episodios('git')), rotulo: 'episódios de Git do zero' },
   { valor: '1.000+', rotulo: 'repositórios avaliados' },
 ];
 
