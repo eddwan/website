@@ -64,15 +64,22 @@ function material(pasta) {
   };
 }
 
+// Data de publicação registrada na LISTA de src/data/canal.ts
+function dataDaLista(id) {
+  const canal = readFileSync(new URL('../src/data/canal.ts', import.meta.url), 'utf8');
+  return canal.split('\n').find((l) => l.includes(`id: '${id}'`))?.match(/data: '(\d{4}-\d{2}-\d{2})'/)?.[1];
+}
+
 if (flag('listar')) {
   const comPost = idsComPost();
   const pendentes = readdirSync(PUBLICAR, { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => ({ nome: d.name, m: material(join(PUBLICAR, d.name)) }))
     .filter(({ m }) => m && m.formato === 'video' && !comPost.has(m.id))
-    .sort((a, b) => b.nome.localeCompare(a.nome, 'pt', { numeric: true }));
+    .map((p) => ({ ...p, data: dataDaLista(p.m.id) ?? '' }))
+    .sort((a, b) => b.data.localeCompare(a.data) || b.nome.localeCompare(a.nome, 'pt', { numeric: true }));
   console.log(`Vídeos enviados sem post no blog (${pendentes.length}):\n`);
-  for (const { nome, m } of pendentes) console.log(`  ${nome.padEnd(26)} ${m.id}  ${m.principal.titulo}`);
+  for (const { nome, m, data } of pendentes) console.log(`  ${(data || '          ').padEnd(11)} ${nome.padEnd(26)} ${m.id}  ${m.principal.titulo}`);
   console.log('\nPara criar o rascunho: npm run post-do-video -- <pasta>');
   process.exit(0);
 }
@@ -146,8 +153,7 @@ if (existsSync(arquivoFontes)) {
 
 // Data da publicação: a LISTA de src/data/canal.ts, depois o feed do canal (horário de Brasília), senão hoje
 async function dataPublicacao(id) {
-  const canal = readFileSync(new URL('../src/data/canal.ts', import.meta.url), 'utf8');
-  const daLista = canal.match(new RegExp(`id: '${id.replace(/[-]/g, '\\-')}'[^\\n]*data: '(\\d{4}-\\d{2}-\\d{2})'`))?.[1];
+  const daLista = dataDaLista(id);
   if (daLista) return daLista;
   try {
     const r = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${CANAL}`, { signal: AbortSignal.timeout(8000) });
@@ -185,7 +191,19 @@ function comCodigo(texto) {
     if (codigo.length) saida.push(codigo.some((l) => chaveYaml.test(l.trim())) ? '```yaml' : '```bash', ...codigo, '```');
     codigo = [];
   };
+  let json = false;
   for (const l of texto.split('\n')) {
+    if (json || l === '{') {
+      if (!json) fecha();
+      json = true;
+      codigo.push(l);
+      if (l === '}') {
+        saida.push('```json', ...codigo, '```');
+        codigo = [];
+        json = false;
+      }
+      continue;
+    }
     const inicio = comando.test(l) || (chaveYaml.test(l) && !/[.!?]$/.test(l));
     if ((codigo.length && pareceCodigo(l)) || inicio) codigo.push(l);
     else {
@@ -204,6 +222,7 @@ const corpo = [];
 // Da apresentação ("📺 Vigésimo quarto volume...") fica a primeira linha, sem as frases com link
 const semLinks = (t) =>
   t
+    .replace(/\s*(Episódio anterior|Próximo episódio)\b.*$/i, '')
     .split(/(?<=[.!?])\s+/)
     .filter((f) => !/https?:\/\//.test(f))
     .join(' ')
@@ -216,7 +235,9 @@ if (capitulos.length > 0) {
   const ordem = [...capitulos].sort((a, b) => b.pos - a.pos);
   corpo.push(`## A lista, do ${ordinal(ordem[0].pos)} ao ${ordinal(ordem.at(-1).pos)}`, '');
   for (const c of ordem) {
-    corpo.push(`### ${c.pos}. ${c.nome}`, '', c.texto);
+    // Descrição com maiúscula no começo e ponto no fim (algumas descrições do YouTube vêm sem)
+    const texto = c.texto.charAt(0).toUpperCase() + c.texto.slice(1) + (/[.!?)]$/.test(c.texto) ? '' : '.');
+    corpo.push(`### ${c.pos}. ${c.nome}`, '', texto);
     if (c.url) corpo.push(`[${host(c.url)}](${c.url})`);
     corpo.push('');
   }
