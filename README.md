@@ -96,7 +96,32 @@ Tema escuro, tipografia grande e as cores da Hallen Tech: laranja `#FFC301 → #
 É de lá que saem a grade filtrável de `/videos`, os “mais recentes” e os mosaicos das séries na página inicial.
 **Saiu vídeo novo?** Acrescente uma linha em `LISTA` (e atualize `NUMEROS` quando mudar a contagem). Se o vídeo tiver post, o post usa o mesmo ID em `youtube.id` e o cartão passa a abrir o post.
 
-## Publicar no Plesk (rsync)
+## Publicar no Cloudflare Workers (padrão)
+
+O site roda como **Worker só de arquivos estáticos** (sem código de servidor): o `astro build` gera o `dist/` e o `wrangler` sobe tudo para a conta **Hallen Tech** da Cloudflare. O plano gratuito cobre com folga (requisições a arquivos estáticos não contam no limite do Worker).
+**Não publique sem o Eddwan aprovar.**
+
+| Arquivo | Para quê |
+| --- | --- |
+| `wrangler.jsonc` | Nome do Worker (`eddwan-website`), conta, pasta `dist/`, domínios `eddwan.com` e `www.eddwan.com`, 404 do Astro, URLs sem barra no fim |
+| `public/_headers` | Cabeçalhos de segurança e cache longo para `/_astro/*` (arquivos com hash) |
+| `public/.assetsignore` | Deixa o `.htaccess` (só do Plesk) fora do upload |
+
+```bash
+npx wrangler login     # uma vez por máquina (já feito no Mac do Eddwan, conta Hallen Tech)
+npm run cf:check       # build + simulação do deploy (não envia nada)
+npm run cf:dev         # build + o site no motor do Cloudflare em http://localhost:8787
+npm run cf:deploy      # build + publica de verdade
+```
+
+- **Domínio:** a zona `eddwan.com` já está na Cloudflare. No primeiro `cf:deploy`, as rotas com `custom_domain` criam os registros DNS e o certificado de `eddwan.com` e `www.eddwan.com`. Não pode existir registro A/AAAA/CNAME com esses nomes antes (em 07/11/2026 não havia nenhum).
+- **www:** responde o mesmo site, com o link canônico apontando para `https://eddwan.com`. Para redirecionar de vez, criar na zona uma *Redirect Rule* (Rules → Redirect Rules → modelo “Redirect from WWW to root”, 301).
+- **URLs:** sem barra no fim (`/sobre`). `trailingSlash: 'never'` no Astro e `drop-trailing-slash` no Cloudflare; `/sobre/` redireciona para `/sobre`.
+- O endereço `*.workers.dev` e as URLs de prévia estão desligados: o site só responde no domínio.
+- Depois de publicar, conferir `https://eddwan.com`, `/sobre`, `/rss.xml`, `/sitemap-index.xml`, uma imagem `/og/...png` e uma página inexistente (deve dar o 404 do site).
+- Voltar uma versão: `npx wrangler rollback` (ou pelo painel, Workers → eddwan-website → Deployments).
+
+## Publicar no Plesk (rsync, alternativa)
 
 Mesmo servidor e mesmo método do site da Hallen Tech (`hallentech/website`, ver `.gitlab-ci.yml` de lá): build estático e `rsync` do `dist/` para o vhost.
 **Não publique sem o Eddwan aprovar.**
@@ -130,4 +155,4 @@ rsync -avz --delete --exclude='.well-known/' --exclude='error_docs/' \
 
 - Comentários (giscus) e newsletter.
 - Post automático a partir de `youtube-channel/video/publicar/<id>/`.
-- CI de deploy (como o do site da Hallen Tech).
+- CI de deploy: GitHub Actions com `wrangler deploy` a cada push no `main` (precisa de um token de API da Cloudflare nos secrets).

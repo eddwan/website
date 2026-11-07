@@ -1,0 +1,24 @@
+// Cloudflare Workers com arquivos estáticos (sem código de Worker): o Astro gera dist/ e o
+// wrangler sobe tudo. Publicar: npm run cf:deploy (faz o build antes). Prévia: npm run cf:dev.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "eddwan-website",
+  "account_id": "b3eef8e6bc57c9ea990f64e4be208686",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    // /sobre serve dist/sobre/index.html (/sobre/ redireciona para /sobre); o resto que não existir cai no 404 do Astro
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // O domínio já está na zona da Cloudflare: o deploy cria o registro DNS e o certificado.
+  // O www redireciona para o domínio sem www por uma Redirect Rule da zona (ver README).
+  "routes": [
+    { "pattern": "eddwan.com", "custom_domain": true },
+    { "pattern": "www.eddwan.com", "custom_domain": true }
+  ],
+  // Endereço eddwan-website.<conta>.workers.dev desligado: o site só responde no domínio
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true }
+}

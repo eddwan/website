@@ -11,7 +11,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "novo-post": "node scripts/novo-post.mjs",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "cf:dev": "astro build && wrangler dev",
+    "cf:deploy": "astro build && wrangler deploy",
+    "cf:check": "astro build && wrangler deploy --dry-run"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -24,5 +27,8 @@
     "satori": "^0.63.2"
   },
   "description": "Site pessoal do Eddwan: blog, notícias, vídeos, portfólio e currículo (Astro estático).",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "wrangler": "4.158.0"
+  }
 }

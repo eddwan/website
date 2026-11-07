@@ -8,7 +8,8 @@ const site = process.env.SITE_URL ?? 'https://eddwan.com';
 
 export default defineConfig({
   site,
-  trailingSlash: 'ignore',
+  // URLs sem barra no fim (/sobre), iguais aos links do site; o Cloudflare serve dist/sobre/index.html nelas
+  trailingSlash: 'never',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: { theme: 'github-dark-dimmed' },
