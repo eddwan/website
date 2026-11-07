@@ -80,6 +80,24 @@ A automação (cada vídeo virar post sozinho) fica para depois.
 - Sobre: `src/pages/sobre.astro`. Os trechos entre colchetes são para o Eddwan preencher.
 - Currículo em PDF: salve como `public/cv.pdf`; o botão aparece no próximo build.
 
+## Métricas (PostHog)
+
+O site manda as métricas para o projeto do PostHog (US Cloud), com a chave pública em `src/consts.ts` (`POSTHOG`) e o código em `src/components/Analytics.astro`.
+
+- Só conta no domínio de produção (`eddwan.com`): nada sai do `npm run dev`, da prévia local nem do `wrangler dev`.
+- **Sem cookies:** o identificador anônimo fica no `sessionStorage` e some quando a aba fecha. Por isso não há banner de cookies. Cada visita conta como um visitante novo, e não dá para saber quem volta no dia seguinte.
+- Eventos: páginas vistas e saídas, cliques em links e botões e `video_play` (play no player do site, com `video_id` e `video_titulo`). Sem gravação de sessão e sem perfil de pessoa; respeita o “Do Not Track”.
+- A biblioteca (cerca de 90 KB comprimida) só baixa depois que a página terminou de abrir.
+
+## Escrever um post a partir de um vídeo
+
+```bash
+npm run post-do-video -- --listar        # vídeos enviados ao YouTube que ainda não têm post
+npm run post-do-video -- v25-top15       # cria o rascunho em src/content/blog/
+```
+
+O script lê `youtube-channel/video/publicar/<id>/` (`youtube.json`, `enviados.json`, a descrição do vídeo em `descricoes/` e o `fontes.md`, se existir) e monta o post com `rascunho: true`. Listas viram “A lista, do 15º ao 1º” com o link de cada projeto; explicativos ganham “Neste vídeo” (capítulos) e o passo a passo da descrição, com os comandos e YAMLs em blocos de código; os shorts e as fontes entram no cabeçalho do post. A data vem de `src/data/canal.ts` ou do feed do canal. Revise o título (nas listas, os destaques), a descrição e o texto, confira no `npm run dev` e troque para `rascunho: false`. A pasta do canal pode ser outra com `YOUTUBE_PUBLICAR=/caminho/publicar`.
+
 ## Visual
 
 Tema escuro, tipografia grande e as cores da Hallen Tech: laranja `#FFC301 → #FE7602` e azul `#03E7FC → #0183FB`.

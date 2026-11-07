@@ -15,7 +15,8 @@
     "cf:dev": "astro build && wrangler dev",
     "cf:deploy": "astro build && wrangler deploy",
     "cf:check": "astro build && wrangler deploy --dry-run",
-    "cf:deploy-www": "wrangler deploy -c cloudflare/www-redirect/wrangler.jsonc"
+    "cf:deploy-www": "wrangler deploy -c cloudflare/www-redirect/wrangler.jsonc",
+    "post-do-video": "node scripts/post-do-video.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -25,6 +26,7 @@
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^7.4.7",
+    "posthog-js": "1.438.21",
     "satori": "^0.63.2"
   },
   "description": "Site pessoal do Eddwan: blog, notícias, vídeos, portfólio e currículo (Astro estático).",

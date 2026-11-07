@@ -1,0 +1,43 @@
+---
+// Métricas de uso com o PostHog, sem cookies: o identificador anônimo fica no sessionStorage e some quando a
+// aba fecha. Conta páginas vistas, cliques (links e botões), saídas da página e os vídeos que deram play.
+// Não grava a sessão (sem replay), não cria perfil de pessoa e não lê o que for digitado.
+import { POSTHOG } from '../consts';
+---
+
+<script is:inline define:vars={{ posthogConfig: POSTHOG }}>
+  window.__posthog = posthogConfig;
+</script>
+<script>
+  type Cfg = { chave: string; host: string; dominios: string[] };
+  const cfg = (window as unknown as { __posthog: Cfg }).__posthog;
+
+  if (import.meta.env.PROD && cfg.dominios.includes(location.hostname)) {
+    // Plays que acontecerem antes de a biblioteca carregar ficam na fila
+    const fila: { id: string; titulo: string }[] = [];
+    let enviar = (d: { id: string; titulo: string }) => void fila.push(d);
+    document.addEventListener('yt:play', (e) => enviar((e as CustomEvent<{ id: string; titulo: string }>).detail));
+
+    // A biblioteca (~90 KB comprimida) só baixa depois que a página terminou de abrir
+    const carregar = async () => {
+      const { default: posthog } = await import('posthog-js');
+      posthog.init(cfg.chave, {
+        api_host: cfg.host,
+        defaults: '2025-05-24',
+        persistence: 'sessionStorage',
+        person_profiles: 'identified_only',
+        disable_session_recording: true,
+        capture_pageview: true,
+        capture_pageleave: true,
+        autocapture: { dom_event_allowlist: ['click'], element_allowlist: ['a', 'button'] },
+        respect_dnt: true,
+      });
+      enviar = ({ id, titulo }) => void posthog.capture('video_play', { video_id: id, video_titulo: titulo });
+      fila.splice(0).forEach(enviar);
+    };
+    const quandoOcioso = (fn: () => void) =>
+      'requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 1500);
+    if (document.readyState === 'complete') quandoOcioso(carregar);
+    else addEventListener('load', () => quandoOcioso(carregar), { once: true });
+  }
+</script>

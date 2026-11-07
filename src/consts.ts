@@ -30,3 +30,11 @@ export const TIPOS: Record<string, string> = {
   lista: 'Lista',
   explicativo: 'Explicativo',
 };
+
+// PostHog (US Cloud). A chave do projeto é pública por natureza: vai no navegador de quem visita.
+export const POSTHOG = {
+  chave: 'phc_BhHMFnQGshocPGG5Znuz2c5huFRjb5JgEEXSQa4p7x7A',
+  host: 'https://us.i.posthog.com',
+  // Só conta visitas no domínio de produção (nada no npm run dev, na prévia local ou no wrangler dev)
+  dominios: ['eddwan.com'],
+};
