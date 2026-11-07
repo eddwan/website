@@ -96,6 +96,24 @@ Tema escuro, tipografia grande e as cores da Hallen Tech: laranja `#FFC301 → #
 É de lá que saem a grade filtrável de `/videos`, os “mais recentes” e os mosaicos das séries na página inicial.
 **Saiu vídeo novo?** Acrescente uma linha em `LISTA` (e atualize `NUMEROS` quando mudar a contagem). Se o vídeo tiver post, o post usa o mesmo ID em `youtube.id` e o cartão passa a abrir o post.
 
+## Fluxo de trabalho e deploy automático
+
+O trabalho acontece na **`develop`**; a **`main`** é o que está no ar.
+
+1. Commit e push na `develop` → o GitHub Actions roda o **CI** (build + simulação do deploy, sem publicar).
+2. Pull request `develop → main` → o CI roda de novo no PR.
+3. **Merge na `main`** → o workflow **Deploy** publica o site e o redirecionamento do www no Cloudflare e confere as páginas no ar.
+
+```bash
+gh pr create --base main --head develop --fill   # abre o PR
+gh pr merge --merge                                # merge (dispara o deploy)
+gh run watch                                       # acompanha o deploy
+```
+
+Também dá para publicar sem merge: Actions → Deploy → *Run workflow* (ou `gh workflow run deploy.yml`).
+
+**Secret obrigatório:** `CLOUDFLARE_API_TOKEN`, criado em dash.cloudflare.com → My Profile → API Tokens → *Create Token* → modelo **Edit Cloudflare Workers**, com *Account Resources* = Hallen Tech e *Zone Resources* = eddwan.com. Guardar no repositório com `gh secret set CLOUDFLARE_API_TOKEN -R eddwan/website` (o comando pede o valor sem mostrar). O ID da conta já está nos `wrangler.jsonc`.
+
 ## Publicar no Cloudflare Workers (padrão)
 
 O site roda como **Worker só de arquivos estáticos** (sem código de servidor): o `astro build` gera o `dist/` e o `wrangler` sobe tudo para a conta **Hallen Tech** da Cloudflare. O plano gratuito cobre com folga (requisições a arquivos estáticos não contam no limite do Worker).
@@ -155,4 +173,3 @@ rsync -avz --delete --exclude='.well-known/' --exclude='error_docs/' \
 
 - Comentários (giscus) e newsletter.
 - Post automático a partir de `youtube-channel/video/publicar/<id>/`.
-- CI de deploy: GitHub Actions com `wrangler deploy` a cada push no `main` (precisa de um token de API da Cloudflare nos secrets).

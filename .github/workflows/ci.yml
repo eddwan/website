@@ -1,0 +1,24 @@
+# Confere o build em todo push na develop e em todo pull request para a main.
+# Não publica nada: o deploy só acontece no merge na main (deploy.yml).
+name: CI
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - name: Build e simulação do deploy (site e redirecionamento do www)
+        run: |
+          npm run cf:check
+          npx wrangler deploy -c cloudflare/www-redirect/wrangler.jsonc --dry-run
