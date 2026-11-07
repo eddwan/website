@@ -3,7 +3,7 @@ titulo: 'Pull request e code review explicado do zero'
 descricao: 'Pull request e code review, explicado do zero: o que é um pull request, como abrir o seu primeiro, como escrever uma boa descrição, como funciona a revisão de código, os checks automáticos, os três tipos de merge e como contribuir em projetos de outras pessoas com fork.'
 data: 2026-10-12
 tipo: explicativo
-tags: [git, github, pull request, code review, fork, merge]
+tags: [git, github, pull request, contribuição open source]
 youtube:
   id: Pb_KdogzJZc
   shorts:

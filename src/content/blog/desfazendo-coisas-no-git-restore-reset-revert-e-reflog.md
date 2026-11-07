@@ -3,7 +3,7 @@ titulo: 'Desfazendo coisas no Git: restore, reset, revert e reflog'
 descricao: 'Como desfazer coisas no Git, explicado do zero: descartar mudanças num arquivo, tirar do staging, corrigir o último commit, voltar commits com reset (soft, mixed e hard), desfazer o que já foi enviado com revert, guardar mudanças com stash e recuperar commits "perdidos" com reflog.'
 data: 2026-10-15
 tipo: explicativo
-tags: [git, github, git reset, git revert, git restore, git stash]
+tags: [git, github]
 youtube:
   id: l3eYaxiS64g
   shorts:

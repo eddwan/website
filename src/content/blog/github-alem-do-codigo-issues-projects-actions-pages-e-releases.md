@@ -3,7 +3,7 @@ titulo: 'GitHub além do código: Issues, Projects, Actions, Pages e Releases'
 descricao: 'O GitHub não é só um lugar para guardar código. Neste episódio: Issues para conversar sobre o trabalho, Projects para organizar num quadro Kanban, GitHub Actions para automatizar testes, GitHub Pages para publicar um site grátis e Releases para entregar versões, além de Discussions, Dependabot e Codespaces.'
 data: 2026-10-17
 tipo: explicativo
-tags: [github, github actions, github pages, github issues, github projects, releases]
+tags: [github, github actions]
 youtube:
   id: A7W-3gAuX2Y
   shorts:

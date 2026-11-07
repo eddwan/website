@@ -3,7 +3,7 @@ titulo: 'Top 10 open source do GitHub, Vol. 7: alternativas ao Canva e ao CapCut
 descricao: '10 projetos open source do GitHub para você testar hoje, em contagem regressiva e com 10 segundos para cada um. Tem alternativa ao Canva e ao CapCut, aula inteira criada por agentes de inteligência artificial, busca no Mac pelo conteúdo dos arquivos, animações de matemática 90 vezes mais rápidas e mais.'
 data: 2026-10-15
 tipo: lista
-tags: [open source, github, alternativa ao canva, alternativa ao capcut, inteligência artificial, webgpu]
+tags: [open source, github, alternativas gratuitas, inteligência artificial]
 youtube:
   id: 5OF6lr7mVbI
   shorts:

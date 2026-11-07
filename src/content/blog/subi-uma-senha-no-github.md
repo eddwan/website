@@ -3,7 +3,7 @@ titulo: 'Subi uma senha no GitHub. E agora?'
 descricao: 'Apagar o arquivo não apaga a senha do histórico. O que fazer, na ordem certa, quando um segredo vaza no Git, e como impedir que isso aconteça de novo.'
 data: 2026-10-30
 tipo: explicativo
-tags: [git, github, segurança, série git]
+tags: [git, github, segurança]
 youtube:
   id: WMLGxYmihMk
   shorts:

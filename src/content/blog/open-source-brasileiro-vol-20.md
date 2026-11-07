@@ -3,7 +3,7 @@ titulo: '15 projetos open source brasileiros no GitHub, Vol. 20: Open Notebook, 
 descricao: 'Edição especial: 15 projetos open source feitos por brasileiros no GitHub, em contagem regressiva. Tem a alternativa aberta ao NotebookLM com mais de 40 mil estrelas, a memória compartilhada entre agentes de código do Fabio Akita, a linguagem Bend do Victor Taelin, o PhotoGIMP do Diolinux, o Winlator, que roda Windows no Android, a BrasilAPI e muito mais.'
 data: 2026-10-31
 tipo: lista
-tags: [open source, github, programação, brasil, projetos brasileiros, open source brasileiro]
+tags: [open source, github, programação]
 youtube:
   id: Hd4QZv2j6vc
   shorts:

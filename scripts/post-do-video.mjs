@@ -393,7 +393,22 @@ if (idsComPost().has(m.id) && !flag('forcar')) {
   process.exit(1);
 }
 
-const tags = (m.principal.tags ?? []).filter((t) => !/^shorts?$/i.test(t)).slice(0, 6);
+// Tags: sinônimos de src/data/tags.json e só as que já existem no blog (o vocabulário não cresce sozinho)
+const SINONIMOS = lerJson(new URL('../src/data/tags.json', import.meta.url).pathname);
+const vocabulario = new Set(
+  readdirSync(BLOG)
+    .filter((f) => f.endsWith('.md'))
+    .flatMap((f) => readFileSync(join(BLOG, f), 'utf8').match(/^tags: \[(.*)\]$/m)?.[1].split(',').map((t) => t.trim()) ?? [])
+    .filter(Boolean),
+);
+const padraoSerie = vol ? ['open source', 'github'] : /Git e GitHub/i.test(serieTitulo) ? ['git', 'github'] : ['programação'];
+const tags = [
+  ...new Set(
+    [...(m.principal.tags ?? []), ...padraoSerie]
+      .map((t) => SINONIMOS[t] ?? t)
+      .filter((t) => vocabulario.size === 0 || vocabulario.has(t)),
+  ),
+].slice(0, 5);
 const fm = [
   '---',
   `titulo: ${aspas(titulo)}`,

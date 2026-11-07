@@ -3,7 +3,7 @@ titulo: 'Top 15 open source do GitHub, Vol. 21: processador de texto em Rust, al
 descricao: 'Mais 15 projetos open source do GitHub que valem o seu tempo, em contagem regressiva do décimo quinto ao primeiríssimo lugar: um processador de texto em Rust com a cara do Word, uma alternativa gratuita ao Termius, transferência de arquivos sem nuvem, um app que instala Linux ao lado do Windows sem pen drive, o Minecraft reescrito em Rust e muito mais.'
 data: 2026-11-04
 tipo: lista
-tags: [open source, github, programação, ferramentas, Rust, Linux]
+tags: [open source, github, programação, ferramentas, rust, linux]
 youtube:
   id: X1Im9Z_z5mg
   shorts:

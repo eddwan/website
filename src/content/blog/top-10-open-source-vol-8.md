@@ -3,7 +3,7 @@ titulo: 'Top 10 open source do GitHub, Vol. 8: agentes de código em paralelo, c
 descricao: '10 projetos open source do GitHub para turbinar o seu fluxo de trabalho, em contagem regressiva e com 10 segundos para cada um. Tem agentes de código rodando em paralelo, revisão automática entre agentes, câmeras que viram sensores do Home Assistant, vídeo com IA no seu computador e mais.'
 data: 2026-10-15
 tipo: lista
-tags: [open source, github, agentes de IA, claude code, self-hosted, home assistant]
+tags: [open source, github, agentes de IA, claude code, self-hosted]
 youtube:
   id: wO5IzvprRBs
   shorts:

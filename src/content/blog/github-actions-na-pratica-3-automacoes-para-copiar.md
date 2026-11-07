@@ -3,7 +3,7 @@ titulo: 'GitHub Actions na prática: 3 automações para copiar'
 descricao: 'Episódio bônus da série: GitHub Actions na prática. Como uma automação funciona (evento, workflow, job e step), o arquivo YAML e três automações prontas para copiar: testes em todo pull request, publicação do site no GitHub Pages e faxina diária nas issues. Mais: como tornar o check obrigatório, onde guardar senhas (Secrets) e como descobrir o erro quando a automação quebra.'
 data: 2026-10-19
 tipo: explicativo
-tags: [github actions, github, ci cd, integração contínua, github pages, yaml]
+tags: [github actions, github]
 youtube:
   id: EOH8xFpasIs
   shorts:

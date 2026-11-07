@@ -3,7 +3,7 @@ titulo: 'Top 10 open source do GitHub, Vol. 6: alternativas ao Discord, ao Noteb
 descricao: '10 projetos open source do GitHub que valem o seu tempo, em contagem regressiva e com 10 segundos para cada um. Tem alternativa ao Discord, ao NotebookLM e ao Airtable rodando na sua máquina, música completa gerada por inteligência artificial aberta, VS Code no terminal e mais.'
 data: 2026-10-14
 tipo: lista
-tags: [open source, github, self-hosted, inteligência artificial, agentes de IA, alternativa ao discord]
+tags: [open source, github, self-hosted, inteligência artificial, agentes de IA, alternativas gratuitas]
 youtube:
   id: 2XTBufX-1Rs
   shorts:

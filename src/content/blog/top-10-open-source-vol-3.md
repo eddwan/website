@@ -3,7 +3,7 @@ titulo: 'Top 10 open source do GitHub, Vol. 3: Office com IA, música gerada na 
 descricao: '10 projetos open source do GitHub que vão mudar o jeito que você trabalha, em contagem regressiva e com 10 segundos para cada um. Tem agentes de IA, Office com IA, música gerada na sua GPU, gravação de tela, rede no terminal e busca semântica de código.'
 data: 2026-10-10
 tipo: lista
-tags: [open source, github, inteligência artificial, agentes de IA, self-hosted, ferramentas gratuitas]
+tags: [open source, github, inteligência artificial, agentes de IA, self-hosted, alternativas gratuitas]
 youtube:
   id: A_TJ7g4kUj8
   shorts:

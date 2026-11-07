@@ -3,7 +3,7 @@ titulo: '.gitignore, README e boas práticas de commit'
 descricao: 'O que nunca subir para o GitHub e como caprichar no repositório, explicado do zero: segredos e arquivos que ficam de fora, o .gitignore, o que fazer quando algo já foi para um commit, mensagens de commit claras, commits pequenos, um bom README e como escolher uma licença.'
 data: 2026-10-16
 tipo: explicativo
-tags: [git, github, gitignore, readme, mensagem de commit, licença open source]
+tags: [git, github, contribuição open source]
 youtube:
   id: WX6jHxpcTpU
   shorts:

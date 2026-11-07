@@ -3,7 +3,7 @@ titulo: 'Git com IA no dia a dia: commit, conflito e PR'
 descricao: 'Agentes de código com inteligência artificial já fazem commit, resolvem conflito e abrem pull request pelo terminal. Neste episódio bônus, como usar um deles (o Claude Code) no dia a dia com o Git, e o que você precisa revisar antes de aceitar: o diff inteiro, os arquivos do commit, os testes e os comandos que nunca devem rodar no automático.'
 data: 2026-10-30
 tipo: explicativo
-tags: [git, github, inteligência artificial, claude code, pull request, commit]
+tags: [git, github, inteligência artificial, claude code, pull request]
 youtube:
   id: 45wo7cjBKMk
   shorts:

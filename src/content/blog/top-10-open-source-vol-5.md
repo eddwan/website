@@ -3,7 +3,7 @@ titulo: 'Top 10 open source em alta no GitHub, Vol. 5: engenharia reversa com ag
 descricao: 'Os 10 projetos open source em alta no GitHub esta semana, em contagem regressiva e com 10 segundos para cada um. Tem engenharia reversa com agentes de IA, modelos gigantes numa GPU de 4 GB, vídeo feito com HTML, CAD a partir de texto e mais.'
 data: 2026-10-11
 tipo: lista
-tags: [open source, github, github trending, inteligência artificial, agentes de IA, engenharia reversa]
+tags: [open source, github, inteligência artificial, agentes de IA]
 youtube:
   id: EmxjlALvvQo
   shorts:

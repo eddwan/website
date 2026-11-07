@@ -3,7 +3,7 @@ titulo: 'Seus dados estão mesmo no Brasil? Datacenter, nuvem e LGPD explicados'
 descricao: 'Seu fornecedor garante que os dados ficam no Brasil. Mas e o backup, o processamento e o suporte? Neste vídeo: o que é um datacenter, como funcionam região e zona na nuvem, os cinco caminhos pelos quais um dado sai do país, o que a lei brasileira exige (LGPD, bancos e governo federal) e o que pedir ao fornecedor para ter certeza.'
 data: 2026-10-19
 tipo: explicativo
-tags: [datacenter, nuvem, cloud, LGPD, soberania de dados, proteção de dados]
+tags: [segurança, cloud]
 youtube:
   id: 9LaRM8Tn26s
 fontes:
