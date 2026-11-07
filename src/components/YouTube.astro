@@ -31,6 +31,8 @@ const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
       f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
       f.allowFullscreen = true;
       el.replaceChildren(f);
+      // Métrica (Analytics.astro): qual vídeo recebeu play
+      document.dispatchEvent(new CustomEvent('yt:play', { detail: { id: el.dataset.yt, titulo: el.dataset.titulo } }));
     });
   });
 </script>
