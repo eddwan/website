@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts } from '../../lib/posts';
+import { LINKS } from '../../consts';
+
+const posts = (await getPosts()).filter((p) => p.data.youtube);
+const videos = posts.filter((p) => p.data.youtube!.formato === 'video');
+const shorts = posts.filter((p) => p.data.youtube!.formato === 'short');
+---
+
+<Base titulo="Vídeos" descricao="Os vídeos do canal @eddwan no YouTube, cada um com resumo, links e fontes.">
+  <div class="container">
+    <header class="cab">
+      <h1>Vídeos</h1>
+      <p>
+        Cada vídeo do <a href={LINKS.youtube}>canal @eddwan</a> ganha um post com o player, o resumo, os links citados e
+        as fontes.
+      </p>
+    </header>
+
+    <h2>Vídeos</h2>
+    <div class="grade">{videos.map((post) => <PostCard post={post} />)}</div>
+
+    {
+      shorts.length > 0 && (
+        <>
+          <h2>Shorts e notícias</h2>
+          <div class="grade">{shorts.map((post) => <PostCard post={post} />)}</div>
+        </>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .cab {
+    padding-block: 2.5rem 0.5rem;
+  }
+  .cab h1 {
+    margin: 0 0 0.25rem;
+    font-size: 2.4rem;
+  }
+  .cab p {
+    margin: 0;
+    color: var(--texto-2);
+  }
+  h2 {
+    margin: 2.5rem 0 1rem;
+  }
+  .grade {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  }
+</style>

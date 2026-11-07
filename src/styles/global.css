@@ -1,0 +1,223 @@
+:root {
+  --bg: #0b0f17;
+  --bg-2: #111827;
+  --card: #141b2a;
+  --borda: #232d42;
+  --texto: #e6e9ef;
+  --texto-2: #a3adbf;
+  --laranja-1: #ffc301;
+  --laranja-2: #fe7602;
+  --azul-1: #03e7fc;
+  --azul-2: #0183fb;
+  --grad-laranja: linear-gradient(90deg, var(--laranja-1), var(--laranja-2));
+  --grad-azul: linear-gradient(90deg, var(--azul-1), var(--azul-2));
+  --raio: 14px;
+  --largura: 72rem;
+  --largura-texto: 44rem;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--texto);
+  font-family: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--azul-1);
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--laranja-1);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+:focus-visible {
+  outline: 2px solid var(--laranja-1);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--largura);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .container {
+    padding-inline: 1.5rem;
+  }
+}
+
+.grad-laranja {
+  background: var(--grad-laranja);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.grad-azul {
+  background: var(--grad-azul);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.selo {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--borda);
+  color: var(--texto-2);
+  text-decoration: none;
+}
+.selo-laranja {
+  color: #111;
+  background: var(--grad-laranja);
+  border: 0;
+}
+.selo-azul {
+  color: #021;
+  background: var(--grad-azul);
+  border: 0;
+}
+
+.aviso-rascunho {
+  border: 1px dashed var(--laranja-2);
+  background: rgba(254, 118, 2, 0.08);
+  border-radius: var(--raio);
+  padding: 0.85rem 1rem;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+.aviso-rascunho strong {
+  color: var(--laranja-1);
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #111;
+  background: var(--grad-laranja);
+}
+.botao:hover {
+  color: #111;
+  filter: brightness(1.08);
+}
+.botao-sec {
+  background: transparent;
+  color: var(--texto);
+  border: 1px solid var(--borda);
+}
+.botao-sec:hover {
+  color: var(--azul-1);
+  border-color: var(--azul-2);
+}
+
+/* Texto longo dos posts */
+.prosa {
+  max-width: var(--largura-texto);
+}
+.prosa h2 {
+  margin-top: 2.2em;
+  font-size: 1.5rem;
+}
+.prosa h3 {
+  margin-top: 1.8em;
+  font-size: 1.2rem;
+}
+.prosa p,
+.prosa li {
+  color: #d5dae3;
+}
+.prosa li + li {
+  margin-top: 0.35em;
+}
+.prosa code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: var(--bg-2);
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+}
+.prosa pre {
+  padding: 1rem;
+  border-radius: var(--raio);
+  border: 1px solid var(--borda);
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.prosa pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.prosa blockquote {
+  margin: 1.5rem 0;
+  padding: 0.25rem 1rem;
+  border-left: 3px solid var(--laranja-2);
+  color: var(--texto-2);
+}
+.prosa table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+}
+.prosa th,
+.prosa td {
+  border-bottom: 1px solid var(--borda);
+  padding: 0.5rem;
+  text-align: left;
+}
+.prosa hr {
+  border: 0;
+  border-top: 1px solid var(--borda);
+  margin: 2.5rem 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

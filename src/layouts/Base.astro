@@ -1,0 +1,208 @@
+---
+import '@fontsource-variable/inter/wght.css';
+import '../styles/global.css';
+import { SITE, LINKS, NAV } from '../consts';
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+  imagem?: string; // caminho da imagem Open Graph (relativo ao site)
+  tipo?: 'website' | 'article';
+  publicado?: Date;
+  semIndice?: boolean;
+}
+
+const { titulo, descricao = SITE.descricao, imagem = '/og/site.png', tipo = 'website', publicado, semIndice = false } =
+  Astro.props;
+const tituloCompleto = titulo ? `${titulo} · ${SITE.titulo}` : `${SITE.titulo}: tecnologia, open source e segurança`;
+const canonica = new URL(Astro.url.pathname, Astro.site);
+const imagemUrl = new URL(imagem, Astro.site);
+const atual = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<!doctype html>
+<html lang={SITE.idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descricao} />
+    <link rel="canonical" href={canonica} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.titulo} href={new URL('rss.xml', Astro.site)} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#0b0f17" />
+    <meta name="generator" content={Astro.generator} />
+    {semIndice && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content={tipo} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={SITE.titulo} />
+    <meta property="og:title" content={titulo ?? SITE.titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={imagemUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    {publicado && <meta property="article:published_time" content={publicado.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo ?? SITE.titulo} />
+    <meta name="twitter:description" content={descricao} />
+    <meta name="twitter:image" content={imagemUrl} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="sr-only" href="#conteudo">Pular para o conteúdo</a>
+    <header class="topo">
+      <div class="container topo-in">
+        <a class="marca" href="/" aria-label="Início">
+          <span class="marca-ponto" aria-hidden="true"></span>
+          <span>eddwan</span>
+        </a>
+        <nav aria-label="Principal">
+          <ul>
+            {
+              NAV.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={atual.startsWith(item.href) ? 'page' : undefined}>
+                    {item.rotulo}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <slot />
+    </main>
+
+    <footer class="rodape">
+      <div class="container rodape-in">
+        <div>
+          <p class="rodape-nome">Eddwan</p>
+          <p>
+            <a href={LINKS.hallentech} rel="noopener">Fundador da Hallen Tech</a>
+          </p>
+        </div>
+        <ul class="rodape-links">
+          <li><a href={LINKS.youtube} rel="noopener">YouTube</a></li>
+          <li><a href={LINKS.github} rel="noopener">GitHub</a></li>
+          <li><a href="/rss.xml">RSS</a></li>
+        </ul>
+      </div>
+      <div class="container rodape-fim">
+        <p>© {new Date().getFullYear()} Eddwan. Feito com Astro e Markdown.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(11, 15, 23, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--borda);
+  }
+  .topo-in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.75rem;
+  }
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--texto);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .marca-ponto {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: conic-gradient(from 200deg, var(--laranja-1), var(--laranja-2), var(--azul-2), var(--azul-1), var(--laranja-1));
+  }
+  nav ul {
+    display: flex;
+    gap: 0.15rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  nav a {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    color: var(--texto-2);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  nav a:hover {
+    color: var(--texto);
+    background: var(--bg-2);
+  }
+  nav a[aria-current='page'] {
+    color: var(--laranja-1);
+  }
+  @media (max-width: 480px) {
+    .marca span:last-child {
+      display: none;
+    }
+    nav a {
+      padding: 0.4rem 0.45rem;
+      font-size: 0.9rem;
+    }
+  }
+  main {
+    min-height: 70vh;
+  }
+  .rodape {
+    margin-top: 5rem;
+    border-top: 1px solid var(--borda);
+    background: var(--bg-2);
+    font-size: 0.95rem;
+  }
+  .rodape-in {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 2rem 1rem;
+  }
+  .rodape p {
+    margin: 0.2rem 0;
+  }
+  .rodape-nome {
+    font-weight: 700;
+  }
+  .rodape-links {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .rodape a {
+    color: var(--texto-2);
+  }
+  .rodape a:hover {
+    color: var(--laranja-1);
+  }
+  .rodape-fim {
+    padding-block: 0 2rem;
+    color: var(--texto-2);
+    font-size: 0.85rem;
+  }
+</style>

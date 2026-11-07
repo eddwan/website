@@ -1,0 +1,74 @@
+---
+// Player leve: mostra a miniatura e só carrega o iframe (youtube-nocookie) no clique.
+interface Props {
+  id: string;
+  titulo: string;
+  formato?: 'video' | 'short';
+}
+const { id, titulo, formato = 'video' } = Astro.props;
+// hqdefault existe para vídeos e shorts (no short vem com faixas pretas, cortadas pelo object-fit)
+const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+---
+
+<div class:list={['yt', formato === 'short' && 'yt-short']} data-yt={id} data-titulo={titulo}>
+  <a class="yt-link" href={`https://www.youtube.com/watch?v=${id}`} rel="noopener">
+    <img src={thumb} alt="" loading="lazy" decoding="async" />
+    <span class="yt-play" aria-hidden="true">
+      <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.2.3 34 .3 34 .3s-21.2 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.8 47.7 34 47.7 34 47.7s21.2 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#e8322b"/><path d="M27 34V14l18 10z" fill="#fff"/></svg>
+    </span>
+    <span class="sr-only">Assistir “{titulo}” no YouTube</span>
+  </a>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-yt]').forEach((el) => {
+    el.querySelector('a')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube-nocookie.com/embed/${el.dataset.yt}?autoplay=1&rel=0`;
+      f.title = el.dataset.titulo ?? 'Vídeo do YouTube';
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      f.allowFullscreen = true;
+      el.replaceChildren(f);
+    });
+  });
+</script>
+
+<style>
+  .yt {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--raio);
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--borda);
+  }
+  .yt-short {
+    aspect-ratio: 9 / 16;
+    max-width: 20rem;
+  }
+  .yt-link,
+  .yt :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .yt img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s, filter 0.3s;
+  }
+  .yt-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .yt-link:hover img {
+    transform: scale(1.02);
+    filter: brightness(0.85);
+  }
+</style>

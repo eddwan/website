@@ -1,0 +1,148 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import YouTube from '../components/YouTube.astro';
+import { getPosts } from '../lib/posts';
+import { LINKS } from '../consts';
+
+const posts = await getPosts();
+const ultimos = posts.slice(0, 3);
+const videos = posts.filter((p) => p.data.youtube && p.data.youtube.formato === 'video');
+const destaque = videos[0];
+---
+
+<Base>
+  <section class="hero container">
+    <img class="hero-foto" src="/img/eddwan.jpg" alt="Foto do Eddwan" width="160" height="160" />
+    <div>
+      <p class="hero-oi">Oi, eu sou o</p>
+      <h1><span class="grad-laranja">Eddwan</span></h1>
+      <!-- RASCUNHO: frase de apresentação para o Eddwan revisar -->
+      <p class="hero-sub">
+        Fundador da <a href={LINKS.hallentech}>Hallen Tech</a> e criador do canal{' '}
+        <a href={LINKS.youtube}>@eddwan</a> no YouTube, onde mostro projetos open source do GitHub, explico Git e
+        GitHub do zero e comento notícias de tecnologia e segurança.
+      </p>
+      <p class="hero-acoes">
+        <a class="botao" href="/videos">Ver os vídeos</a>
+        <a class="botao botao-sec" href="/blog">Ler o blog</a>
+      </p>
+    </div>
+  </section>
+
+  {
+    destaque && (
+      <section class="container bloco">
+        <div class="bloco-topo">
+          <h2>Último vídeo</h2>
+          <a href={LINKS.youtube}>Canal no YouTube →</a>
+        </div>
+        <div class="destaque">
+          <YouTube id={destaque.data.youtube!.id} titulo={destaque.data.titulo} />
+          <div>
+            <h3>
+              <a href={`/blog/${destaque.id}`}>{destaque.data.titulo}</a>
+            </h3>
+            <p>{destaque.data.descricao}</p>
+            <a href={`/blog/${destaque.id}`}>Resumo, links e fontes →</a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="container bloco">
+    <div class="bloco-topo">
+      <h2>Últimos posts</h2>
+      <a href="/blog">Todos os posts →</a>
+    </div>
+    <div class="grade">
+      {ultimos.map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 2.5rem;
+    padding-block: 3.5rem 2rem;
+  }
+  .hero-foto {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    object-fit: cover;
+    padding: 4px;
+    background: conic-gradient(from 200deg, var(--laranja-1), var(--laranja-2), var(--azul-2), var(--azul-1), var(--laranja-1));
+  }
+  @media (min-width: 640px) {
+    .hero-foto {
+      width: 10rem;
+      height: 10rem;
+    }
+  }
+  .hero > div {
+    flex: 1 1 22rem;
+  }
+  .hero-oi {
+    margin: 0;
+    color: var(--texto-2);
+    font-weight: 500;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 7vw, 3.6rem);
+  }
+  .hero-sub {
+    max-width: 40rem;
+    font-size: 1.15rem;
+    color: #cfd5df;
+  }
+  .hero-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .bloco {
+    padding-block: 1.5rem;
+  }
+  .bloco-topo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+  }
+  .bloco-topo h2 {
+    margin: 0 0 1rem;
+  }
+  .grade {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  }
+  .destaque {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  @media (min-width: 860px) {
+    .destaque {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+  .destaque h3 {
+    margin-top: 0;
+    font-size: 1.35rem;
+  }
+  .destaque h3 a {
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .destaque p {
+    color: var(--texto-2);
+  }
+</style>

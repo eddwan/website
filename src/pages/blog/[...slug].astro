@@ -1,0 +1,158 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import YouTube from '../../components/YouTube.astro';
+import { getPosts, formataData, slugTag } from '../../lib/posts';
+import { TIPOS, LINKS } from '../../consts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { titulo, descricao, data, atualizado, tipo, tags, youtube, fontes, rascunho } = post.data;
+const { Content } = await render(post);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': tipo === 'noticia' ? 'NewsArticle' : 'BlogPosting',
+  headline: titulo,
+  description: descricao,
+  datePublished: data.toISOString(),
+  dateModified: (atualizado ?? data).toISOString(),
+  author: { '@type': 'Person', name: 'Eddwan', url: Astro.site?.toString() },
+  image: new URL(`/og/${post.id}.png`, Astro.site).toString(),
+  inLanguage: 'pt-BR',
+};
+---
+
+<Base titulo={titulo} descricao={descricao} imagem={`/og/${post.id}.png`} tipo="article" publicado={data} semIndice={rascunho}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+  <article class="container post">
+    <header class="post-cab">
+      <p class="post-meta">
+        <a href="/blog">Blog</a>
+        <span aria-hidden="true">·</span>
+        <span class="selo">{TIPOS[tipo]}</span>
+        <time datetime={data.toISOString()}>{formataData(data)}</time>
+      </p>
+      <h1>{titulo}</h1>
+      <p class="post-desc">{descricao}</p>
+      {rascunho && <p class="aviso-rascunho"><strong>Rascunho.</strong> Este post não entra no build de produção.</p>}
+    </header>
+
+    {
+      youtube && (
+        <div class:list={['post-video', youtube.formato === 'short' && 'post-video-short']}>
+          <YouTube id={youtube.id} titulo={titulo} formato={youtube.formato} />
+        </div>
+      )
+    }
+
+    <div class="prosa">
+      <Content />
+
+      {
+        youtube && youtube.shorts.length > 0 && (
+          <section>
+            <h2>Shorts</h2>
+            <ul>
+              {youtube.shorts.map((s) => (
+                <li>
+                  <a href={`https://www.youtube.com/shorts/${s.id}`} rel="noopener">{s.titulo}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        fontes.length > 0 && (
+          <section class="fontes">
+            <h2>Fontes</h2>
+            <ul>
+              {fontes.map((f) => (
+                <li>
+                  <a href={f.url} rel="noopener">{f.titulo}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        tags.length > 0 && (
+          <p class="post-tags">
+            {tags.map((t) => <a class="selo" href={`/blog/tag/${slugTag(t)}`}>#{t}</a>)}
+          </p>
+        )
+      }
+
+      <aside class="post-cta">
+        <p>
+          Gostou? Tem vídeo novo toda semana no <a href={LINKS.youtube}>canal @eddwan</a> e conversa na{' '}
+          <a href={LINKS.comunidade} rel="noopener">comunidade do WhatsApp</a>.
+        </p>
+      </aside>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post {
+    max-width: calc(var(--largura-texto) + 3rem);
+  }
+  .post-cab {
+    padding-block: 2.5rem 0.5rem;
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    color: var(--texto-2);
+    font-size: 0.9rem;
+  }
+  h1 {
+    margin: 0.75rem 0 0.5rem;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+  }
+  .post-desc {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--texto-2);
+  }
+  .post-video {
+    margin: 2rem 0 1rem;
+  }
+  .post-video-short {
+    display: flex;
+    justify-content: center;
+  }
+  .post-video-short > :global(*) {
+    width: 100%;
+  }
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+  }
+  .post-tags a {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .post-cta {
+    margin-top: 2rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--raio);
+    background: var(--card);
+    border: 1px solid var(--borda);
+  }
+  .post-cta p {
+    margin: 0;
+  }
+</style>

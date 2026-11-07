@@ -1,0 +1,111 @@
+---
+import type { Post } from '../lib/posts';
+import { formataData } from '../lib/posts';
+import { TIPOS } from '../consts';
+
+interface Props {
+  post: Post;
+  comThumb?: boolean;
+}
+const { post, comThumb = true } = Astro.props;
+const { titulo, descricao, data, tipo, youtube, rascunho } = post.data;
+const href = `/blog/${post.id}`;
+const thumb = youtube ? `https://i.ytimg.com/vi/${youtube.id}/hqdefault.jpg` : undefined;
+---
+
+<article class="card">
+  {
+    comThumb && thumb && (
+      <a href={href} class="card-thumb" tabindex="-1" aria-hidden="true">
+        <img src={thumb} alt="" loading="lazy" decoding="async" width="480" height="360" />
+        {youtube && <span class="card-dur">{youtube.formato === 'short' ? 'Short' : 'Vídeo'}</span>}
+      </a>
+    )
+  }
+  <div class="card-corpo">
+    <p class="card-meta">
+      <span class:list={['selo', tipo === 'noticia' ? 'selo-laranja' : tipo === 'explicativo' ? 'selo-azul' : '']}>
+        {TIPOS[tipo]}
+      </span>
+      <time datetime={data.toISOString()}>{formataData(data)}</time>
+      {rascunho && <span class="selo">rascunho</span>}
+    </p>
+    <h3><a href={href}>{titulo}</a></h3>
+    <p class="card-desc">{descricao}</p>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: #36507a;
+    transform: translateY(-2px);
+  }
+  .card-thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+  .card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .card-dur {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 6px;
+  }
+  .card-corpo {
+    padding: 1rem 1.1rem 1.2rem;
+  }
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: var(--texto-2);
+  }
+  h3 {
+    margin: 0 0 0.4rem;
+    font-size: 1.15rem;
+  }
+  h3 a {
+    color: var(--texto);
+    text-decoration: none;
+  }
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .card {
+    position: relative;
+  }
+  h3 a:hover {
+    color: var(--laranja-1);
+  }
+  .card-desc {
+    margin: 0;
+    color: var(--texto-2);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+</style>

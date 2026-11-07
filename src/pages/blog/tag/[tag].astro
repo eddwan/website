@@ -1,0 +1,47 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getPosts, todasAsTags, slugTag } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return todasAsTags(posts).map((t) => ({
+    params: { tag: t.slug },
+    props: { tag: t.tag, posts: posts.filter((p) => p.data.tags.some((x) => slugTag(x) === t.slug)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<Base titulo={`#${tag}`} descricao={`Posts com a tag ${tag}.`}>
+  <div class="container">
+    <header class="cab">
+      <p><a href="/blog">← Blog</a></p>
+      <h1>#{tag}</h1>
+      <p>{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+    </header>
+    <div class="grade">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </div>
+</Base>
+
+<style>
+  .cab {
+    padding-block: 2.5rem 1.5rem;
+  }
+  .cab h1 {
+    margin: 0.25rem 0;
+    font-size: 2.2rem;
+  }
+  .cab p {
+    margin: 0;
+    color: var(--texto-2);
+  }
+  .grade {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  }
+</style>

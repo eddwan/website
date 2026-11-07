@@ -1,0 +1,92 @@
+---
+import { existsSync } from 'node:fs';
+import Base from '../layouts/Base.astro';
+import { LINKS } from '../consts';
+
+// O link do currículo em PDF só aparece quando existir o arquivo public/cv.pdf
+const temCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
+---
+
+<Base titulo="Sobre" descricao="Quem é o Eddwan: trajetória, experiência e contato.">
+  <div class="container sobre">
+    <header class="cab">
+      <img src="/img/eddwan.jpg" alt="Foto do Eddwan" width="120" height="120" />
+      <div>
+        <h1>Sobre</h1>
+        <p>Eddwan, fundador da <a href={LINKS.hallentech}>Hallen Tech</a>.</p>
+      </div>
+    </header>
+
+    <p class="aviso-rascunho">
+      <strong>Rascunho para o Eddwan revisar.</strong> Só entraram fatos que já estão no material do canal. Os trechos entre
+      colchetes ficam para você preencher; nada do currículo foi inventado. A foto é um quadro de uma live (provisória).
+    </p>
+
+    <div class="prosa">
+      <h2>Hoje</h2>
+      <ul>
+        <li>
+          Fundador da <a href={LINKS.hallentech}>Hallen Tech</a>, empresa de liderança de tecnologia sob demanda,
+          software, cloud e segurança.
+        </li>
+        <li>
+          Criador do canal <a href={LINKS.youtube}>@eddwan</a> no YouTube (desde outubro de 2026): listas de projetos open
+          source do GitHub, a série “Git e GitHub do zero” e notícias de tecnologia e segurança.
+        </li>
+        <li>Cofundador da EDCA Treinamentos, com o Caio Hernandes.</li>
+      </ul>
+
+      <h2>Trajetória</h2>
+      <p>[Preencher: formação, empresas, cargos e períodos.]</p>
+
+      <h2>Áreas de atuação</h2>
+      <p>[Preencher: por exemplo arquitetura de software, cloud, Kubernetes, segurança, liderança técnica.]</p>
+
+      <h2>Currículo</h2>
+      {
+        temCv ? (
+          <p>
+            <a class="botao" href="/cv.pdf">Baixar o currículo em PDF</a>
+          </p>
+        ) : (
+          <p>[O PDF do currículo entra em <code>/cv.pdf</code> quando estiver pronto.]</p>
+        )
+      }
+
+      <h2>Contato</h2>
+      <ul>
+        <li><a href={LINKS.youtube}>YouTube: @eddwan</a></li>
+        <li><a href={LINKS.github}>GitHub: eddwan</a></li>
+        <li>[Preencher: LinkedIn e e-mail público, se quiser.]</li>
+      </ul>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .sobre {
+    max-width: calc(var(--largura-texto) + 3rem);
+  }
+  .cab {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-block: 2.5rem 0;
+  }
+  .cab img {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    object-fit: cover;
+    padding: 3px;
+    background: conic-gradient(from 200deg, var(--laranja-1), var(--laranja-2), var(--azul-2), var(--azul-1), var(--laranja-1));
+  }
+  .cab h1 {
+    margin: 0;
+    font-size: 2.4rem;
+  }
+  .cab p {
+    margin: 0;
+    color: var(--texto-2);
+  }
+</style>
