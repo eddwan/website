@@ -12,11 +12,8 @@
     "not_found_handling": "404-page"
   },
   // O domínio já está na zona da Cloudflare: o deploy cria o registro DNS e o certificado.
-  // O www redireciona para o domínio sem www por uma Redirect Rule da zona (ver README).
-  "routes": [
-    { "pattern": "eddwan.com", "custom_domain": true },
-    { "pattern": "www.eddwan.com", "custom_domain": true }
-  ],
+  // O www fica com outro Worker, que só redireciona (cloudflare/www-redirect).
+  "routes": [{ "pattern": "eddwan.com", "custom_domain": true }],
   // Endereço eddwan-website.<conta>.workers.dev desligado: o site só responde no domínio
   "workers_dev": false,
   "preview_urls": false,

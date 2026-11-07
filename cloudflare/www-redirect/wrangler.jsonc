@@ -1,0 +1,11 @@
+// Worker que só redireciona o www para o domínio sem www. Publicar: npm run cf:deploy-www
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "eddwan-www-redirect",
+  "account_id": "b3eef8e6bc57c9ea990f64e4be208686",
+  "main": "index.js",
+  "compatibility_date": "2026-11-01",
+  "routes": [{ "pattern": "www.eddwan.com", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false
+}

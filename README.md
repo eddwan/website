@@ -103,7 +103,7 @@ O site roda como **Worker só de arquivos estáticos** (sem código de servidor)
 
 | Arquivo | Para quê |
 | --- | --- |
-| `wrangler.jsonc` | Nome do Worker (`eddwan-website`), conta, pasta `dist/`, domínios `eddwan.com` e `www.eddwan.com`, 404 do Astro, URLs sem barra no fim |
+| `wrangler.jsonc` | Nome do Worker (`eddwan-website`), conta, pasta `dist/`, domínio `eddwan.com`, 404 do Astro, URLs sem barra no fim |
 | `public/_headers` | Cabeçalhos de segurança e cache longo para `/_astro/*` (arquivos com hash) |
 | `public/.assetsignore` | Deixa o `.htaccess` (só do Plesk) fora do upload |
 
@@ -114,8 +114,8 @@ npm run cf:dev         # build + o site no motor do Cloudflare em http://localho
 npm run cf:deploy      # build + publica de verdade
 ```
 
-- **Domínio:** a zona `eddwan.com` já está na Cloudflare. No primeiro `cf:deploy`, as rotas com `custom_domain` criam os registros DNS e o certificado de `eddwan.com` e `www.eddwan.com`. Não pode existir registro A/AAAA/CNAME com esses nomes antes (em 07/11/2026 não havia nenhum).
-- **www:** responde o mesmo site, com o link canônico apontando para `https://eddwan.com`. Para redirecionar de vez, criar na zona uma *Redirect Rule* (Rules → Redirect Rules → modelo “Redirect from WWW to root”, 301).
+- **Domínio:** a zona `eddwan.com` já está na Cloudflare. A rota com `custom_domain` cria o registro DNS e o certificado no deploy. Não pode existir registro A/AAAA/CNAME com o mesmo nome antes.
+- **www:** fica com outro Worker, `eddwan-www-redirect` (`cloudflare/www-redirect/`), que responde 301 para `https://eddwan.com` mantendo caminho e parâmetros. Só ele roda código, e só para quem entra pelo www. Publicar: `npm run cf:deploy-www`. Se um dia preferir uma Redirect Rule da zona (Rules → Redirect Rules → modelo “Redirect from WWW to root”), apague antes esse Worker e o domínio personalizado dele.
 - **URLs:** sem barra no fim (`/sobre`). `trailingSlash: 'never'` no Astro e `drop-trailing-slash` no Cloudflare; `/sobre/` redireciona para `/sobre`.
 - O endereço `*.workers.dev` e as URLs de prévia estão desligados: o site só responde no domínio.
 - Depois de publicar, conferir `https://eddwan.com`, `/sobre`, `/rss.xml`, `/sitemap-index.xml`, uma imagem `/og/...png` e uma página inexistente (deve dar o 404 do site).
