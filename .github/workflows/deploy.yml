@@ -33,13 +33,25 @@ jobs:
       - name: Deploy do redirecionamento do www
         run: npm run cf:deploy-www
       - name: Conferir o site no ar
+        # A proteção contra robôs da Cloudflare pode responder 403 aos IPs do GitHub. Nesse caso
+        # fica um aviso (o deploy já deu certo); qualquer outro código diferente do esperado falha.
         run: |
-          set -e
+          confere() {
+            local url=$1 esperado=$2 obtido
+            obtido=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --retry 5 --retry-delay 5 --retry-all-errors "$url")
+            obtido=${obtido% }
+            echo "$url -> $obtido"
+            if [ "$obtido" = "$esperado" ]; then return 0; fi
+            if [ "${obtido%% *}" = 403 ]; then
+              echo "::warning::$url respondeu 403 ao GitHub (proteção contra robôs da Cloudflare); confira no navegador."
+              return 0
+            fi
+            echo "::error::$url: esperado '$esperado', veio '$obtido'"
+            return 1
+          }
+          falhou=0
           for caminho in / /sobre /portfolio /videos /blog /rss.xml /sitemap-index.xml; do
-            codigo=$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 5 --retry-all-errors "https://eddwan.com$caminho")
-            echo "$caminho $codigo"
-            test "$codigo" = 200
+            confere "https://eddwan.com$caminho" 200 || falhou=1
           done
-          www=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' https://www.eddwan.com/sobre)
-          echo "www $www"
-          test "$www" = "301 https://eddwan.com/sobre"
+          confere https://www.eddwan.com/sobre "301 https://eddwan.com/sobre" || falhou=1
+          exit $falhou
