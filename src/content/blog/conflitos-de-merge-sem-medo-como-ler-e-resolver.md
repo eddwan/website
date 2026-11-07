@@ -3,7 +3,7 @@ titulo: 'Conflitos de merge sem medo: como ler e resolver'
 descricao: 'Conflitos de merge explicados do zero: por que acontecem, como ler os marcadores de conflito, como resolver no editor e no VS Code, como finalizar o merge, o que fazer quando o pull request tem conflito, a diferença entre merge e rebase e como ter menos conflitos no dia a dia.'
 data: 2026-10-14
 tipo: explicativo
-tags: [git, github, conflito de merge, merge conflict, git rebase, git merge]
+tags: [git, github]
 youtube:
   id: H1ARqOxhcnI
   shorts:

@@ -3,7 +3,7 @@ titulo: 'Música para programar: 1 hora de synthwave para focar no código'
 descricao: '1 hora de synthwave animado para programar, estudar ou trabalhar com foco. São 10 faixas originais da Hallen Tech, tocadas duas vezes (a segunda volta em outra ordem).'
 data: 2026-10-28
 tipo: artigo
-tags: [música para programar, synthwave, music for programming, coding music, foco, programação]
+tags: [programação, música para programar]
 youtube:
   id: n6-jCqV0oLc
 rascunho: false

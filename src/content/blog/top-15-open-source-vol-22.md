@@ -3,7 +3,7 @@ titulo: 'Top 15 open source do GitHub, Vol. 22: IDE em Rust, Overleaf com recurs
 descricao: 'Mais 15 projetos open source do GitHub que valem o seu tempo, em contagem regressiva do décimo quinto ao primeiríssimo lugar: um app de busca de emprego no seu servidor, uma IDE em Rust no estilo IntelliJ, uma busca que lê dentro dos seus arquivos, o Overleaf com recursos pagos de graça, um detector de spyware como o Pegasus e muito mais.'
 data: 2026-11-05
 tipo: lista
-tags: [open source, github, programação, ferramentas, Rust, self-hosted]
+tags: [open source, github, programação, ferramentas, rust, self-hosted]
 youtube:
   id: HskCGNN6gfA
   shorts:

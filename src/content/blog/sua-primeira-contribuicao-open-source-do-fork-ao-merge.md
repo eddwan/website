@@ -3,7 +3,7 @@ titulo: 'Sua primeira contribuição open source, do fork ao merge'
 descricao: 'O último episódio da série: como contribuir com projetos open source. Por que contribuir, como contribuir sem programar, como achar um projeto e uma "good first issue", o que fazer antes de começar, o fluxo completo de fork a pull request, como fazer um bom PR, como manter o fork atualizado com o upstream e o que fazer depois do pull request.'
 data: 2026-10-18
 tipo: explicativo
-tags: [open source, github, contribuir open source, good first issue, fork, pull request]
+tags: [open source, github, contribuição open source, pull request]
 youtube:
   id: vkQFu0jjMiA
   shorts:

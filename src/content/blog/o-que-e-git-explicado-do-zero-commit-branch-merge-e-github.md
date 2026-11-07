@@ -3,7 +3,7 @@ titulo: 'O que é Git? Explicado do zero: commit, branch, merge e GitHub'
 descricao: 'O que é Git e como ele funciona, explicado do zero: repositório, staging, commit, histórico, branch, merge, a diferença entre Git e GitHub, e os comandos clone, push e pull. No fim, o fluxo que você vai usar todo dia.'
 data: 2026-10-10
 tipo: explicativo
-tags: [git, github, o que é git, git para iniciantes, controle de versão, commit]
+tags: [git, github]
 youtube:
   id: eScJHwkbBcA
   shorts:

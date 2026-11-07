@@ -6,6 +6,9 @@ import { getPosts, todasAsTags } from '../../lib/posts';
 
 const posts = await getPosts();
 const tags = todasAsTags(posts);
+// Na abertura, só as tags mais usadas (até 8, em pelo menos 3 posts); as outras ficam em "Todas as tags", em ordem alfabética
+const principais = tags.filter((t) => t.total >= 3).slice(0, 8);
+const outras = tags.filter((t) => !principais.includes(t)).sort((a, b) => a.tag.localeCompare(b.tag, 'pt-BR'));
 const [primeiro, ...resto] = posts;
 ---
 
@@ -16,7 +19,25 @@ const [primeiro, ...resto] = posts;
     lead="Artigos, notícias e listas. Cada vídeo do canal também vira um post, com o passo a passo, os links e as fontes."
   >
     <nav class="tags" aria-label="Tags">
-      {tags.map((t) => <a class="tag" href={`/blog/tag/${t.slug}`}>#{t.tag} <span>{t.total}</span></a>)}
+      {principais.map((t) => <a class="tag" href={`/blog/tag/${t.slug}`}>#{t.tag} <span>{t.total}</span></a>)}
+      {
+        outras.length > 0 && (
+          <details class="todas">
+            <summary class="tag">
+              <span class="abrir">+ {outras.length} tags</span>
+              <span class="fechar">Mostrar menos</span>
+            </summary>
+            <div class="nuvem">
+              {outras.map((t) => (
+                <a href={`/blog/tag/${t.slug}`}>
+                  #{t.tag}
+                  {t.total > 1 && <span> {t.total}</span>}
+                </a>
+              ))}
+            </div>
+          </details>
+        )
+      }
     </nav>
   </CabecalhoPagina>
 
@@ -42,6 +63,58 @@ const [primeiro, ...resto] = posts;
   }
   .tags span {
     opacity: 0.5;
+  }
+  /* Fechado, é só mais uma pílula na linha; aberto, ocupa a linha inteira com a lista embaixo */
+  .todas[open] {
+    flex-basis: 100%;
+  }
+  .todas summary {
+    display: inline-flex;
+  }
+  .todas summary {
+    cursor: pointer;
+    list-style: none;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.8rem;
+    color: var(--o1);
+    border-style: dashed;
+  }
+  .todas summary::-webkit-details-marker {
+    display: none;
+  }
+  .todas[open] summary {
+    color: var(--muted);
+  }
+  .todas summary span {
+    opacity: 1;
+  }
+  .todas .fechar,
+  .todas[open] .abrir {
+    display: none;
+  }
+  .todas[open] .fechar {
+    display: inline;
+  }
+  /* Lista completa: texto corrido e discreto, sem uma pílula por tag */
+  .nuvem {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    margin-top: 0.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface);
+    font-family: var(--f-mono);
+    font-size: 0.78rem;
+  }
+  .nuvem a {
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  .nuvem a:hover {
+    color: var(--o1);
   }
   .grade {
     display: grid;

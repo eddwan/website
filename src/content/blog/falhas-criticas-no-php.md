@@ -3,7 +3,7 @@ titulo: 'Duas falhas críticas no PHP: atualize hoje'
 descricao: 'As falhas apelidadas de PHP2Shell deixam alguém invadir o servidor sem login e sem senha. Veja quais versões corrigem e o que fazer se o seu site roda WordPress, Laravel ou Magento.'
 data: 2026-10-21
 tipo: noticia
-tags: [segurança, php, wordpress, notícia]
+tags: [segurança, wordpress]
 youtube:
   id: r4bRFOAIE_E
   formato: short

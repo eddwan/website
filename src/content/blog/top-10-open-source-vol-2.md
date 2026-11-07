@@ -3,7 +3,7 @@ titulo: 'Top 10 open source do GitHub, Vol. 2: agentes de IA, deploy, self-hoste
 descricao: '10 projetos open source do GitHub que vão mudar o jeito que você trabalha, em contagem regressiva e com 10 segundos para cada um. Tem agentes de IA, deploy, self-hosted, Docker, SEO e produtividade.'
 data: 2026-10-08
 tipo: lista
-tags: [open source, github, inteligência artificial, agentes de IA, self-hosted, devops]
+tags: [open source, github, inteligência artificial, agentes de IA, self-hosted, github actions]
 youtube:
   id: zgDqrBgo77Q
   shorts:

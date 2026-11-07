@@ -3,7 +3,7 @@ titulo: 'Os 20 campeões: o melhor de cada volume do Open source do GitHub'
 descricao: 'Os 20 campeões do Open source do GitHub: peguei o número 1 de cada um dos 20 volumes da série e coloquei todos para brigar num ranking só, com as estrelas e a atividade do GitHub atualizadas no dia da gravação. Do #20 ao #1, cada um com o volume em que foi campeão.'
 data: 2026-11-03
 tipo: lista
-tags: [open source, github, programação, ferramentas, agentes de IA, ranking]
+tags: [open source, github, programação, ferramentas, agentes de IA]
 youtube:
   id: T7LMUjzhKT8
   shorts:

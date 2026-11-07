@@ -3,7 +3,7 @@ titulo: 'Top 10 open source do GitHub, Vol. 4: apps para Mac, Postgres no termin
 descricao: '10 projetos open source do GitHub que vão mudar o jeito que você trabalha, em contagem regressiva e com 10 segundos para cada um. Tem agentes de IA, apps para Mac, design, Postgres no terminal e uma alternativa ao PowerPoint num arquivo só.'
 data: 2026-10-10
 tipo: lista
-tags: [open source, github, inteligência artificial, agentes de IA, mac, self-hosted]
+tags: [open source, github, inteligência artificial, agentes de IA, self-hosted]
 youtube:
   id: PArXbdIFtDg
   shorts:

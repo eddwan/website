@@ -3,7 +3,7 @@ titulo: 'Top 10 open source do GitHub, Vol. 9: diagramas e animações técnicas
 descricao: '10 projetos open source do GitHub para desenhar diagramas e criar animações técnicas, em contagem regressiva e com 10 segundos para cada um. Metade é de diagramas (do texto direto para Excalidraw, Mermaid, SVG e diagramas animados) e metade é de animação e vídeo feitos com agentes de código.'
 data: 2026-10-16
 tipo: lista
-tags: [open source, github, diagramas, animação, excalidraw, mermaid]
+tags: [open source, github, design]
 youtube:
   id: 4j93ZxZmDUU
   shorts:
