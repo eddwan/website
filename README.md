@@ -96,6 +96,8 @@ npm run post-do-video -- --listar        # vídeos enviados ao YouTube que ainda
 npm run post-do-video -- v25-top15       # cria o rascunho em src/content/blog/
 ```
 
+**Automático:** o deploy agendado (de 3 em 3 horas) roda `npm run post-do-video -- --novos`. Cada vídeo longo que já está público no canal e ainda não tem post ganha um post publicado, montado só com o feed público do YouTube (título, descrição completa e os shorts com o mesmo sufixo no título). O GitHub Actions faz o commit na `main` (e na `develop`, quando ela não tem commits próprios) e publica na mesma execução. O título das listas sai com o primeiro destaque do resumo (ex.: “Top 15 open source do GitHub, Vol. 24: um CAD 3D que roda até no navegador e uma alternativa aberta ao Figma”); para melhorar o título ou o texto depois, é só editar o arquivo na `develop`. Para não esperar as 3 horas: `gh workflow run deploy.yml -R eddwan/website`.
+
 O script lê `youtube-channel/video/publicar/<id>/` (`youtube.json`, `enviados.json`, a descrição do vídeo em `descricoes/` e o `fontes.md`, se existir) e monta o post com `rascunho: true`. Listas viram “A lista, do 15º ao 1º” com o link de cada projeto; explicativos ganham “Neste vídeo” (capítulos) e o passo a passo da descrição, com os comandos e YAMLs em blocos de código; os shorts e as fontes entram no cabeçalho do post. A data vem de `src/data/canal.ts` ou do feed do canal. Revise o título (nas listas, os destaques), a descrição e o texto, confira no `npm run dev` e troque para `rascunho: false`. A pasta do canal pode ser outra com `YOUTUBE_PUBLICAR=/caminho/publicar`.
 
 ## Visual
