@@ -78,7 +78,7 @@ const LISTA: VideoCanal[] = [
   { id: 'EmxjlALvvQo', titulo: '10 projetos open source em alta no GitHub esta semana', data: '2026-10-11', serie: 'open-source', rotulo: 'Vol. 5' },
   { id: 'PArXbdIFtDg', titulo: '10 projetos open source do GitHub que vão mudar o jeito que você trabalha', data: '2026-10-10', serie: 'open-source', rotulo: 'Vol. 4' },
   { id: 'A_TJ7g4kUj8', titulo: '10 projetos open source do GitHub que vão mudar o jeito que você trabalha', data: '2026-10-10', serie: 'open-source', rotulo: 'Vol. 3' },
-  { id: 'zgDqrBgo77Q', titulo: '10 projetos open source do GitHub que vão mudar o jeito que você trabalha', serie: 'open-source', rotulo: 'Vol. 2' },
+  { id: 'zgDqrBgo77Q', titulo: '10 projetos open source do GitHub que vão mudar o jeito que você trabalha', data: '2026-10-08', serie: 'open-source', rotulo: 'Vol. 2' },
   { id: 'eScJHwkbBcA', titulo: 'O que é Git? Explicado do zero: commit, branch, merge e GitHub', data: '2026-10-10', serie: 'git', rotulo: 'Ep. 1' },
 ];
 

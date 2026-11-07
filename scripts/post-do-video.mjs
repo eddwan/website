@@ -181,7 +181,7 @@ const host = (u) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 
 // Comandos de terminal e arquivos YAML viram bloco de código. O trecho começa na primeira linha que parece
 // código e segue enquanto as linhas forem recuadas, chaves YAML, itens de lista, comentários ou comandos.
-const comando = /^(git|gh|npm|npx|pnpm|yarn|pip|python3?|node|docker|kubectl|curl|cd|ls|cat|echo|brew|gitleaks|pre-commit|claude|codex)\b/;
+const comando = /^(git|gh|npm|npx|pnpm|yarn|pip|python3?|node|docker|kubectl|curl|cd|ls|cat|echo|brew|mkdir|touch|rm|mv|cp|gitleaks|pre-commit|claude|codex)\b/;
 const chaveYaml = /^[a-z_][\w.-]*:(\s|$)/;
 const pareceCodigo = (l) => comando.test(l) || chaveYaml.test(l) || /^\s+\S/.test(l) || /^-\s/.test(l) || /^#\s/.test(l);
 function comCodigo(texto) {
@@ -208,11 +208,15 @@ function comCodigo(texto) {
     if ((codigo.length && pareceCodigo(l)) || inicio) codigo.push(l);
     else {
       fecha();
-      saida.push(l);
+      // Fora do código: minutagem vira item de lista; as outras linhas viram parágrafos separados
+      const tempo = l.match(/^(\d+:\d{2}(?::\d{2})?)\s+(.+)$/);
+      if (tempo) saida.push(`- \`${tempo[1]}\` ${tempo[2]}`);
+      else if (/^(\d+\.|-)\s/.test(l)) saida.push(l);
+      else saida.push('', l, '');
     }
   }
   fecha();
-  return saida.join('\n');
+  return saida.join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
 const resumo = blocos[0] ? semEmoji(blocos[0]) : `[Resumo do vídeo “${tituloBase}”.]`;
@@ -246,10 +250,15 @@ if (capitulos.length > 0) {
   // O resto da descrição (passo a passo, comandos) entra como material para revisar
   const resto = blocos.slice(1).filter((b) => b !== apresentacao && b !== blocoCapitulos && b !== blocoLinks && !doCanal(b));
   if (resto.length > 0) {
-    corpo.push('## Passo a passo', '', '<!-- Tirado da descrição do vídeo: revise títulos e blocos de código. -->', '');
+    corpo.push(tipo === 'explicativo' ? '## Passo a passo' : '## Sobre o vídeo', '');
     for (const b of resto) {
       const [primeira, ...demais] = b.split('\n');
-      const titulo = primeira.match(/^\d+\)\s*(.+)$/)?.[1];
+      // "1) Título" ou uma linha curta sem ponto final ("Comandos do vídeo", "Faixas:") vira subtítulo
+      const titulo =
+        primeira.match(/^\d+\)\s*(.+)$/)?.[1] ??
+        (demais.length > 0 && primeira.length < 50 && !/[.!?]$/.test(primeira) && !comando.test(primeira) && !chaveYaml.test(primeira)
+          ? primeira.replace(/:$/, '')
+          : undefined);
       if (titulo) corpo.push(`### ${titulo}`, '', comCodigo(demais.join('\n')), '');
       else corpo.push(comCodigo(b), '');
     }
@@ -257,8 +266,10 @@ if (capitulos.length > 0) {
 }
 
 // Título e endereço do post
-const titulo = vol ? `Top 15 open source do GitHub, Vol. ${vol}: [destaques da lista]` : tituloBase;
-const slug = vol ? `top-15-open-source-vol-${vol}` : slugify(tituloBase);
+// Listas: "Top 10" ou "Top 15", conforme o título do vídeo ("10 projetos...", "Mais 15 projetos...")
+const tamanho = tituloBase.match(/\b(\d+) projetos/)?.[1] ?? '15';
+const titulo = vol ? `Top ${tamanho} open source do GitHub, Vol. ${vol}: [destaques da lista]` : tituloBase;
+const slug = vol ? `top-${tamanho}-open-source-vol-${vol}` : slugify(tituloBase);
 const arquivo = join(BLOG, `${slug}.md`);
 if (existsSync(arquivo) && !flag('forcar')) {
   console.error(`Já existe: src/content/blog/${slug}.md (use --forcar para sobrescrever)`);
