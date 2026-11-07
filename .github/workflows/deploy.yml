@@ -1,0 +1,45 @@
+# Publica em https://eddwan.com no Cloudflare Workers a cada push na main
+# (o merge da develop na main gera esse push). Também dá para rodar à mão em Actions.
+# Precisa do secret CLOUDFLARE_API_TOKEN (modelo "Edit Cloudflare Workers"; ver README).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Um deploy por vez; se chegar outro push, o anterior termina antes
+concurrency:
+  group: deploy-producao
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: producao
+      url: https://eddwan.com
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - name: Build e deploy do site
+        run: npm run cf:deploy
+      - name: Deploy do redirecionamento do www
+        run: npm run cf:deploy-www
+      - name: Conferir o site no ar
+        run: |
+          set -e
+          for caminho in / /sobre /portfolio /videos /blog /rss.xml /sitemap-index.xml; do
+            codigo=$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 5 --retry-all-errors "https://eddwan.com$caminho")
+            echo "$caminho $codigo"
+            test "$codigo" = 200
+          done
+          www=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' https://www.eddwan.com/sobre)
+          echo "www $www"
+          test "$www" = "301 https://eddwan.com/sobre"
