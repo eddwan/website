@@ -31,6 +31,10 @@ const portfolio = defineCollection({
     titulo: z.string(),
     resumo: z.string(),
     ordem: z.number().default(100),
+    // Agrupa a página: produtos da Hallen Tech, conteúdo (canal, cursos) e empresas
+    categoria: z.enum(['produto', 'conteudo', 'empresa']).default('produto'),
+    // Fase do produto, mostrada num selo (ex.: "No ar", "Em piloto")
+    status: z.string().optional(),
     papel: z.string().optional(),
     periodo: z.string().optional(),
     links: z.array(z.object({ rotulo: z.string(), url: z.string().url() })).default([]),

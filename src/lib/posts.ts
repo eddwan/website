@@ -33,3 +33,13 @@ export function todasAsTags(posts: Post[]): { tag: string; slug: string; total: 
 export function formataData(d: Date): string {
   return d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 }
+
+/** Minutos de leitura (200 palavras por minuto, mínimo 1). */
+export function tempoLeitura(texto = ''): number {
+  const palavras = texto.replace(/```[\s\S]*?```/g, ' ').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(palavras / 200));
+}
+
+export function formataDataCurta(d: Date): string {
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', timeZone: 'UTC' }).replace('.', '');
+}

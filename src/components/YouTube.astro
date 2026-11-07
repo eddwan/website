@@ -14,7 +14,8 @@ const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
   <a class="yt-link" href={`https://www.youtube.com/watch?v=${id}`} rel="noopener">
     <img src={thumb} alt="" loading="lazy" decoding="async" />
     <span class="yt-play" aria-hidden="true">
-      <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.2.3 34 .3 34 .3s-21.2 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.8 47.7 34 47.7 34 47.7s21.2 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#e8322b"/><path d="M27 34V14l18 10z" fill="#fff"/></svg>
+      <span class="yt-botao"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M8 5.1v13.8a1 1 0 0 0 1.5.9l10.8-6.9a1 1 0 0 0 0-1.8L9.5 4.2A1 1 0 0 0 8 5.1Z"/></svg></span>
+      <span class="yt-texto">Assistir</span>
     </span>
     <span class="sr-only">Assistir “{titulo}” no YouTube</span>
   </a>
@@ -38,10 +39,11 @@ const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
   .yt {
     position: relative;
     aspect-ratio: 16 / 9;
-    border-radius: var(--raio);
+    border-radius: var(--r);
     overflow: hidden;
     background: #000;
-    border: 1px solid var(--borda);
+    border: 1px solid var(--line-2);
+    box-shadow: 0 40px 80px -40px rgba(1, 131, 251, 0.35), 0 30px 60px -30px rgba(254, 118, 2, 0.3);
   }
   .yt-short {
     aspect-ratio: 9 / 16;
@@ -64,11 +66,45 @@ const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
   .yt-play {
     position: absolute;
     inset: 0;
+    justify-content: center;
+    align-items: center;
+  }
+  .yt-play {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-content: center;
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.35), transparent 60%);
+  }
+  .yt-botao {
     display: grid;
     place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    background: var(--g-o);
+    color: #120800;
+    box-shadow: 0 0 0 10px rgba(254, 118, 2, 0.18), 0 18px 40px -10px rgba(254, 118, 2, 0.7);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s;
+  }
+  .yt-botao svg {
+    margin-left: 3px;
+  }
+  .yt-texto {
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
   }
   .yt-link:hover img {
-    transform: scale(1.02);
-    filter: brightness(0.85);
+    transform: scale(1.03);
+    filter: brightness(0.8);
+  }
+  .yt-link:hover .yt-botao {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 16px rgba(254, 118, 2, 0.14), 0 18px 40px -10px rgba(254, 118, 2, 0.8);
   }
 </style>

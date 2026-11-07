@@ -1,128 +1,252 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+import Icone from '../../components/Icone.astro';
 
 const projetos = (await getCollection('portfolio')).sort((a, b) => a.data.ordem - b.data.ordem);
 const itens = await Promise.all(projetos.map(async (p) => ({ p, Content: (await render(p)).Content })));
 const algumRevisar = projetos.some((p) => p.data.revisar);
+const GRUPOS = [
+  { chave: 'produto', eyebrow: 'Produtos', titulo: 'Feitos na Hallen Tech.', azul: false },
+  { chave: 'conteudo', eyebrow: 'Conteúdo', titulo: 'Vídeos e cursos.', azul: true },
+  { chave: 'empresa', eyebrow: 'Empresa', titulo: 'Onde tudo isso acontece.', azul: false },
+] as const;
+const grupos = GRUPOS.map((g) => ({ ...g, itens: itens.filter(({ p }) => p.data.categoria === g.chave) })).filter(
+  (g) => g.itens.length > 0,
+);
 ---
 
-<Base titulo="Portfólio" descricao="Projetos do Eddwan: o Estúdio, o canal no YouTube e trabalhos da Hallen Tech.">
-  <div class="container">
-    <header class="cab">
-      <h1>Portfólio</h1>
-      <p>Projetos em que trabalho ou trabalhei.</p>
-      {
-        algumRevisar && (
-          <p class="aviso-rascunho">
-            <strong>Rascunho para o Eddwan revisar.</strong> Os textos marcados abaixo foram escritos a partir do material
-            do canal e ainda não foram conferidos.
-          </p>
-        )
-      }
-    </header>
+<Base titulo="Portfólio" descricao="Projetos do Eddwan: produtos da Hallen Tech (VivaHQ, Trama, Trâmite, Lúmen e Estúdio), o canal @eddwan e a EDCA.">
+  <CabecalhoPagina
+    eyebrow={`${projetos.length} projetos`}
+    titulo="Portfólio"
+    lead="Produtos, conteúdo e empresa: o que eu construo e mantenho."
+    azul
+  >
+    <nav class="atalhos" aria-label="Seções">
+      {grupos.map((g) => <a class="tag" href={`#${g.chave}`}>{g.eyebrow} · {g.itens.length}</a>)}
+    </nav>
+    {
+      algumRevisar && (
+        <p class="aviso-rascunho">
+          <span>
+            <strong>Rascunho para o Eddwan revisar.</strong> Textos escritos a partir do site da Hallen Tech, das páginas dos
+            produtos e do material do canal; ainda não foram conferidos.
+          </span>
+        </p>
+      )
+    }
+  </CabecalhoPagina>
 
-    <div class="lista">
-      {
-        itens.map(({ p, Content }) => (
-          <article class="proj" id={p.id}>
-            <div class="proj-cab">
-              <h2>{p.data.titulo}</h2>
-              {p.data.revisar && <span class="selo">revisar</span>}
-            </div>
-            <p class="proj-resumo">{p.data.resumo}</p>
-            {(p.data.papel || p.data.periodo) && (
-              <p class="proj-meta">{[p.data.papel, p.data.periodo].filter(Boolean).join(' · ')}</p>
-            )}
-            <div class="prosa">
-              <Content />
-            </div>
-            {p.data.tecnologias.length > 0 && (
-              <p class="proj-tec">
-                {p.data.tecnologias.map((t) => (
-                  <span class="selo">{t}</span>
-                ))}
-              </p>
-            )}
-            {p.data.links.length > 0 && (
-              <p class="proj-links">
-                {p.data.links.map((l) => (
-                  <a href={l.url} rel="noopener">
-                    {l.rotulo} →
-                  </a>
-                ))}
-              </p>
-            )}
-          </article>
-        ))
-      }
-    </div>
-  </div>
+  {
+    grupos.map((g) => (
+      <section class="container grupo" id={g.chave}>
+        <div class="secao-cab">
+          <div>
+            <p class:list={['eyebrow', g.azul && 'azul']}>{g.eyebrow}</p>
+            <h2>{g.titulo}</h2>
+          </div>
+        </div>
+        <div class:list={['lista', g.chave === 'produto' && 'lista-produtos']}>
+          {g.itens.map(({ p, Content }, i) => (
+            <article class:list={['card projeto revela', (g.azul ? i % 2 === 0 : i % 2 === 1) && 'par']} id={p.id}>
+              <div class="lado">
+                <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                <div>
+                  <div class="titulo">
+                    <h3>{p.data.titulo}</h3>
+                    {p.data.status && <span class="tag tag-o status">{p.data.status}</span>}
+                  </div>
+                  <p class="resumo">{p.data.resumo}</p>
+                  <dl class="dados">
+                    {p.data.papel && (
+                      <div>
+                        <dt>Papel</dt>
+                        <dd>{p.data.papel}</dd>
+                      </div>
+                    )}
+                    {p.data.periodo && (
+                      <div>
+                        <dt>Período</dt>
+                        <dd>{p.data.periodo}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              </div>
+              <div class="conteudo">
+                <div class="prosa">
+                  <Content />
+                </div>
+                {p.data.tecnologias.length > 0 && (
+                  <p class="tec">
+                    {p.data.tecnologias.map((t) => (
+                      <span class="tag">{t}</span>
+                    ))}
+                  </p>
+                )}
+                {p.data.links.length > 0 && (
+                  <p class="links">
+                    {p.data.links.map((l, j) => (
+                      <a class:list={['btn', j > 0 && 'btn-ghost', j === 0 && (g.azul ? i % 2 === 0 : i % 2 === 1) && 'btn-azul']} href={l.url} rel="noopener">
+                        {l.rotulo} <Icone nome="externo" />
+                      </a>
+                    ))}
+                  </p>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  }
 </Base>
 
 <style>
-  .cab {
-    padding-block: 2.5rem 1rem;
+  .atalhos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
   }
-  .cab h1 {
-    margin: 0 0 0.25rem;
-    font-size: 2.4rem;
+  .atalhos a {
+    text-decoration: none;
   }
-  .cab > p {
-    color: var(--texto-2);
+  .grupo {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+    scroll-margin-top: 6rem;
+  }
+  .grupo .secao-cab h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
   }
   .lista {
     display: grid;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
-  .proj {
-    background: var(--card);
-    border: 1px solid var(--borda);
-    border-radius: var(--raio);
-    padding: 1.25rem 1.4rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .proj::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 3px;
-    background: var(--grad-laranja);
-  }
-  .proj-cab {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .proj h2 {
-    margin: 0;
-    font-size: 1.4rem;
-  }
-  .proj-resumo {
-    font-size: 1.05rem;
-    color: #cfd5df;
-    margin: 0.5rem 0;
-  }
-  .proj-meta {
-    color: var(--texto-2);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-  .proj-tec {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .proj-tec .selo {
+  .status {
     text-transform: none;
     letter-spacing: 0;
   }
-  .proj-links {
+  .projeto {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    overflow: hidden;
+  }
+  .projeto:hover {
+    transform: none;
+  }
+  .projeto::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(36rem 20rem at 0% 0%, rgba(254, 118, 2, 0.12), transparent 60%);
+  }
+  .par::before {
+    background: radial-gradient(36rem 20rem at 100% 0%, rgba(1, 131, 251, 0.14), transparent 60%);
+  }
+  .projeto > * {
+    position: relative;
+  }
+  @media (min-width: 960px) {
+    .projeto {
+      grid-template-columns: 1fr 1.1fr;
+      gap: 3.5rem;
+    }
+    /* Produtos: dois por linha, com o texto embaixo do título */
+    .lista-produtos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .lista-produtos .projeto {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+    .lista-produtos .projeto:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 3.5rem;
+    }
+  }
+  .lista-produtos .num {
+    font-size: clamp(3rem, 7vw, 4.5rem);
+  }
+  .lado {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .num {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(4rem, 10vw, 6.5rem);
+    line-height: 0.8;
+    letter-spacing: -0.06em;
+    background: var(--g-o);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .par .num {
+    background: var(--g-b);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .titulo {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-bottom: 0;
-    font-weight: 600;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  h3 {
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    letter-spacing: -0.035em;
+  }
+  .resumo {
+    margin: 0.9rem 0 0;
+    font-size: 1.12rem;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .dados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    margin: 1.5rem 0 0;
+  }
+  .dados dt {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .dados dd {
+    margin: 0.2rem 0 0;
+    color: var(--text-2);
+  }
+  .conteudo .prosa {
+    font-size: 1rem;
+  }
+  .tec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 1.5rem 0 0;
+  }
+  .tec .tag {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.75rem 0 0;
   }
 </style>

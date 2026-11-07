@@ -1,111 +1,208 @@
 ---
 import type { Post } from '../lib/posts';
-import { formataData } from '../lib/posts';
+import { formataData, tempoLeitura } from '../lib/posts';
 import { TIPOS } from '../consts';
+import Icone from './Icone.astro';
 
 interface Props {
   post: Post;
-  comThumb?: boolean;
+  grande?: boolean;
 }
-const { post, comThumb = true } = Astro.props;
-const { titulo, descricao, data, tipo, youtube, rascunho } = post.data;
+const { post, grande = false } = Astro.props;
+const { titulo, descricao, data, tipo, youtube, rascunho, tags } = post.data;
 const href = `/blog/${post.id}`;
-const thumb = youtube ? `https://i.ytimg.com/vi/${youtube.id}/hqdefault.jpg` : undefined;
+const thumb = youtube ? `https://i.ytimg.com/vi/${youtube.id}/${grande ? 'maxres' : 'hq'}default.jpg` : undefined;
+const corTipo = tipo === 'noticia' ? 'tag-o' : tipo === 'explicativo' ? 'tag-b' : '';
 ---
 
-<article class="card">
-  {
-    comThumb && thumb && (
-      <a href={href} class="card-thumb" tabindex="-1" aria-hidden="true">
-        <img src={thumb} alt="" loading="lazy" decoding="async" width="480" height="360" />
-        {youtube && <span class="card-dur">{youtube.formato === 'short' ? 'Short' : 'Vídeo'}</span>}
-      </a>
-    )
-  }
-  <div class="card-corpo">
-    <p class="card-meta">
-      <span class:list={['selo', tipo === 'noticia' ? 'selo-laranja' : tipo === 'explicativo' ? 'selo-azul' : '']}>
-        {TIPOS[tipo]}
-      </span>
+<article class:list={['card post', grande && 'grande']}>
+  <div class="midia">
+    {
+      thumb ? (
+        <img src={thumb} alt="" loading="lazy" decoding="async" width="1280" height="720" />
+      ) : (
+        <div class="midia-vazia" aria-hidden="true">
+          <span>{TIPOS[tipo]}</span>
+        </div>
+      )
+    }
+    {
+      youtube && (
+        <span class="play" aria-hidden="true">
+          <Icone nome="play" />
+        </span>
+      )
+    }
+  </div>
+  <div class="corpo">
+    <p class="meta">
+      <span class:list={['tag', corTipo]}>{TIPOS[tipo]}</span>
       <time datetime={data.toISOString()}>{formataData(data)}</time>
-      {rascunho && <span class="selo">rascunho</span>}
+      <span class="leitura"><Icone nome="relogio" /> {tempoLeitura(post.body)} min</span>
+      {rascunho && <span class="tag">rascunho</span>}
     </p>
     <h3><a href={href}>{titulo}</a></h3>
-    <p class="card-desc">{descricao}</p>
+    <p class="desc">{descricao}</p>
+    {grande && tags.length > 0 && <p class="tags">{tags.map((t) => <span>#{t}</span>)}</p>}
   </div>
 </article>
 
 <style>
-  .card {
+  .post {
     display: flex;
     flex-direction: column;
-    background: var(--card);
-    border: 1px solid var(--borda);
-    border-radius: var(--raio);
     overflow: hidden;
-    transition: border-color 0.2s, transform 0.2s;
   }
-  .card:hover {
-    border-color: #36507a;
-    transform: translateY(-2px);
-  }
-  .card-thumb {
+  .midia {
     position: relative;
-    display: block;
     aspect-ratio: 16 / 9;
+    overflow: hidden;
     background: #000;
+    border-bottom: 1px solid var(--line);
   }
-  .card-thumb img {
+  .midia img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.6s var(--ease), filter 0.4s;
   }
-  .card-dur {
+  .post:hover .midia img {
+    transform: scale(1.05);
+    filter: brightness(0.75);
+  }
+  .midia-vazia {
     position: absolute;
-    right: 0.5rem;
-    bottom: 0.5rem;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.1rem 0.45rem;
-    border-radius: 6px;
+    inset: 0;
+    display: grid;
+    place-items: end start;
+    padding: 1.25rem;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(1, 131, 251, 0.35), transparent 55%),
+      radial-gradient(circle at 10% 90%, rgba(254, 118, 2, 0.35), transparent 55%), var(--surface-2);
   }
-  .card-corpo {
-    padding: 1rem 1.1rem 1.2rem;
+  .midia-vazia span {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: 2.5rem;
+    letter-spacing: -0.04em;
+    color: rgba(255, 255, 255, 0.85);
   }
-  .card-meta {
+  .play {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--g-o);
+    color: #120800;
+    box-shadow: 0 8px 24px -6px rgba(254, 118, 2, 0.6);
+    transition: transform 0.3s var(--ease);
+  }
+  .play :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-left: 2px;
+  }
+  .post:hover .play {
+    transform: scale(1.12);
+  }
+  .corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.25rem 1.35rem 1.5rem;
+    flex: 1;
+  }
+  .meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.6rem;
-    margin: 0 0 0.5rem;
-    font-size: 0.85rem;
-    color: var(--texto-2);
+    gap: 0.4rem 0.8rem;
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .leitura {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .leitura :global(svg) {
+    width: 0.85rem;
+    height: 0.85rem;
   }
   h3 {
-    margin: 0 0 0.4rem;
-    font-size: 1.15rem;
+    font-size: 1.35rem;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
   }
   h3 a {
-    color: var(--texto);
+    color: var(--text);
     text-decoration: none;
   }
   h3 a::after {
     content: '';
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
-  .card {
-    position: relative;
+  .post:hover h3 a {
+    color: var(--o1);
   }
-  h3 a:hover {
-    color: var(--laranja-1);
-  }
-  .card-desc {
+  .desc {
     margin: 0;
-    color: var(--texto-2);
-    font-size: 0.95rem;
-    line-height: 1.55;
+    color: var(--text-2);
+    font-size: 0.96rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    margin: auto 0 0;
+    padding-top: 0.5rem;
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    color: var(--b1);
+  }
+
+  /* Versão grande: imagem ao lado no desktop */
+  @media (min-width: 900px) {
+    .grande {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+    }
+    .grande .midia {
+      aspect-ratio: auto;
+      min-height: 100%;
+      border-bottom: 0;
+      border-right: 1px solid var(--line);
+    }
+    .grande .corpo {
+      padding: 2.25rem 2.25rem 2.25rem;
+      justify-content: center;
+      gap: 0.9rem;
+    }
+    .grande h3 {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+    }
+    .grande .desc {
+      font-size: 1.05rem;
+      -webkit-line-clamp: 5;
+    }
+    .grande .play {
+      width: 4rem;
+      height: 4rem;
+      left: 1.5rem;
+      bottom: 1.5rem;
+    }
   }
 </style>

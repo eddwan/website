@@ -2,14 +2,17 @@ export const SITE = {
   nome: 'Eddwan',
   titulo: 'Eddwan',
   descricao:
-    'Blog, notícias, vídeos e projetos do Eddwan: open source, Git, segurança e tecnologia, em português.',
+    'Open source, Git e segurança explicados em português. Blog, notícias, vídeos e projetos do Eddwan, fundador da Hallen Tech.',
   idioma: 'pt-BR',
   autor: 'Eddwan',
 };
 
 export const LINKS = {
   youtube: 'https://www.youtube.com/@eddwan',
+  inscrever: 'https://www.youtube.com/@eddwan?sub_confirmation=1',
   github: 'https://github.com/eddwan',
+  linkedin: 'https://www.linkedin.com/in/eddwan',
+  emailComercial: 'contato@hallentech.com',
   hallentech: 'https://hallentech.com',
   comunidade: 'https://chat.whatsapp.com/FkgHk11RMaFDUdTUXgA0IL',
 };

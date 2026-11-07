@@ -1,92 +1,510 @@
 ---
 import { existsSync } from 'node:fs';
 import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
 import { LINKS } from '../consts';
+import { NOME_COMPLETO, EXPERIENCIAS, FORMACAO, CERTIFICACOES, HABILIDADES, IDIOMAS } from '../data/perfil';
 
-// O link do currículo em PDF só aparece quando existir o arquivo public/cv.pdf
+// O botão do currículo em PDF só aparece quando existir o arquivo public/cv.pdf
 const temCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
+const destaques = [
+  { valor: '20+', rotulo: 'anos em tecnologia, desde 2004' },
+  { valor: 'CCIE', rotulo: 'Collaboration #58006 (Cisco)' },
+  { valor: 'MBA', rotulo: 'em Gestão de Projetos (UFJF)' },
+];
+const hoje = [
+  {
+    papel: 'Fundador e sócio sênior',
+    onde: 'Hallen Tech',
+    texto: 'CTO sob demanda, desenvolvimento de software, infraestrutura, cloud e segurança da informação para empresas.',
+    link: LINKS.hallentech,
+  },
+  {
+    papel: 'Criador',
+    onde: 'Canal @eddwan',
+    texto: 'Projetos open source do GitHub, a série “Git e GitHub do zero” e notícias de tecnologia e segurança, desde outubro de 2026.',
+    link: LINKS.youtube,
+  },
+  {
+    papel: 'Cofundador',
+    onde: 'EDCA Treinamentos',
+    texto: 'Cursos de redes com o Caio Hernandes, como o de Sub-Redes IPv4, na Udemy e no canal da EDCA.',
+    link: 'https://www.edca.com.br',
+  },
+];
 ---
 
-<Base titulo="Sobre" descricao="Quem é o Eddwan: trajetória, experiência e contato.">
-  <div class="container sobre">
-    <header class="cab">
-      <img src="/img/eddwan.jpg" alt="Foto do Eddwan" width="120" height="120" />
-      <div>
-        <h1>Sobre</h1>
-        <p>Eddwan, fundador da <a href={LINKS.hallentech}>Hallen Tech</a>.</p>
+<Base titulo="Sobre" descricao="Eddwan Hallen: fundador da Hallen Tech, CCIE Collaboration, mais de 20 anos em tecnologia, de redes e voz a produtos de software.">
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="container hero-in">
+      <div class="foto revela">
+        <img src="/img/eddwan-perfil.jpg" alt="Foto do Eddwan Hallen" width="614" height="614" />
       </div>
-    </header>
-
-    <p class="aviso-rascunho">
-      <strong>Rascunho para o Eddwan revisar.</strong> Só entraram fatos que já estão no material do canal. Os trechos entre
-      colchetes ficam para você preencher; nada do currículo foi inventado. A foto é um quadro de uma live (provisória).
-    </p>
-
-    <div class="prosa">
-      <h2>Hoje</h2>
-      <ul>
-        <li>
-          Fundador da <a href={LINKS.hallentech}>Hallen Tech</a>, empresa de liderança de tecnologia sob demanda,
-          software, cloud e segurança.
-        </li>
-        <li>
-          Criador do canal <a href={LINKS.youtube}>@eddwan</a> no YouTube (desde outubro de 2026): listas de projetos open
-          source do GitHub, a série “Git e GitHub do zero” e notícias de tecnologia e segurança.
-        </li>
-        <li>Cofundador da EDCA Treinamentos, com o Caio Hernandes.</li>
-      </ul>
-
-      <h2>Trajetória</h2>
-      <p>[Preencher: formação, empresas, cargos e períodos.]</p>
-
-      <h2>Áreas de atuação</h2>
-      <p>[Preencher: por exemplo arquitetura de software, cloud, Kubernetes, segurança, liderança técnica.]</p>
-
-      <h2>Currículo</h2>
-      {
-        temCv ? (
-          <p>
-            <a class="botao" href="/cv.pdf">Baixar o currículo em PDF</a>
-          </p>
-        ) : (
-          <p>[O PDF do currículo entra em <code>/cv.pdf</code> quando estiver pronto.]</p>
-        )
-      }
-
-      <h2>Contato</h2>
-      <ul>
-        <li><a href={LINKS.youtube}>YouTube: @eddwan</a></li>
-        <li><a href={LINKS.github}>GitHub: eddwan</a></li>
-        <li>[Preencher: LinkedIn e e-mail público, se quiser.]</li>
-      </ul>
+      <div>
+        <p class="eyebrow">Sobre</p>
+        <h1>{NOME_COMPLETO.split(' ')[0]} <span class="t-grad-ob">{NOME_COMPLETO.split(' ').slice(1).join(' ')}</span>.</h1>
+        <p class="lead">
+          Comecei a mexer com computador aos 9 anos e transformei isso em profissão. Passei por redes, telefonia e
+          colaboração, com mais de onze anos na Cisco, e hoje construo e opero produtos de software na Hallen Tech. No canal, divido
+          o que aprendo pelo caminho.
+        </p>
+        <div class="acoes">
+          <a class="btn" href={LINKS.linkedin} rel="noopener">LinkedIn <Icone nome="externo" /></a>
+          {temCv && <a class="btn btn-ghost" href="/cv.pdf">Currículo em PDF</a>}
+          <a class="btn btn-ghost" href={LINKS.youtube} rel="noopener"><Icone nome="youtube" /> Canal</a>
+        </div>
+        <dl class="numeros">
+          {
+            destaques.map((n) => (
+              <div>
+                <dt>{n.rotulo}</dt>
+                <dd>{n.valor}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
     </div>
+  </section>
+
+  <div class="container">
+
+    <section class="bloco">
+      <p class="eyebrow">Hoje</p>
+      <div class="hoje">
+        {
+          hoje.map((h) => (
+            <a class="card papel" href={h.link} rel="noopener">
+              <span class="papel-rot">{h.papel}</span>
+              <h2>{h.onde}</h2>
+              <p>{h.texto}</p>
+              <Icone nome="externo" class="papel-ic" />
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="bloco">
+      <div class="secao-cab">
+        <div>
+          <p class="eyebrow azul">Trajetória</p>
+          <h2>De redes e voz a produtos de software.</h2>
+        </div>
+      </div>
+      <ol class="linha">
+        {
+          EXPERIENCIAS.map((e) => (
+            <li class="revela">
+              <div class="linha-quando">{e.periodo}</div>
+              <div class="linha-corpo">
+                <h3>{e.cargo}</h3>
+                <p class="linha-empresa">{e.empresa}</p>
+                <p>{e.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="bloco duas">
+      <div>
+        <p class="eyebrow">Formação</p>
+        <ul class="itens">
+          {
+            FORMACAO.map((f) => (
+              <li class="card item">
+                <span class="item-ano">{f.ano}</span>
+                <strong>{f.curso}</strong>
+                <span class="muted">{f.onde}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">Certificações e idiomas</p>
+        <ul class="itens">
+          {
+            CERTIFICACOES.map((c) => (
+              <li class="card item">
+                <span class="item-ano">{c.emissor}</span>
+                <strong>
+                  {c.nome} {c.detalhe && <span class="t-grad">{c.detalhe}</span>}
+                </strong>
+              </li>
+            ))
+          }
+          <li class="card item">
+            <span class="item-ano">Idiomas</span>
+            <strong>{IDIOMAS.map((i) => `${i.idioma} (${i.nivel})`).join(' · ')}</strong>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="bloco">
+      <p class="eyebrow">Habilidades</p>
+      <div class="habilidades">
+        {
+          HABILIDADES.map((h) => (
+            <div class="card hab">
+              <h3>{h.grupo}</h3>
+              <p>
+                {h.itens.map((i) => (
+                  <span class="tag">{i}</span>
+                ))}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="bloco">
+      <p class="eyebrow">Contato</p>
+      <div class="contatos">
+        <a class="card contato" href={LINKS.linkedin} rel="noopener"
+          ><Icone nome="externo" /><span>LinkedIn<small>/in/eddwan</small></span></a
+        >
+        <a class="card contato" href={`mailto:${LINKS.emailComercial}`}
+          ><Icone nome="seta" /><span>Projetos e consultoria<small>{LINKS.emailComercial}</small></span></a
+        >
+        <a class="card contato" href={LINKS.youtube} rel="noopener"
+          ><Icone nome="youtube" /><span>YouTube<small>@eddwan</small></span></a
+        >
+        <a class="card contato" href={LINKS.github} rel="noopener"
+          ><Icone nome="github" /><span>GitHub<small>eddwan</small></span></a
+        >
+        <a class="card contato" href={LINKS.comunidade} rel="noopener"
+          ><Icone nome="whatsapp" /><span>Comunidade<small>WhatsApp</small></span></a
+        >
+      </div>
+    </section>
   </div>
 </Base>
 
 <style>
-  .sobre {
-    max-width: calc(var(--largura-texto) + 3rem);
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 7vw, 5rem) 1rem;
   }
-  .cab {
+  .hero-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .hero-in {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 4rem;
+    }
+  }
+  .foto {
+    max-width: 24rem;
+    border-radius: 28px;
+    padding: 2px;
+    background: linear-gradient(150deg, var(--o1), var(--o2) 30%, rgba(255, 255, 255, 0.08) 55%, var(--b2) 80%, var(--b1));
+    transform: rotate(-2deg);
+    box-shadow: 0 50px 100px -40px rgba(254, 118, 2, 0.4), 0 40px 80px -50px rgba(1, 131, 251, 0.5);
+  }
+  .foto img {
+    border-radius: 26px;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  h1 {
+    margin-top: 0.9rem;
+    font-size: clamp(2.8rem, 8vw, 5.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+  }
+  .lead {
+    margin: 1.25rem 0 0;
+    max-width: 36rem;
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    color: var(--text-2);
+  }
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+  .numeros {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 2.25rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    max-width: 34rem;
+  }
+  .numeros div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.2rem;
+  }
+  .numeros dd {
+    margin: 0;
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+  .numeros div:first-child dd {
+    background: var(--g-o);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .numeros div:nth-child(2) dd {
+    background: var(--g-b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .numeros dt {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+  .bloco {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+  .bloco > .eyebrow,
+  .duas .eyebrow {
+    display: flex;
+    margin-bottom: 1.25rem;
+  }
+  .secao-cab h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+  }
+
+  .hoje {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 860px) {
+    .hoje {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .papel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.75rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .papel:hover {
+    color: var(--text);
+  }
+  .papel-rot {
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--o1);
+  }
+  .papel h2 {
+    font-size: 1.7rem;
+  }
+  .papel p {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+  .papel :global(.papel-ic) {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--muted);
+  }
+
+  /* Linha do tempo */
+  .linha {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .linha::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.3rem;
+    width: 1px;
+    background: linear-gradient(var(--o2), var(--b2) 60%, transparent);
+  }
+  .linha li {
+    position: relative;
+    display: grid;
+    gap: 0.35rem 2rem;
+    padding: 0 0 2.25rem 2rem;
+  }
+  @media (min-width: 760px) {
+    .linha::before {
+      left: 11.3rem;
+    }
+    .linha li {
+      grid-template-columns: 10rem minmax(0, 1fr);
+      padding-left: 0;
+    }
+  }
+  .linha li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.4rem;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--g-o);
+    box-shadow: 0 0 0 5px var(--bg), 0 0 18px rgba(254, 118, 2, 0.6);
+  }
+  @media (min-width: 760px) {
+    .linha li::before {
+      left: 11rem;
+    }
+    .linha-corpo {
+      padding-left: 2rem;
+    }
+  }
+  .linha-quando {
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    color: var(--o1);
+    padding-top: 0.2rem;
+  }
+  @media (min-width: 760px) {
+    .linha-quando {
+      text-align: right;
+    }
+  }
+  .linha h3 {
+    font-size: 1.4rem;
+    letter-spacing: -0.025em;
+  }
+  .linha-empresa {
+    margin: 0.25rem 0 0.5rem;
+    font-weight: 650;
+    color: var(--b1);
+  }
+  .linha-corpo p:last-child {
+    margin: 0;
+    max-width: 42rem;
+    color: var(--text-2);
+  }
+
+  .duas {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 860px) {
+    .duas {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .itens {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 1.1rem 1.25rem;
+  }
+  .item:hover {
+    transform: none;
+  }
+  .item-ano {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .item strong {
+    font-size: 1.05rem;
+  }
+  .item .muted {
+    font-size: 0.92rem;
+  }
+
+  .habilidades {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 760px) {
+    .habilidades {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .hab {
+    padding: 1.5rem;
+  }
+  .hab:hover {
+    transform: none;
+  }
+  .hab h3 {
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+  .hab p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 1rem 0 0;
+  }
+  .hab .tag {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.78rem;
+  }
+
+  .contatos {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  }
+  .contato {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    padding-block: 2.5rem 0;
+    gap: 1rem;
+    padding: 1.25rem;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 650;
   }
-  .cab img {
-    width: 6rem;
-    height: 6rem;
-    border-radius: 50%;
-    object-fit: cover;
-    padding: 3px;
-    background: conic-gradient(from 200deg, var(--laranja-1), var(--laranja-2), var(--azul-2), var(--azul-1), var(--laranja-1));
+  .contato:hover {
+    color: var(--text);
   }
-  .cab h1 {
-    margin: 0;
-    font-size: 2.4rem;
+  .contato :global(svg) {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--o1);
   }
-  .cab p {
-    margin: 0;
-    color: var(--texto-2);
+  .contato small {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--muted);
+    word-break: break-all;
   }
 </style>

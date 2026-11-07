@@ -1,60 +1,52 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostCard from '../../components/PostCard.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 import { getPosts, todasAsTags } from '../../lib/posts';
 
 const posts = await getPosts();
 const tags = todasAsTags(posts);
+const [primeiro, ...resto] = posts;
 ---
 
 <Base titulo="Blog" descricao="Artigos, notícias e listas sobre open source, Git, segurança e tecnologia.">
-  <div class="container">
-    <header class="cab">
-      <h1>Blog</h1>
-      <p>Artigos, notícias e listas. Cada vídeo do canal também vira um post, com resumo, links e fontes.</p>
-    </header>
+  <CabecalhoPagina
+    eyebrow={`${posts.length} posts`}
+    titulo="Blog"
+    lead="Artigos, notícias e listas. Cada vídeo do canal também vira um post, com o passo a passo, os links e as fontes."
+  >
     <nav class="tags" aria-label="Tags">
-      {tags.map((t) => <a class="selo" href={`/blog/tag/${t.slug}`}>#{t.tag} <span>{t.total}</span></a>)}
+      {tags.map((t) => <a class="tag" href={`/blog/tag/${t.slug}`}>#{t.tag} <span>{t.total}</span></a>)}
     </nav>
+  </CabecalhoPagina>
+
+  <div class="container">
+    {primeiro && <PostCard post={primeiro} grande />}
     <div class="grade">
-      {posts.map((post) => <PostCard post={post} />)}
+      {resto.map((post) => <PostCard post={post} />)}
     </div>
   </div>
 </Base>
 
 <style>
-  .cab {
-    padding-block: 2.5rem 1rem;
-  }
-  .cab h1 {
-    margin: 0 0 0.25rem;
-    font-size: 2.4rem;
-  }
-  .cab p {
-    margin: 0;
-    color: var(--texto-2);
-  }
   .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 2rem;
+    margin-top: 2rem;
   }
   .tags a {
     text-transform: none;
     letter-spacing: 0;
-    font-size: 0.85rem;
-  }
-  .tags a:hover {
-    color: var(--laranja-1);
-    border-color: var(--laranja-2);
+    font-size: 0.8rem;
   }
   .tags span {
-    opacity: 0.6;
+    opacity: 0.5;
   }
   .grade {
     display: grid;
     gap: 1.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    margin-top: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
   }
 </style>

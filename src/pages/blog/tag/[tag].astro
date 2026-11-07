@@ -1,47 +1,55 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import PostCard from '../../../components/PostCard.astro';
+import CabecalhoPagina from '../../../components/CabecalhoPagina.astro';
 import { getPosts, todasAsTags, slugTag } from '../../../lib/posts';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
-  return todasAsTags(posts).map((t) => ({
+  const tags = todasAsTags(posts);
+  return tags.map((t) => ({
     params: { tag: t.slug },
-    props: { tag: t.tag, posts: posts.filter((p) => p.data.tags.some((x) => slugTag(x) === t.slug)) },
+    props: { tag: t.tag, tags, posts: posts.filter((p) => p.data.tags.some((x) => slugTag(x) === t.slug)) },
   }));
 }
 
-const { tag, posts } = Astro.props;
+const { tag, tags, posts } = Astro.props;
+const atual = slugTag(tag);
 ---
 
 <Base titulo={`#${tag}`} descricao={`Posts com a tag ${tag}.`}>
-  <div class="container">
-    <header class="cab">
-      <p><a href="/blog">← Blog</a></p>
-      <h1>#{tag}</h1>
-      <p>{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
-    </header>
-    <div class="grade">
-      {posts.map((post) => <PostCard post={post} />)}
-    </div>
+  <CabecalhoPagina eyebrow={`Tag · ${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} titulo={`#${tag}`}>
+    <nav class="tags" aria-label="Outras tags">
+      <a class="tag" href="/blog">← Todos</a>
+      {
+        tags.map((t) => (
+          <a class:list={['tag', t.slug === atual && 'tag-o']} href={`/blog/tag/${t.slug}`} aria-current={t.slug === atual ? 'page' : undefined}>
+            #{t.tag}
+          </a>
+        ))
+      }
+    </nav>
+  </CabecalhoPagina>
+  <div class="container grade">
+    {posts.map((post) => <PostCard post={post} />)}
   </div>
 </Base>
 
 <style>
-  .cab {
-    padding-block: 2.5rem 1.5rem;
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2rem;
   }
-  .cab h1 {
-    margin: 0.25rem 0;
-    font-size: 2.2rem;
-  }
-  .cab p {
-    margin: 0;
-    color: var(--texto-2);
+  .tags a {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.8rem;
   }
   .grade {
     display: grid;
     gap: 1.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
   }
 </style>

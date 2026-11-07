@@ -1,56 +1,235 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PostCard from '../../components/PostCard.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import YouTube from '../../components/YouTube.astro';
+import Icone from '../../components/Icone.astro';
 import { getPosts } from '../../lib/posts';
 import { LINKS } from '../../consts';
+import { VIDEOS, SERIES, type Serie } from '../../data/canal';
 
-const posts = (await getPosts()).filter((p) => p.data.youtube);
-const videos = posts.filter((p) => p.data.youtube!.formato === 'video');
-const shorts = posts.filter((p) => p.data.youtube!.formato === 'short');
+const posts = await getPosts();
+const postPorVideo = new Map(posts.filter((p) => p.data.youtube).map((p) => [p.data.youtube!.id, p.id]));
+const shorts = posts.filter((p) => p.data.youtube?.formato === 'short');
+const [ultimo] = VIDEOS;
+const contagem = (s: Serie) => VIDEOS.filter((v) => v.serie === s).length;
+const filtros: { id: 'todos' | Serie; nome: string; total: number }[] = [
+  { id: 'todos', nome: 'Todos', total: VIDEOS.length },
+  ...(Object.keys(SERIES) as Serie[]).map((s) => ({ id: s, nome: SERIES[s].nome, total: contagem(s) })),
+];
 ---
 
-<Base titulo="Vídeos" descricao="Os vídeos do canal @eddwan no YouTube, cada um com resumo, links e fontes.">
-  <div class="container">
-    <header class="cab">
-      <h1>Vídeos</h1>
-      <p>
-        Cada vídeo do <a href={LINKS.youtube}>canal @eddwan</a> ganha um post com o player, o resumo, os links citados e
-        as fontes.
-      </p>
-    </header>
+<Base titulo="Vídeos" descricao="Os vídeos do canal @eddwan no YouTube: listas de open source, a série Git e GitHub do zero e especiais.">
+  <CabecalhoPagina
+    eyebrow="Canal @eddwan"
+    titulo="Vídeos"
+    lead="Listas de open source, a série Git e GitHub do zero e os especiais. Os vídeos com post no blog trazem o resumo, os links e as fontes."
+  >
+    <div class="acoes">
+      <a class="btn" href={LINKS.inscrever} rel="noopener"><Icone nome="youtube" /> Inscrever no canal</a>
+      {SERIES.git.playlist && <a class="btn btn-ghost" href={SERIES.git.playlist} rel="noopener">Playlist Git do zero</a>}
+    </div>
+  </CabecalhoPagina>
 
-    <h2>Vídeos</h2>
-    <div class="grade">{videos.map((post) => <PostCard post={post} />)}</div>
+  <div class="container">
+    {
+      ultimo && (
+        <section class="ultimo">
+          <YouTube id={ultimo.id} titulo={ultimo.titulo} />
+          <div class="ultimo-texto">
+            <p class="eyebrow">Mais recente · {ultimo.rotulo}</p>
+            <h2>{ultimo.titulo}</h2>
+            <p class="muted">{SERIES[ultimo.serie].resumo}</p>
+            {postPorVideo.get(ultimo.id) && (
+              <a class="btn btn-ghost" href={`/blog/${postPorVideo.get(ultimo.id)}`}>
+                Ler o post <Icone nome="seta" />
+              </a>
+            )}
+          </div>
+        </section>
+      )
+    }
+
+    <section aria-labelledby="todos-videos">
+      <div class="barra">
+        <h2 id="todos-videos">Todos os vídeos</h2>
+        <div class="filtros" role="group" aria-label="Filtrar por série">
+          {
+            filtros.map((f, i) => (
+              <button type="button" class="filtro" data-filtro={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+                {f.nome} <span>{f.total}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="grade" data-grade>
+        {VIDEOS.map((v) => <VideoCard video={v} post={postPorVideo.get(v.id)} />)}
+      </div>
+    </section>
 
     {
       shorts.length > 0 && (
-        <>
-          <h2>Shorts e notícias</h2>
-          <div class="grade">{shorts.map((post) => <PostCard post={post} />)}</div>
-        </>
+        <section class="shorts" aria-labelledby="shorts">
+          <div class="barra">
+            <h2 id="shorts">Shorts com post</h2>
+          </div>
+          <div class="shorts-grade">
+            {shorts.map((p) => (
+              <a class="card short" href={`/blog/${p.id}`}>
+                <img src={`https://i.ytimg.com/vi/${p.data.youtube!.id}/hqdefault.jpg`} alt="" loading="lazy" width="480" height="360" />
+                <span class="short-texto">
+                  <span class="tag tag-o">Short</span>
+                  <strong>{p.data.titulo}</strong>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
       )
     }
   </div>
 </Base>
 
+<script>
+  const botoes = document.querySelectorAll<HTMLButtonElement>('[data-filtro]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-grade] > [data-serie]');
+  botoes.forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = b.dataset.filtro;
+      botoes.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      cards.forEach((c) => (c.hidden = f !== 'todos' && c.dataset.serie !== f));
+    }),
+  );
+</script>
+
 <style>
-  .cab {
-    padding-block: 2.5rem 0.5rem;
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
   }
-  .cab h1 {
-    margin: 0 0 0.25rem;
-    font-size: 2.4rem;
+  .ultimo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: clamp(3.5rem, 8vw, 5.5rem);
   }
-  .cab p {
-    margin: 0;
-    color: var(--texto-2);
+  @media (min-width: 960px) {
+    .ultimo {
+      grid-template-columns: 1.6fr 1fr;
+      gap: 3rem;
+    }
   }
-  h2 {
-    margin: 2.5rem 0 1rem;
+  .ultimo h2 {
+    margin: 0.75rem 0 0;
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  }
+  .ultimo-texto .btn {
+    margin-top: 0.5rem;
+  }
+  .barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .barra h2 {
+    font-size: clamp(1.7rem, 3.5vw, 2.3rem);
+  }
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-2);
+    font: 550 0.88rem var(--f-body);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .filtro span {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    opacity: 0.6;
+  }
+  .filtro:hover {
+    color: var(--text);
+    border-color: rgba(254, 118, 2, 0.5);
+  }
+  .filtro[aria-pressed='true'] {
+    color: #120800;
+    background: var(--g-o);
+    border-color: transparent;
+  }
+  .filtro[aria-pressed='true'] span {
+    opacity: 0.75;
   }
   .grade {
     display: grid;
+    gap: 2rem 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16.5rem), 1fr));
+  }
+  .grade > :global([hidden]) {
+    display: none;
+  }
+  .shorts {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+  }
+  .shorts-grade {
+    display: grid;
     gap: 1.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  }
+  .short {
+    display: block;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    max-width: 16rem;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .short img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: calc(var(--r) - 1px);
+  }
+  .short::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: calc(var(--r) - 1px);
+    background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.9));
+  }
+  .short-texto {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-family: var(--f-display);
+    font-size: 1.15rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
   }
 </style>

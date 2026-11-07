@@ -82,8 +82,19 @@ A automação (cada vídeo virar post sozinho) fica para depois.
 
 ## Visual
 
-Tema escuro com as cores da Hallen Tech: laranja `#FFC301 → #FE7602` e azul `#03E7FC → #0183FB`
-(variáveis em `src/styles/global.css`). Fonte Inter (variável, servida pelo próprio site). Rodapé com “Fundador da Hallen Tech” → hallentech.com.
+Tema escuro, tipografia grande e as cores da Hallen Tech: laranja `#FFC301 → #FE7602` e azul `#03E7FC → #0183FB`.
+
+- **Fontes** (servidas pelo próprio site): Bricolage Grotesque nos títulos, Inter no texto e JetBrains Mono nas etiquetas.
+- **Tokens e estilos comuns** (cores, botões, etiquetas, cartões, texto dos posts): `src/styles/global.css`.
+- **Peças:** `src/components/` (cartão de post, cartão de vídeo, player, cabeçalho de página, ícones) e `src/layouts/Base.astro` (cabeçalho com menu no celular e rodapé).
+- **Movimento:** entrada suave ao rolar só onde o navegador suporta (`animation-timeline`), e nada anima com “reduzir movimento” ligado.
+- Rodapé com “Fundador da Hallen Tech” → hallentech.com.
+
+## Dados do canal
+
+`src/data/canal.ts` guarda os vídeos públicos do @eddwan (ID, título, data, série), as séries com as playlists e os números da página inicial.
+É de lá que saem a grade filtrável de `/videos`, os “mais recentes” e os mosaicos das séries na página inicial.
+**Saiu vídeo novo?** Acrescente uma linha em `LISTA` (e atualize `NUMEROS` quando mudar a contagem). Se o vídeo tiver post, o post usa o mesmo ID em `youtube.id` e o cartão passa a abrir o post.
 
 ## Publicar no Plesk (rsync)
 

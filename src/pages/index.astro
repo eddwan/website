@@ -1,148 +1,957 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
 import YouTube from '../components/YouTube.astro';
-import { getPosts } from '../lib/posts';
+import Icone from '../components/Icone.astro';
+import { getPosts, formataDataCurta } from '../lib/posts';
 import { LINKS } from '../consts';
+import { VIDEOS, SERIES, NUMEROS, REPOS_NO_CANAL, thumb } from '../data/canal';
 
 const posts = await getPosts();
-const ultimos = posts.slice(0, 3);
-const videos = posts.filter((p) => p.data.youtube && p.data.youtube.formato === 'video');
-const destaque = videos[0];
+const postPorVideo = new Map(posts.filter((p) => p.data.youtube).map((p) => [p.data.youtube!.id, p.id]));
+const destaque = posts.find((p) => p.data.youtube?.formato === 'video');
+const principal = posts[0];
+// No bloco do blog, evita repetir em destaque o post do vídeo que já aparece acima
+const doBlog = posts.filter((p) => p.id !== destaque?.id);
+const blogDestaque = doBlog[0] ?? principal;
+const blogOutros = [...doBlog.slice(1), ...(destaque ? [destaque] : [])].slice(0, 2);
+const recentes = VIDEOS.filter((v) => v.id !== destaque?.data.youtube?.id).slice(0, 4);
+const deSerie = (s: string) => VIDEOS.filter((v) => v.serie === s);
+const noticias = posts.filter((p) => p.data.tipo === 'noticia');
+// Na home, só três projetos: um produto com download, o produto que está no ar e o canal
+const DESTAQUES_PORTFOLIO = ['estudio', 'vivahq', 'canal-eddwan'];
+const todosProjetos = await getCollection('portfolio');
+const projetos = DESTAQUES_PORTFOLIO.map((id) => todosProjetos.find((p) => p.id === id)).filter((p) => p !== undefined);
+const terminal = posts.slice(0, 3).map((p) => ({
+  hash: (p.data.youtube?.id ?? p.id).replace(/[^a-zA-Z0-9]/g, '').slice(0, 7).toLowerCase(),
+  titulo: p.data.titulo.split(':')[0],
+}));
 ---
 
 <Base>
-  <section class="hero container">
-    <img class="hero-foto" src="/img/eddwan.jpg" alt="Foto do Eddwan" width="160" height="160" />
-    <div>
-      <p class="hero-oi">Oi, eu sou o</p>
-      <h1><span class="grad-laranja">Eddwan</span></h1>
-      <!-- RASCUNHO: frase de apresentação para o Eddwan revisar -->
-      <p class="hero-sub">
-        Fundador da <a href={LINKS.hallentech}>Hallen Tech</a> e criador do canal{' '}
-        <a href={LINKS.youtube}>@eddwan</a> no YouTube, onde mostro projetos open source do GitHub, explico Git e
-        GitHub do zero e comento notícias de tecnologia e segurança.
-      </p>
-      <p class="hero-acoes">
-        <a class="botao" href="/videos">Ver os vídeos</a>
-        <a class="botao botao-sec" href="/blog">Ler o blog</a>
-      </p>
+  <!-- ═════════ HERO ═════════ -->
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="container hero-grade">
+      <div class="hero-texto">
+        {
+          principal && (
+            <a class="hero-status" href={`/blog/${principal.id}`}>
+              <span class="pulso" aria-hidden="true" />
+              <span class="hero-status-rot">Novo</span>
+              <span class="hero-status-tit">{principal.data.titulo.split(':')[0]}</span>
+              <Icone nome="seta" />
+            </a>
+          )
+        }
+        <h1>
+          Open source, Git e segurança, <span class="t-grad-ob">sem enrolação.</span>
+        </h1>
+        <!-- RASCUNHO: frase de apresentação para o Eddwan revisar -->
+        <p class="hero-lead">
+          Eu sou o <strong>Eddwan</strong>, fundador da Hallen Tech. No canal <strong>@eddwan</strong> eu garimpo projetos
+          open source do GitHub, ensino Git do zero e comento as notícias de tecnologia e segurança que importam.
+        </p>
+        <div class="hero-acoes">
+          <a class="btn" href={LINKS.youtube} rel="noopener"><Icone nome="youtube" /> Assistir no YouTube</a>
+          <a class="btn btn-ghost" href="/blog">Ler o blog <Icone nome="seta" /></a>
+        </div>
+        <dl class="numeros">
+          {
+            NUMEROS.map((n) => (
+              <div>
+                <dt>{n.rotulo}</dt>
+                <dd>{n.valor}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="foto">
+          <img src="/img/eddwan-retrato.jpg" alt="" width="800" height="1000" fetchpriority="high" />
+          <div class="foto-nome">
+            <span>Eddwan</span>
+            <span class="foto-arroba">@eddwan</span>
+          </div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-topo">
+            <i></i><i></i><i></i>
+            <span>~/canal</span>
+          </div>
+          <pre><span class="c-prompt">$</span> git log --oneline -3
+{terminal.map((t) => <><span class="c-hash">{t.hash}</span> {t.titulo}{'\n'}</>)}<span class="c-prompt">$</span> <span class="c-cursor"></span></pre>
+        </div>
+        <div class="chip chip-1"><Icone nome="youtube" /> Vol. 24 no ar</div>
+        <div class="chip chip-2"><span class="t-grad-b">git</span> do zero · 10 eps</div>
+      </div>
     </div>
   </section>
 
+  <!-- ═════════ FAIXA DE REPOSITÓRIOS ═════════ -->
+  <section class="faixa" aria-label="Projetos que já passaram pelo canal">
+    <p class="faixa-rot">No último volume</p>
+    <div class="faixa-trilho">
+      <ul>
+        {REPOS_NO_CANAL.map((r) => <li>{r}</li>)}
+      </ul>
+      <ul aria-hidden="true">
+        {REPOS_NO_CANAL.map((r) => <li>{r}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═════════ SÉRIES ═════════ -->
+  <section class="secao container">
+    <div class="secao-cab revela">
+      <div>
+        <p class="eyebrow">As séries</p>
+        <h2>Escolha por onde começar.</h2>
+        <p>Listas para descobrir ferramentas novas, um curso de Git do jeito certo e notícias com fonte conferida.</p>
+      </div>
+    </div>
+
+    <div class="bento">
+      <a class="card serie serie-os revela" href={SERIES['open-source'].playlist} rel="noopener">
+        <div class="mosaico">
+          {deSerie('open-source').slice(0, 9).map((v) => <img src={thumb(v.id, 'mq')} alt="" decoding="async" width="320" height="180" />)}
+        </div>
+        <div class="serie-corpo">
+          <span class="serie-num t-grad">24</span>
+          <div>
+            <p class="eyebrow">Playlist · volumes</p>
+            <h3>{SERIES['open-source'].nome}</h3>
+            <p>{SERIES['open-source'].resumo}</p>
+            <span class="link-seta">Ver a playlist</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card serie serie-git revela" href={SERIES.git.playlist} rel="noopener">
+        <div class="mosaico mosaico-4">
+          {deSerie('git').slice(0, 4).map((v) => <img src={thumb(v.id, 'mq')} alt="" decoding="async" width="320" height="180" />)}
+        </div>
+        <div class="serie-corpo">
+          <span class="serie-num t-grad-b">10</span>
+          <div>
+            <p class="eyebrow azul">Playlist · episódios</p>
+            <h3>{SERIES.git.nome}</h3>
+            <p>{SERIES.git.resumo}</p>
+            <span class="link-seta">Começar pelo ep. 1</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card serie serie-news revela" href="/blog/tag/noticia">
+        <div class="news-alerta">
+          <span class="tag tag-o tag-ponto">Urgente</span>
+          {noticias[0] && <p>{noticias[0].data.titulo}</p>}
+        </div>
+        <div class="serie-corpo">
+          <div>
+            <p class="eyebrow">Shorts · notícias</p>
+            <h3>Notícias e segurança</h3>
+            <p>Falhas críticas, atualizações e mudanças que afetam o seu site ou o seu código, com as fontes no post.</p>
+            <span class="link-seta">Ver as notícias</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═════════ ÚLTIMO VÍDEO ═════════ -->
   {
     destaque && (
-      <section class="container bloco">
-        <div class="bloco-topo">
-          <h2>Último vídeo</h2>
-          <a href={LINKS.youtube}>Canal no YouTube →</a>
-        </div>
-        <div class="destaque">
-          <YouTube id={destaque.data.youtube!.id} titulo={destaque.data.titulo} />
-          <div>
-            <h3>
-              <a href={`/blog/${destaque.id}`}>{destaque.data.titulo}</a>
-            </h3>
-            <p>{destaque.data.descricao}</p>
-            <a href={`/blog/${destaque.id}`}>Resumo, links e fontes →</a>
+      <section class="secao secao-video">
+        <div class="container">
+          <div class="secao-cab revela">
+            <div>
+              <p class="eyebrow">Último vídeo</p>
+              <h2>{destaque.data.titulo.split(':')[0]}</h2>
+            </div>
+            <a class="link-seta" href="/videos">
+              Todos os vídeos
+            </a>
+          </div>
+          <div class="video-grade">
+            <div class="revela">
+              <YouTube id={destaque.data.youtube!.id} titulo={destaque.data.titulo} />
+              <div class="video-info">
+                <p>{destaque.data.descricao}</p>
+                <a class="btn btn-ghost" href={`/blog/${destaque.id}`}>
+                  Resumo, links e fontes <Icone nome="seta" />
+                </a>
+              </div>
+            </div>
+            <aside class="recentes revela" aria-label="Vídeos recentes">
+              <p class="recentes-tit">Mais recentes</p>
+              <ul>
+                {recentes.map((v) => {
+                  const post = postPorVideo.get(v.id);
+                  return (
+                    <li>
+                      <a
+                        href={post ? `/blog/${post}` : `https://www.youtube.com/watch?v=${v.id}`}
+                        rel={post ? undefined : 'noopener'}
+                      >
+                        <img src={thumb(v.id, 'mq')} alt="" loading="lazy" width="320" height="180" />
+                        <span>
+                          <span class="recentes-rot">
+                            {v.rotulo}
+                            {v.data && ` · ${formataDataCurta(new Date(v.data + 'T12:00:00Z'))}`}
+                          </span>
+                          <span class="recentes-titulo">{v.titulo}</span>
+                        </span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+              <a class="btn btn-ghost recentes-btn" href={LINKS.inscrever} rel="noopener">
+                <Icone nome="youtube" /> Inscrever no canal
+              </a>
+            </aside>
           </div>
         </div>
       </section>
     )
   }
 
-  <section class="container bloco">
-    <div class="bloco-topo">
-      <h2>Últimos posts</h2>
-      <a href="/blog">Todos os posts →</a>
+  <!-- ═════════ BLOG ═════════ -->
+  <section class="secao container">
+    <div class="secao-cab revela">
+      <div>
+        <p class="eyebrow">Do blog</p>
+        <h2>Para ler com calma.</h2>
+        <p>Cada vídeo vira um post com o passo a passo, os comandos, os links e as fontes.</p>
+      </div>
+      <a class="link-seta" href="/blog">Todos os posts</a>
     </div>
-    <div class="grade">
-      {ultimos.map((post) => <PostCard post={post} />)}
+    {blogDestaque && <div class="revela"><PostCard post={blogDestaque} grande /></div>}
+    <div class="grade-2">
+      {blogOutros.map((post) => <div class="revela"><PostCard post={post} /></div>)}
+    </div>
+  </section>
+
+  <!-- ═════════ PORTFÓLIO ═════════ -->
+  <section class="secao container">
+    <div class="secao-cab revela">
+      <div>
+        <p class="eyebrow azul">Portfólio</p>
+        <h2>O que eu construo.</h2>
+      </div>
+      <a class="link-seta" href="/portfolio">Ver o portfólio</a>
+    </div>
+    <ol class="projetos">
+      {
+        projetos.map((p, i) => (
+          <li class="revela">
+            <a class="card projeto" href={`/portfolio#${p.id}`}>
+              <span class="projeto-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{p.data.titulo}</h3>
+              <p>{p.data.resumo}</p>
+              <span class="projeto-seta" aria-hidden="true">
+                <Icone nome="seta" />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- ═════════ HALLEN TECH ═════════ -->
+  <section class="container">
+    <div class="ht revela">
+      <div class="ht-texto">
+        <p class="eyebrow">Para empresas</p>
+        <h2>Tecnologia na sua empresa, com quem entende.</h2>
+        <p>
+          A Hallen Tech oferece liderança de tecnologia sob demanda, software, cloud e segurança para a sua empresa.
+        </p>
+      </div>
+      <a class="btn btn-azul" href={LINKS.hallentech} rel="noopener">Conhecer a Hallen Tech <Icone nome="externo" /></a>
     </div>
   </section>
 </Base>
 
 <style>
+  /* ── Hero ── */
   .hero {
-    display: flex;
-    flex-wrap: wrap;
+    position: relative;
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(3rem, 7vw, 5rem);
+    overflow: hidden;
+  }
+  .hero-grade {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3.5rem;
     align-items: center;
-    gap: 1.5rem 2.5rem;
-    padding-block: 3.5rem 2rem;
   }
-  .hero-foto {
-    width: 8rem;
-    height: 8rem;
-    border-radius: 50%;
-    object-fit: cover;
-    padding: 4px;
-    background: conic-gradient(from 200deg, var(--laranja-1), var(--laranja-2), var(--azul-2), var(--azul-1), var(--laranja-1));
-  }
-  @media (min-width: 640px) {
-    .hero-foto {
-      width: 10rem;
-      height: 10rem;
+  @media (min-width: 980px) {
+    .hero-grade {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 4rem;
     }
   }
-  .hero > div {
-    flex: 1 1 22rem;
+  .hero-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    max-width: 100%;
+    padding: 0.35rem 0.85rem 0.35rem 0.4rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 0.88rem;
+    margin-bottom: 1.75rem;
   }
-  .hero-oi {
-    margin: 0;
-    color: var(--texto-2);
-    font-weight: 500;
+  .hero-status:hover {
+    color: var(--text);
+    border-color: rgba(254, 118, 2, 0.5);
+  }
+  .hero-status :global(svg) {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex: none;
+  }
+  .hero-status-rot {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    color: #120800;
+    background: var(--g-o);
+  }
+  .hero-status-tit {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pulso {
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-left: 0.35rem;
+    border-radius: 50%;
+    background: #3ddc84;
+    flex: none;
+  }
+  .pulso::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #3ddc84;
+    animation: pulso 2s ease-out infinite;
+  }
+  @keyframes pulso {
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
   }
   h1 {
-    margin: 0;
-    font-size: clamp(2.4rem, 7vw, 3.6rem);
+    font-size: clamp(2.6rem, 8.2vw, 5.2rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
   }
-  .hero-sub {
-    max-width: 40rem;
-    font-size: 1.15rem;
-    color: #cfd5df;
+  .hero-lead {
+    margin: 1.75rem 0 0;
+    max-width: 36rem;
+    font-size: clamp(1.08rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+  .hero-lead strong {
+    color: var(--text);
+    font-weight: 600;
   }
   .hero-acoes {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin-top: 2rem;
   }
-  .bloco {
-    padding-block: 1.5rem;
+  .numeros {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 2.75rem 0 0;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--line);
+    max-width: 34rem;
   }
-  .bloco-topo {
+  .numeros div {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column-reverse;
+    gap: 0.2rem;
+  }
+  .numeros dd {
+    margin: 0;
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .numeros div:first-child dd {
+    background: var(--g-o);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .numeros div:nth-child(2) dd {
+    background: var(--g-b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .numeros dt {
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  /* Visual do hero: foto + terminal + chips */
+  .hero-visual {
+    position: relative;
+    max-width: 30rem;
+    width: 100%;
+    margin-inline: auto;
+    padding: 0 0 3.5rem 0;
+  }
+  .foto {
+    position: relative;
+    margin-left: auto;
+    width: 82%;
+    aspect-ratio: 4 / 5;
+    border-radius: 28px;
+    padding: 2px;
+    background: linear-gradient(150deg, var(--o1), var(--o2) 30%, rgba(255, 255, 255, 0.08) 55%, var(--b2) 80%, var(--b1));
+    transform: rotate(2.5deg);
+    box-shadow: 0 50px 100px -40px rgba(254, 118, 2, 0.45), 0 40px 80px -50px rgba(1, 131, 251, 0.6);
+  }
+  .foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 26px;
+    filter: saturate(1.05) contrast(1.05);
+  }
+  .foto::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 26px;
+    background: linear-gradient(180deg, transparent 55%, rgba(5, 7, 11, 0.85));
+  }
+  .foto-nome {
+    position: absolute;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 1.1rem;
+    z-index: 1;
+    display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 0.5rem 1rem;
+    font-family: var(--f-display);
+    font-weight: 750;
+    font-size: 1.4rem;
+    letter-spacing: -0.03em;
   }
-  .bloco-topo h2 {
-    margin: 0 0 1rem;
+  .foto-arroba {
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--o1);
+    letter-spacing: 0;
   }
-  .grade {
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  .terminal {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: min(88%, 22rem);
+    border-radius: 14px;
+    border: 1px solid var(--line-2);
+    background: rgba(10, 14, 21, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+    transform: rotate(-2deg);
+    overflow: hidden;
   }
-  .destaque {
-    display: grid;
-    gap: 1.5rem;
+  .terminal-topo {
+    display: flex;
     align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
   }
-  @media (min-width: 860px) {
-    .destaque {
-      grid-template-columns: 3fr 2fr;
+  .terminal-topo i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: #ff5f57;
+  }
+  .terminal-topo i:nth-child(2) {
+    background: #febc2e;
+  }
+  .terminal-topo i:nth-child(3) {
+    background: #28c840;
+    margin-right: 0.5rem;
+  }
+  .terminal pre {
+    margin: 0;
+    padding: 0.85rem 1rem 1rem;
+    font-family: var(--f-mono);
+    font-size: 0.74rem;
+    line-height: 1.75;
+    color: var(--text-2);
+    white-space: pre-wrap;
+  }
+  .c-prompt {
+    color: #3ddc84;
+  }
+  .c-hash {
+    color: var(--o1);
+  }
+  .c-cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.05em;
+    vertical-align: text-bottom;
+    background: var(--b1);
+    animation: pisca2 1.1s steps(1) infinite;
+  }
+  @keyframes pisca2 {
+    50% {
+      opacity: 0;
     }
   }
-  .destaque h3 {
-    margin-top: 0;
-    font-size: 1.35rem;
+  .chip {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    background: rgba(15, 20, 29, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 16px 30px -12px rgba(0, 0, 0, 0.7);
+    animation: flutua 6s ease-in-out infinite;
   }
-  .destaque h3 a {
-    color: var(--texto);
+  .chip :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    color: #ff3d3d;
+  }
+  .chip-1 {
+    top: 8%;
+    left: 0;
+  }
+  .chip-2 {
+    top: 46%;
+    right: -0.5rem;
+    animation-delay: -3s;
+  }
+  @keyframes flutua {
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @media (max-width: 520px) {
+    .chip-2 {
+      right: 0;
+    }
+  }
+
+  /* ── Faixa de repositórios ── */
+  .faixa {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-block: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.015);
+    padding: 1.1rem 0 1.1rem var(--gutter);
+    overflow: hidden;
+  }
+  .faixa-rot {
+    margin: 0;
+    flex: none;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .faixa-trilho {
+    display: flex;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .faixa ul {
+    display: flex;
+    flex: none;
+    gap: 2.75rem;
+    padding: 0 1.375rem;
+    margin: 0;
+    list-style: none;
+    animation: rola 45s linear infinite;
+  }
+  .faixa li {
+    display: flex;
+    align-items: center;
+    gap: 2.75rem;
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+  .faixa li::after {
+    content: '✦';
+    font-size: 0.8rem;
+    color: var(--o2);
+  }
+  .faixa-trilho:hover ul {
+    animation-play-state: paused;
+  }
+  @keyframes rola {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* ── Séries (bento) ── */
+  .bento {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+  @media (min-width: 900px) {
+    .bento {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+    }
+    .serie-os {
+      grid-row: span 2;
+    }
+  }
+  .serie {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--text);
     text-decoration: none;
   }
-  .destaque p {
-    color: var(--texto-2);
+  .serie:hover {
+    color: var(--text);
+  }
+  .mosaico {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 6px;
+    transform: rotate(-4deg) scale(1.15);
+    transform-origin: center;
+    margin: -1.5rem -1rem 0;
+    opacity: 0.85;
+    transition: transform 0.6s var(--ease), opacity 0.4s;
+    mask-image: linear-gradient(180deg, #000 60%, transparent);
+    -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+  }
+  .mosaico-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .mosaico img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .serie:hover .mosaico {
+    transform: rotate(-2deg) scale(1.2);
+    opacity: 1;
+  }
+  .serie-corpo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 1.75rem 1.75rem;
+    margin-top: auto;
+  }
+  .serie-os .serie-corpo {
+    padding: 0 2.25rem 2.25rem;
+  }
+  .serie-num {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(5rem, 12vw, 8.5rem);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+  }
+  .serie-git .serie-num {
+    font-size: clamp(4rem, 8vw, 5.5rem);
+  }
+  .serie h3 {
+    margin-top: 0.5rem;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+  }
+  .serie p:not(.eyebrow) {
+    margin: 0.6rem 0 1rem;
+    color: var(--text-2);
+    max-width: 30rem;
+  }
+  .serie-news {
+    background:
+      linear-gradient(var(--surface), var(--surface)) padding-box,
+      linear-gradient(140deg, rgba(254, 118, 2, 0.5), var(--line) 50%) border-box;
+  }
+  .news-alerta {
+    margin: 1.75rem 1.75rem 1.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid rgba(254, 118, 2, 0.3);
+    background: repeating-linear-gradient(-45deg, rgba(254, 118, 2, 0.06) 0 10px, transparent 10px 20px);
+  }
+  .news-alerta p {
+    margin: 0.7rem 0 0;
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Último vídeo ── */
+  .secao-video {
+    background: linear-gradient(180deg, transparent, rgba(1, 131, 251, 0.05) 30%, rgba(254, 118, 2, 0.04) 70%, transparent);
+  }
+  .video-grade {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+  @media (min-width: 1000px) {
+    .video-grade {
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    }
+  }
+  .video-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-top: 1.5rem;
+  }
+  .video-info p {
+    flex: 1 1 22rem;
+    margin: 0;
+    color: var(--text-2);
+  }
+  .recentes {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    border-radius: var(--r);
+    border: 1px solid var(--line);
+    background: rgba(15, 20, 29, 0.6);
+  }
+  .recentes-tit {
+    margin: 0 0 0.75rem;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .recentes ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .recentes a {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.9rem;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: var(--r-sm);
+    color: var(--text);
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .recentes a:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .recentes img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .recentes-rot {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    color: var(--o1);
+  }
+  .recentes-titulo {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.9rem;
+    font-weight: 550;
+    line-height: 1.35;
+  }
+  .recentes-btn {
+    margin-top: auto;
+    width: 100%;
+  }
+  .recentes ul + .recentes-btn {
+    margin-top: 1rem;
+  }
+
+  /* ── Blog ── */
+  .grade-2 {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  @media (min-width: 760px) {
+    .grade-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .grade-2 > div {
+    display: flex;
+  }
+  .grade-2 > div > :global(*) {
+    flex: 1;
+  }
+
+  /* ── Portfólio ── */
+  .projetos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 860px) {
+    .projetos {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .projetos li {
+    display: flex;
+  }
+  .projeto {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.75rem;
+    min-height: 15rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .projeto:hover {
+    color: var(--text);
+  }
+  .projeto-num {
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    color: var(--b1);
+  }
+  .projeto h3 {
+    font-size: 1.75rem;
+    margin-top: auto;
+  }
+  .projeto p {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+  .projeto-seta {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--line-2);
+    transition: background 0.3s, color 0.3s, transform 0.3s var(--ease);
+  }
+  .projeto-seta :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    transform: rotate(-45deg);
+  }
+  .projeto:hover .projeto-seta {
+    background: var(--g-o);
+    color: #120800;
+    border-color: transparent;
+    transform: rotate(45deg);
+  }
+
+  /* ── Hallen Tech ── */
+  .ht {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.5rem;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    border-radius: 28px;
+    overflow: hidden;
+    border: 1px solid rgba(1, 131, 251, 0.35);
+    background:
+      radial-gradient(40rem 20rem at 100% 0%, rgba(3, 231, 252, 0.18), transparent 60%),
+      radial-gradient(30rem 20rem at 0% 100%, rgba(1, 131, 251, 0.2), transparent 60%), var(--surface);
+  }
+  .ht-texto {
+    flex: 1 1 26rem;
+  }
+  .ht h2 {
+    margin-top: 0.6rem;
+    font-size: clamp(1.8rem, 4vw, 2.7rem);
+    max-width: 32rem;
+  }
+  .ht p:not(.eyebrow) {
+    margin: 0.9rem 0 0;
+    color: var(--text-2);
+    max-width: 34rem;
   }
 </style>

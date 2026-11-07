@@ -1,11 +1,51 @@
 ---
 import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
 ---
 
 <Base titulo="Página não encontrada" semIndice>
-  <div class="container" style="padding-block: 5rem; text-align: center">
-    <h1 class="grad-laranja" style="font-size: 4rem; margin: 0">404</h1>
-    <p>Esta página não existe (ou mudou de lugar).</p>
-    <p><a class="botao" href="/">Voltar ao início</a></p>
-  </div>
+  <section class="nf">
+    <div class="grid-bg"></div>
+    <div class="container">
+      <p class="eyebrow">Erro 404</p>
+      <h1 class="t-grad-ob">404</h1>
+      <pre><span>$</span> git checkout esta-pagina
+error: pathspec 'esta-pagina' did not match any file(s) known to git</pre>
+      <p class="muted">Esta página não existe (ou mudou de lugar).</p>
+      <a class="btn" href="/">Voltar ao início <Icone nome="seta" /></a>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .nf {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(4rem, 12vw, 8rem);
+    text-align: center;
+  }
+  h1 {
+    margin: 0.5rem 0 1.5rem;
+    font-size: clamp(7rem, 25vw, 14rem);
+    font-weight: 800;
+    line-height: 0.85;
+    letter-spacing: -0.07em;
+  }
+  pre {
+    display: inline-block;
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    font-family: var(--f-mono);
+    font-size: 0.82rem;
+    text-align: left;
+    white-space: pre-wrap;
+    color: #ff7b72;
+  }
+  pre span {
+    color: #3ddc84;
+  }
+</style>

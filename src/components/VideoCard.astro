@@ -1,0 +1,133 @@
+---
+import { thumb, SERIES, type VideoCanal } from '../data/canal';
+import Icone from './Icone.astro';
+
+interface Props {
+  video: VideoCanal;
+  post?: string; // id do post no blog, se houver
+}
+const { video, post } = Astro.props;
+const href = post ? `/blog/${post}` : `https://www.youtube.com/watch?v=${video.id}`;
+const externo = !post;
+const cor = SERIES[video.serie].cor;
+const data = video.data
+  ? new Date(video.data + 'T12:00:00Z').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).replace('.', '')
+  : undefined;
+---
+
+<article class="video" data-serie={video.serie}>
+  <a class="thumb" href={href} rel={externo ? 'noopener' : undefined}>
+    <img src={thumb(video.id, 'mq')} alt="" loading="lazy" decoding="async" width="320" height="180" />
+    <span class:list={['rotulo', `c-${cor}`]}>{video.rotulo}</span>
+    <span class="play" aria-hidden="true"><Icone nome="play" /></span>
+    {post && <span class="com-post">Post no blog</span>}
+    <span class="sr-only">{video.titulo}{externo ? ' (abre no YouTube)' : ''}</span>
+  </a>
+  <h3>{video.titulo}</h3>
+  <p class="meta">
+    <span>{SERIES[video.serie].nome}</span>
+    {data && <time datetime={video.data}>{data}</time>}
+  </p>
+</article>
+
+<style>
+  .video {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--line);
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease), filter 0.3s;
+  }
+  .thumb:hover img {
+    transform: scale(1.06);
+    filter: brightness(0.6);
+  }
+  .rotulo {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    color: #0a0a0a;
+  }
+  .c-laranja {
+    background: var(--g-o);
+  }
+  .c-azul {
+    background: var(--g-b);
+  }
+  .c-misto {
+    background: #fff;
+  }
+  .com-post {
+    position: absolute;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.75);
+    color: var(--o1);
+  }
+  .play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--g-o);
+    color: #120800;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s, transform 0.3s var(--ease);
+  }
+  .play :global(svg) {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-left: 2px;
+  }
+  .thumb:hover .play {
+    opacity: 1;
+    transform: none;
+  }
+  h3 {
+    font-family: var(--f-body);
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    margin: -0.35rem 0 0;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+</style>
