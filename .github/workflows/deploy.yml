@@ -1,5 +1,5 @@
-# Publica em https://eddwan.com no Cloudflare Workers a cada push na main
-# (o merge da develop na main gera esse push). Também dá para rodar à mão em Actions.
+# Publica em https://eddwan.com no Cloudflare Workers a cada push na main (o merge da develop na
+# main gera esse push), de 3 em 3 horas (vídeos novos do canal) e à mão em Actions.
 # Precisa do secret CLOUDFLARE_API_TOKEN (modelo "Edit Cloudflare Workers"; ver README).
 name: Deploy
 
@@ -7,6 +7,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Vídeos novos do canal entram pelo feed do YouTube no build: refaz o site de 3 em 3 horas
+  # (00h15, 03h15, ... em UTC; 21h15, 00h15 etc. em Brasília, logo depois dos horários de publicação)
+  schedule:
+    - cron: '15 */3 * * *'
 
 # Um deploy por vez; se chegar outro push, o anterior termina antes
 concurrency:
