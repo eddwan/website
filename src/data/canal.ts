@@ -55,7 +55,6 @@ const LISTA: VideoCanal[] = [
   { id: 'WMLGxYmihMk', titulo: 'Subi uma senha no GitHub. E agora?', data: '2026-10-30', serie: 'git', rotulo: 'Ep. 9' },
   { id: 'IvRdBtNMPEg', titulo: 'Mais 15 projetos open source do GitHub que valem o seu tempo', data: '2026-10-29', serie: 'open-source', rotulo: 'Vol. 18' },
   { id: 'LTzng0sG8V4', titulo: 'Mais 15 projetos open source do GitHub que valem o seu tempo', data: '2026-10-28', serie: 'open-source', rotulo: 'Vol. 17' },
-  { id: 'n6-jCqV0oLc', titulo: 'Música para programar: 1 hora de synthwave para focar no código', data: '2026-10-28', serie: 'especiais', rotulo: 'Mix' },
   { id: 'Z04sPaDfO0g', titulo: 'Mais 15 projetos open source do GitHub que valem o seu tempo', data: '2026-10-27', serie: 'open-source', rotulo: 'Vol. 16' },
   { id: '0AWCe7c0tkY', titulo: 'Mais 15 projetos open source do GitHub que valem o seu tempo', data: '2026-10-26', serie: 'open-source', rotulo: 'Vol. 15' },
   { id: 'sJwNLx8IjWU', titulo: 'Mais 15 projetos open source do GitHub que valem o seu tempo', data: '2026-10-25', serie: 'open-source', rotulo: 'Vol. 14' },
@@ -84,7 +83,9 @@ const LISTA: VideoCanal[] = [
 
 // Do mais novo para o mais antigo (sem data vai para o fim)
 const conhecidos = new Set(LISTA.map((v) => v.id));
-const novos = (await videosDoFeed()).filter((v) => !conhecidos.has(v.id));
+// Vídeos do canal que ficam fora do site: os mixes de "Música para programar" (decisão do Eddwan, 08/11/2026).
+const FORA_DO_SITE = [/^música para programar/i];
+const novos = (await videosDoFeed()).filter((v) => !conhecidos.has(v.id) && !FORA_DO_SITE.some((re) => re.test(v.titulo)));
 
 export const VIDEOS: VideoCanal[] = [...LISTA, ...novos].sort((a, b) => (b.data ?? '').localeCompare(a.data ?? ''));
 
