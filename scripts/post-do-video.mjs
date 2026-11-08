@@ -121,11 +121,14 @@ function pastasPorId() {
   return mapa;
 }
 
+// Vídeos do canal que não viram post: os mixes de "Música para programar" (decisão do Eddwan, 08/11/2026).
+const SEM_POST = [/^música para programar/i];
+
 if (flag('novos')) {
   const longos = await lerFeed(FEED_LONGOS);
   const comPost = idsComPost();
   const pastas = pastasPorId();
-  const novos = longos.filter((v) => v.id && !comPost.has(v.id));
+  const novos = longos.filter((v) => v.id && !comPost.has(v.id) && !SEM_POST.some((re) => re.test(v.titulo ?? '')));
   if (novos.length === 0) console.log('Nenhum vídeo público novo sem post.');
   for (const v of novos) {
     const origem = pastas.get(v.id) ?? `--feed=${v.id}`;
