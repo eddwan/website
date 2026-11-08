@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="https://eddwan.com"><img src=".github/banner.png" alt="eddwan: open source, Git e segurança, sem enrolação." width="100%"></a>
+</p>
+
 # eddwan.com: site pessoal do Eddwan
 
 Blog, notícias, vídeos do canal [@eddwan](https://www.youtube.com/@eddwan), portfólio e currículo.
@@ -95,6 +99,8 @@ npm run post-do-video -- v25-top15       # cria o rascunho em src/content/blog/
 Na máquina do Eddwan, o script lê a pasta de publicação do canal (privada, fora deste repositório; caminho em `YOUTUBE_PUBLICAR`), em `<id>/` (`youtube.json`, `enviados.json`, a descrição do vídeo em `descricoes/` e o `fontes.md`, se existir) e monta o post com `rascunho: true`. Listas viram “A lista, do 15º ao 1º” com o link de cada projeto; explicativos ganham “Neste vídeo” (capítulos) e o passo a passo da descrição, com os comandos e YAMLs em blocos de código; os shorts e as fontes entram no cabeçalho do post. A data vem de `src/data/canal.ts` ou do feed do canal. Revise o título (nas listas, os destaques), a descrição e o texto, confira no `npm run dev` e troque para `rascunho: false`.
 
 ## Visual
+
+O banner do topo deste README sai de `scripts/banner.mjs` (mesma identidade das imagens Open Graph): `npm run banner` regera `.github/banner.png`.
 
 Tema escuro, tipografia grande e as cores da Hallen Tech: laranja `#FFC301 → #FE7602` e azul `#03E7FC → #0183FB`.
 
