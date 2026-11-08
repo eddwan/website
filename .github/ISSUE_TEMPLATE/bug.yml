@@ -1,0 +1,24 @@
+name: Algo quebrado
+description: Link quebrado, página com erro, problema no celular, erro em um post
+labels: [bug]
+body:
+  - type: input
+    id: pagina
+    attributes:
+      label: Página
+      description: Endereço onde acontece
+      placeholder: https://eddwan.com/blog/...
+    validations:
+      required: true
+  - type: textarea
+    id: oque
+    attributes:
+      label: O que aconteceu
+      description: O que você esperava e o que viu. Se puder, mande um print.
+    validations:
+      required: true
+  - type: input
+    id: ambiente
+    attributes:
+      label: Navegador e aparelho
+      placeholder: Chrome no Android, Safari no iPhone, Firefox no Windows...

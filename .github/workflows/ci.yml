@@ -1,12 +1,16 @@
-# Confere o build em todo push na develop e em todo pull request para a main.
-# Não publica nada: o deploy só acontece no merge na main (deploy.yml).
+# Confere o build em todo push na develop e em todo pull request para a develop ou a main.
+# Não publica nada nem usa segredos (PRs de fork rodam com permissão só de leitura):
+# o deploy só acontece no merge na main (deploy.yml).
 name: CI
 
 on:
   push:
     branches: [develop]
   pull_request:
-    branches: [main]
+    branches: [develop, main]
+
+permissions:
+  contents: read
 
 jobs:
   build:

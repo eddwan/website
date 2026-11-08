@@ -1,0 +1,22 @@
+name: Ideia ou melhoria
+description: Proponha um recurso novo ou uma melhoria antes de abrir o PR
+labels: [ideia]
+body:
+  - type: textarea
+    id: ideia
+    attributes:
+      label: A ideia
+      description: O que você quer adicionar ou mudar, e por quê
+    validations:
+      required: true
+  - type: textarea
+    id: como
+    attributes:
+      label: Como faria
+      description: Opcional. Abordagem, bibliotecas, impacto no peso do site.
+  - type: checkboxes
+    id: pr
+    attributes:
+      label: Contribuição
+      options:
+        - label: Quero fazer o PR depois que a ideia for aprovada

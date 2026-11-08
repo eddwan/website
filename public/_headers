@@ -1,4 +1,4 @@
-# Cabeçalhos do Cloudflare Workers (arquivos estáticos). No Plesk vale o .htaccess.
+# Cabeçalhos do Cloudflare Workers (arquivos estáticos).
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
