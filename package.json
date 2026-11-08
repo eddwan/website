@@ -15,7 +15,8 @@
     "cf:deploy": "astro build && wrangler deploy",
     "cf:check": "astro build && wrangler deploy --dry-run",
     "cf:deploy-www": "wrangler deploy -c cloudflare/www-redirect/wrangler.jsonc",
-    "post-do-video": "node scripts/post-do-video.mjs"
+    "post-do-video": "node scripts/post-do-video.mjs",
+    "banner": "node scripts/banner.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
