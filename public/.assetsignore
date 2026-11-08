@@ -1,2 +1,0 @@
-# Arquivos de public/ que não sobem para o Cloudflare (o .htaccess é só do Plesk)
-.htaccess

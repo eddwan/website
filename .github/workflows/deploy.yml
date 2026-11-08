@@ -30,7 +30,11 @@ jobs:
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
+      # Com a main protegida, só a chave de deploy DEPLOY_KEY_POSTS (liberada na regra da main)
+      # consegue enviar os posts automáticos direto para ela. Sem o secret, usa o token padrão.
       - uses: actions/checkout@v5
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY_POSTS }}
       - uses: actions/setup-node@v5
         with:
           node-version: 26

@@ -1,22 +1,12 @@
-## Development
+# Instruções para agentes de código
 
-When starting the dev server, use background mode:
+Site pessoal do Eddwan (eddwan.com): Astro 7 estático, conteúdo em Markdown, deploy no Cloudflare Workers. Visão geral no [README](README.md), regras de contribuição em [CONTRIBUTING.md](CONTRIBUTING.md).
 
-```
-astro dev --background
-```
-
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
-
-## Documentation
-
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+- Textos da interface e commits em português do Brasil.
+- Rodar: `npm run dev` (porta 4321); conferir: `npm run build` (o CI roda `npm run cf:check`).
+- Não invente fatos do currículo nem do portfólio (`src/data/perfil.ts`, `src/content/portfolio/`): só o que o Eddwan confirmou.
+- Posts (`src/content/blog/`) seguem o esquema de `src/content.config.ts`; tags novas passam primeiro pelo mapa `src/data/tags.json`.
+- Sem dependências novas, rastreadores ou scripts de terceiros sem o OK do Eddwan.
+- Nunca ponha segredos no repositório: o token da Cloudflare fica só nos secrets do GitHub.
+- Trabalho na `develop`; a `main` é o que está no ar (merge na `main` = deploy).
+- Docs do Astro: https://docs.astro.build

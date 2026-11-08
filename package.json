@@ -11,7 +11,6 @@
     "preview": "astro preview",
     "astro": "astro",
     "novo-post": "node scripts/novo-post.mjs",
-    "deploy": "bash scripts/deploy.sh",
     "cf:dev": "astro build && wrangler dev",
     "cf:deploy": "astro build && wrangler deploy",
     "cf:check": "astro build && wrangler deploy --dry-run",
