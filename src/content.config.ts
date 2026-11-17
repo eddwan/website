@@ -1,5 +1,5 @@
 import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 const blog = defineCollection({
@@ -44,4 +44,35 @@ const portfolio = defineCollection({
   }),
 });
 
-export const collections = { blog, portfolio };
+const repositorios = defineCollection({
+  // Catálogo dos repositórios que saíram nos vídeos (gerado pelo script da planilha)
+  loader: file('src/data/repositorios.json'),
+  schema: z
+    .object({
+      id: z.string().regex(/^[\w.-]+\/[\w.-]+$/, 'id deve ser dono/repo'),
+      nome: z.string().min(1),
+      url: z.string().url(),
+      resumo: z.string().min(1),
+      tags: z.array(z.string()).min(1),
+      // Ferramentas que o repositório substitui (ex.: "Notion", "Photoshop")
+      alternativaA: z.array(z.string()).default([]),
+      linguagem: z.string().optional(),
+      licenca: z.string().min(1),
+      // Vídeos em que o repositório apareceu
+      aparicoes: z
+        .array(
+          z.object({
+            videoId: z.string().regex(/^[\w-]{11}$/, 'videoId do YouTube tem 11 caracteres'),
+            volume: z.string().regex(/^Vol\. \d+$/, 'volume no formato "Vol. 29"'),
+            data: z.coerce.date(),
+          }),
+        )
+        .min(1),
+    })
+    .refine((r) => r.url.toLowerCase() === `https://github.com/${r.id}`.toLowerCase(), {
+      message: 'url deve ser https://github.com/<id>',
+      path: ['url'],
+    }),
+});
+
+export const collections = { blog, portfolio, repositorios };
