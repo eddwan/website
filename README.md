@@ -131,6 +131,17 @@ Tema escuro, tipografia grande e as cores da Hallen Tech: laranja `#FFC301 → #
 - Shorts não entram na grade; os da página `/videos` vêm dos posts do blog (`youtube.formato: short`).
 - Vídeo com post: o post usa o mesmo ID em `youtube.id`, e o cartão passa a abrir o post.
 
+## Catálogo de repositórios
+
+`src/data/repositorios.json` é a coleção `repositorios` (esquema em `src/content.config.ts`, validado no build): os repositórios que já saíram nos vídeos. Não edite à mão; ele é gerado da planilha do canal (privada, fora deste repositório) na máquina do Eddwan:
+
+```bash
+npm run exportar-catalogo                         # padrão: ~/Projetos/hallentech/youtube-channel
+npm run exportar-catalogo -- <pasta do canal>     # outro caminho
+```
+
+O script lê a aba “Ranking completo” de `repositorios-para-videos.xlsx`, pega só as linhas com Status YouTube “Publicado” e busca o videoId em `video/publicar/<pasta do vídeo>/enviados.json`. Notas, alertas, peso e posição ficam na planilha. No fim, ele lista o que ficou de fora (sem videoId ou com campo faltando). Confira com `npm run build` e faça o commit do JSON.
+
 ## Fluxo de trabalho e deploy automático
 
 O trabalho acontece na **`develop`**; a **`main`** é o que está no ar.
