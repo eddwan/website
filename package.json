@@ -16,6 +16,7 @@
     "cf:check": "astro build && wrangler deploy --dry-run",
     "cf:deploy-www": "wrangler deploy -c cloudflare/www-redirect/wrangler.jsonc",
     "post-do-video": "node scripts/post-do-video.mjs",
+    "exportar-catalogo": "node scripts/exportar-catalogo.mjs",
     "banner": "node scripts/banner.mjs"
   },
   "dependencies": {
