@@ -63,7 +63,8 @@ const repositorios = defineCollection({
         .array(
           z.object({
             videoId: z.string().regex(/^[\w-]{11}$/, 'videoId do YouTube tem 11 caracteres'),
-            volume: z.string().regex(/^Vol\. \d+$/, 'volume no formato "Vol. 29"'),
+            // Top N é "Vol. 29"; short avulso é "Short 1"; episódio de série é "Ep. 3"
+            volume: z.string().regex(/^(Vol\.|Short|Ep\.) \d+$/, 'volume no formato "Vol. 29", "Short 1" ou "Ep. 3"'),
             data: z.coerce.date(),
           }),
         )
