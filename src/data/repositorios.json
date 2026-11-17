@@ -8979,5 +8979,694 @@
         "data": "2026-10-08"
       }
     ]
+  },
+  {
+    "id": "AmoabaKelvin/logdeck",
+    "nome": "logdeck",
+    "url": "https://github.com/AmoabaKelvin/logdeck",
+    "resumo": "Logs, alertas e gestão de containers Docker/Podman em um único binário Go, com CLI e servidor MCP.",
+    "tags": [
+      "CLI",
+      "servidor MCP",
+      "self-host",
+      "Docker",
+      "observabilidade",
+      "DevOps"
+    ],
+    "alternativaA": [],
+    "linguagem": "Go",
+    "licenca": "GPL-3.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "Augani/openreel-video",
+    "nome": "openreel-video",
+    "url": "https://github.com/Augani/openreel-video",
+    "resumo": "Editor de vídeo open-source no navegador e desktop, sem marca d'água, com legendas, áudio e cor.",
+    "tags": [
+      "web app",
+      "app desktop",
+      "navegador",
+      "vídeo"
+    ],
+    "alternativaA": [
+      "CapCut"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "bifrost0x/webssh",
+    "nome": "webssh",
+    "url": "https://github.com/bifrost0x/webssh",
+    "resumo": "Workspace SSH e SFTP auto-hospedado e multiusuário para homelabs e times.",
+    "tags": [
+      "web app",
+      "self-host",
+      "Docker",
+      "offline",
+      "terminal",
+      "redes",
+      "segurança"
+    ],
+    "alternativaA": [],
+    "linguagem": "Python",
+    "licenca": "Apache-2.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "bilawalsidhu/gods-eye-view",
+    "nome": "gods-eye-view",
+    "url": "https://github.com/bilawalsidhu/gods-eye-view",
+    "resumo": "Simulador de satélite espião no navegador com globo 3D e dados públicos ao vivo.",
+    "tags": [
+      "web app",
+      "navegador",
+      "3D",
+      "dados/BI"
+    ],
+    "alternativaA": [],
+    "linguagem": "JavaScript",
+    "licenca": "NOASSERTION",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "bridge-mind/bridgeclip",
+    "nome": "bridgeclip",
+    "url": "https://github.com/bridge-mind/bridgeclip",
+    "resumo": "App desktop open-source que transforma vídeos longos em clipes curtos legendados com IA.",
+    "tags": [
+      "app desktop",
+      "vídeo",
+      "marketing/redes sociais"
+    ],
+    "alternativaA": [
+      "OpusClip"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "cjpais/Handy",
+    "nome": "Handy",
+    "url": "https://github.com/cjpais/Handy",
+    "resumo": "App desktop gratuito e offline de ditado por voz com Whisper/Parakeet que cola o texto em qualquer campo.",
+    "tags": [
+      "app desktop",
+      "offline",
+      "roda local",
+      "macOS",
+      "Windows",
+      "Linux",
+      "voz/áudio",
+      "produtividade"
+    ],
+    "alternativaA": [],
+    "linguagem": "Rust",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "cogsend/cogsend",
+    "nome": "cogsend",
+    "url": "https://github.com/cogsend/cogsend",
+    "resumo": "Agendador de redes sociais self-hosted na Cloudflare para Mastodon, Bluesky, LinkedIn, Threads e X, com MCP.",
+    "tags": [
+      "web app",
+      "self-host",
+      "nuvem",
+      "marketing/redes sociais",
+      "automação"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "different-ai/openwork",
+    "nome": "openwork",
+    "url": "https://github.com/different-ai/openwork",
+    "resumo": "Alternativa open source ao Claude Cowork: app desktop em que agentes trabalham nos seus arquivos com 50+ modelos.",
+    "tags": [
+      "app desktop",
+      "agentes",
+      "produtividade",
+      "arquivos"
+    ],
+    "alternativaA": [
+      "Claude Cowork"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "NOASSERTION",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "ericerkz/kept",
+    "nome": "kept",
+    "url": "https://github.com/ericerkz/kept",
+    "resumo": "App de notas self-hosted estilo Google Keep, com checklists, lembretes, apps iOS/Android e servidor MCP.",
+    "tags": [
+      "web app",
+      "app mobile",
+      "self-host",
+      "iOS",
+      "Android",
+      "notas/conhecimento",
+      "produtividade"
+    ],
+    "alternativaA": [
+      "Google Keep"
+    ],
+    "linguagem": "JavaScript",
+    "licenca": "NOASSERTION",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "every-app/open-seo",
+    "nome": "open-seo",
+    "url": "https://github.com/every-app/open-seo",
+    "resumo": "Alternativa open source ao Semrush e Ahrefs com pay-as-you-go via DataForSEO, MCP e skills para agentes.",
+    "tags": [
+      "web app",
+      "servidor MCP",
+      "self-host",
+      "marketing/redes sociais"
+    ],
+    "alternativaA": [
+      "Semrush",
+      "Ahrefs"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "f/textream",
+    "nome": "textream",
+    "url": "https://github.com/f/textream",
+    "resumo": "Teleprompter gratuito para Mac e iPhone que destaca cada palavra falada, com overlay estilo Dynamic Island.",
+    "tags": [
+      "app desktop",
+      "app mobile",
+      "macOS",
+      "iOS",
+      "vídeo",
+      "produtividade"
+    ],
+    "alternativaA": [],
+    "linguagem": "Swift",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "generalaction/emdash",
+    "nome": "emdash",
+    "url": "https://github.com/generalaction/emdash",
+    "resumo": "App desktop para rodar vários agentes de código em paralelo, cada um num Git worktree, local ou via SSH.",
+    "tags": [
+      "app desktop",
+      "Claude Code",
+      "agentes",
+      "git"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "Apache-2.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "hieunc229/mailflare",
+    "nome": "mailflare",
+    "url": "https://github.com/hieunc229/mailflare",
+    "resumo": "Caixa de e-mail self-hosted para domínios próprios sobre Cloudflare, com Resend ou SES, calendário e caixas compartilhadas.",
+    "tags": [
+      "web app",
+      "self-host",
+      "nuvem",
+      "e-mail"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "AGPL-3.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "kajisho5/ffmpeg-skill",
+    "nome": "ffmpeg-skill",
+    "url": "https://github.com/kajisho5/ffmpeg-skill",
+    "resumo": "Skill que dá ao agente de código um editor de vídeo local com FFmpeg, com 53 demos antes e depois.",
+    "tags": [
+      "plugin/skill",
+      "servidor MCP",
+      "roda local",
+      "vídeo",
+      "voz/áudio"
+    ],
+    "alternativaA": [],
+    "linguagem": "Python",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "kenryu42/cc-safety-net",
+    "nome": "cc-safety-net",
+    "url": "https://github.com/kenryu42/cc-safety-net",
+    "resumo": "Plugin que bloqueia comandos destrutivos e acesso a segredos antes que o agente de código execute.",
+    "tags": [
+      "plugin/skill",
+      "Claude Code",
+      "Codex",
+      "segurança",
+      "agentes"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "langgenius/dify",
+    "nome": "dify",
+    "url": "https://github.com/langgenius/dify",
+    "resumo": "Plataforma open source para criar apps de IA com workflows visuais, RAG e agentes.",
+    "tags": [
+      "web app",
+      "self-host",
+      "nuvem",
+      "agentes",
+      "automação",
+      "RAG/busca"
+    ],
+    "alternativaA": [],
+    "linguagem": "Python",
+    "licenca": "NOASSERTION",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "LogicLabs-OU/OpenArchiver",
+    "nome": "OpenArchiver",
+    "url": "https://github.com/LogicLabs-OU/OpenArchiver",
+    "resumo": "Plataforma self-hosted para arquivar e buscar e-mails do Gmail, Microsoft 365, IMAP e PST.",
+    "tags": [
+      "web app",
+      "self-host",
+      "e-mail",
+      "backup"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "AGPL-3.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "louislam/dockge",
+    "nome": "dockge",
+    "url": "https://github.com/louislam/dockge",
+    "resumo": "Gerenciador web e reativo de stacks docker compose, do criador do Uptime Kuma.",
+    "tags": [
+      "web app",
+      "self-host",
+      "Docker",
+      "DevOps"
+    ],
+    "alternativaA": [
+      "Portainer"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "Maxteabag/sqlit",
+    "nome": "sqlit",
+    "url": "https://github.com/Maxteabag/sqlit",
+    "resumo": "TUI estilo lazygit para conectar e consultar dezenas de bancos de dados pelo terminal.",
+    "tags": [
+      "TUI",
+      "terminal",
+      "banco de dados"
+    ],
+    "alternativaA": [],
+    "linguagem": "Python",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "mayswind/ezbookkeeping",
+    "nome": "ezbookkeeping",
+    "url": "https://github.com/mayswind/ezbookkeeping",
+    "resumo": "App de finanças pessoais self-hosted, leve, com PWA, importação de vários formatos e recursos de IA.",
+    "tags": [
+      "web app",
+      "self-host",
+      "finanças"
+    ],
+    "alternativaA": [],
+    "linguagem": "Go",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "melgarafael/DeskcommCRM",
+    "nome": "DeskcommCRM",
+    "url": "https://github.com/melgarafael/DeskcommCRM",
+    "resumo": "CRM open source brasileiro com agentes de IA que atendem e vendem no WhatsApp, rodando na sua VPS.",
+    "tags": [
+      "web app",
+      "self-host",
+      "mensagens/chat",
+      "agentes",
+      "marketing/redes sociais"
+    ],
+    "alternativaA": [
+      "Kommo",
+      "Octadesk",
+      "Intercom"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "Nearcyan/vibecraft",
+    "nome": "vibecraft",
+    "url": "https://github.com/Nearcyan/vibecraft",
+    "resumo": "Interface visual em 3D que mostra seu Claude Code trabalhando como num ateliê, com áudio espacial.",
+    "tags": [
+      "web app",
+      "Claude Code",
+      "3D",
+      "agentes",
+      "voz/áudio"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "openobserve/openobserve",
+    "nome": "openobserve",
+    "url": "https://github.com/openobserve/openobserve",
+    "resumo": "Alternativa open source ao Datadog para logs, métricas, traces e RUM, em Rust com custo de storage muito menor.",
+    "tags": [
+      "API/servidor",
+      "self-host",
+      "observabilidade",
+      "DevOps"
+    ],
+    "alternativaA": [
+      "Datadog",
+      "Splunk",
+      "Elasticsearch"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "AGPL-3.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "presenton/presenton",
+    "nome": "presenton",
+    "url": "https://github.com/presenton/presenton",
+    "resumo": "Gerador open source de apresentações com IA, alternativa ao Gamma e Canva, com API.",
+    "tags": [
+      "web app",
+      "API/servidor",
+      "self-host",
+      "documentos/PDF",
+      "agentes",
+      "design"
+    ],
+    "alternativaA": [
+      "Gamma",
+      "Canva"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "Apache-2.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "sgasser/pasteguard",
+    "nome": "pasteguard",
+    "url": "https://github.com/sgasser/pasteguard",
+    "resumo": "Mascara dados pessoais e segredos antes de chegarem a ChatGPT, Claude e agentes.",
+    "tags": [
+      "extensão de navegador",
+      "API/servidor",
+      "roda local",
+      "privacidade",
+      "segurança",
+      "agentes"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "Apache-2.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "Taskosaur/Taskosaur",
+    "nome": "Taskosaur",
+    "url": "https://github.com/Taskosaur/Taskosaur",
+    "resumo": "Gerenciador de projetos open source com IA conversacional que executa tarefas por conversa.",
+    "tags": [
+      "web app",
+      "self-host",
+      "produtividade",
+      "agentes"
+    ],
+    "alternativaA": [
+      "Jira",
+      "Asana"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "NOASSERTION",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "vercel-labs/agent-browser",
+    "nome": "agent-browser",
+    "url": "https://github.com/vercel-labs/agent-browser",
+    "resumo": "CLI nativo em Rust da Vercel que automatiza o navegador para agentes de IA com snapshots e refs.",
+    "tags": [
+      "CLI",
+      "navegador automatizado",
+      "agentes"
+    ],
+    "alternativaA": [],
+    "linguagem": "Rust",
+    "licenca": "Apache-2.0",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "webadderallorg/Recordly",
+    "nome": "Recordly",
+    "url": "https://github.com/webadderallorg/Recordly",
+    "resumo": "Gravador e editor de tela open source com zoom automático, cursor suavizado e molduras estilizadas para demos.",
+    "tags": [
+      "app desktop",
+      "macOS",
+      "Windows",
+      "Linux",
+      "vídeo"
+    ],
+    "alternativaA": [
+      "Screen Studio"
+    ],
+    "linguagem": "TypeScript",
+    "licenca": "NOASSERTION",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
+  },
+  {
+    "id": "workersio/breakscale",
+    "nome": "breakscale",
+    "url": "https://github.com/workersio/breakscale",
+    "resumo": "Simulador de design de sistemas com simulação real de eventos: monte a arquitetura e aumente a carga até quebrar.",
+    "tags": [
+      "web app",
+      "navegador",
+      "educação",
+      "backend"
+    ],
+    "alternativaA": [],
+    "linguagem": "TypeScript",
+    "licenca": "MIT",
+    "aparicoes": [
+      {
+        "videoId": "u2Cs4UWW260",
+        "volume": "Vol. 1",
+        "data": "2026-10-06"
+      }
+    ]
   }
 ]
