@@ -4,6 +4,7 @@
     "nome": "zigzag",
     "url": "https://github.com/simpsoka/zigzag",
     "resumo": "Programa grátis de bordado para Mac e Windows: transforma SVG em bordado de máquina, edita os pontos e cria desenhos com agentes por MCP.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "servidor MCP",
@@ -32,6 +33,7 @@
     "nome": "freefield",
     "url": "https://github.com/neuregex/freefield",
     "resumo": "Os apps de imagem, vídeo, efeitos e áudio do Higgsfield recriados sobre o ComfyUI, com 120 apps e só modelos abertos, na sua GPU ou no Modal.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "web app",
       "self-host",
@@ -58,6 +60,7 @@
     "nome": "airhand",
     "url": "https://github.com/sqlpxc/airhand",
     "resumo": "Acesso remoto de baixa latência: tela codificada na GPU a até 120 fps por QUIC, com servidor de retransmissão próprio e apps para Windows, Mac, Linux, Android e navegador.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "app desktop",
       "self-host",
@@ -88,6 +91,7 @@
     "nome": "satellites",
     "url": "https://github.com/dev-Armaan/satellites",
     "resumo": "Watched.earth: mostra todas as imagens públicas de satélite da Terra (Sentinel, Landsat, NASA) num globo interativo.",
+    "categoria": "Outros",
     "tags": [
       "web app",
       "navegador",
@@ -112,6 +116,7 @@
     "nome": "office-engine",
     "url": "https://github.com/p10node/office-engine",
     "resumo": "Biblioteca que abre e edita DOCX, XLSX e PPTX no navegador, sem servidor e sem dependências.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "navegador",
@@ -138,6 +143,7 @@
     "nome": "shorts-kit",
     "url": "https://github.com/howznguyen/shorts-kit",
     "resumo": "Faz shorts verticais narrados (TikTok, Shorts, Reels) com um agente de código e o Remotion: 9 skills, 20 roteiros e efeitos sonoros CC0.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -164,6 +170,7 @@
     "nome": "Orwell",
     "url": "https://github.com/magnuslab-sudo/Orwell",
     "resumo": "Chat e chamadas para comunidades com criptografia de ponta a ponta, focado em privacidade.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -189,6 +196,7 @@
     "nome": "blender-skills",
     "url": "https://github.com/EL4CTEO/blender-skills",
     "resumo": "28 skills para agentes de código fazerem o pipeline 3D completo no Blender 5.2.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -213,6 +221,7 @@
     "nome": "mitra",
     "url": "https://github.com/a11delavar/mitra",
     "resumo": "Calendário self-hosted que junta eventos e tarefas na mesma linha do tempo, com sincronia CalDAV, Google e Notion.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "self-host",
@@ -237,6 +246,7 @@
     "nome": "gpucanvas",
     "url": "https://github.com/berkantay/gpucanvas",
     "resumo": "Milhares de elementos HTML ao vivo numa tela infinita desenhada pela GPU, com editor, shaders e um agente que lê e aponta os elementos.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "navegador",
@@ -263,6 +273,7 @@
     "nome": "ThreeRT",
     "url": "https://github.com/meshy-dev/ThreeRT",
     "resumo": "Ray tracing de verdade com uma API no estilo do three.js: motor em Rust e wgpu, cenas em TypeScript, da Meshy.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "GPU",
@@ -287,6 +298,7 @@
     "nome": "openshelf",
     "url": "https://github.com/wingedpanther/openshelf",
     "resumo": "Loja de apps para Android TV que instala apps open source direto das releases do GitHub.",
+    "categoria": "Self-hosted",
     "tags": [
       "app mobile",
       "TV",
@@ -312,6 +324,7 @@
     "nome": "ui",
     "url": "https://github.com/vercel-labs/ui",
     "resumo": "Biblioteca da Vercel com comportamentos prontos para agentes montarem interfaces que se adaptam enquanto você usa.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "SDK",
@@ -336,6 +349,7 @@
     "nome": "yami",
     "url": "https://github.com/Trendorin/yami",
     "resumo": "Desktop em pixel art para o compositor niri no Linux, com barra, launcher, dock e tela de bloqueio em Rust.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "app desktop",
       "Linux",
@@ -361,6 +375,7 @@
     "nome": "github-cool-readme",
     "url": "https://github.com/pedrocatalao/github-cool-readme",
     "resumo": "Cartões animados em SVG com as suas estatísticas para o README do perfil do GitHub, contando trabalho privado e de organizações, via GitHub Action.",
+    "categoria": "Dev Tools",
     "tags": [
       "template/starter",
       "GitHub",
@@ -384,6 +399,7 @@
     "nome": "procraft",
     "url": "https://github.com/artcraft-android/procraft",
     "resumo": "App de pintura open source para tablets Android, Windows e Linux, com motor próprio em Rust e pincéis sensíveis à pressão.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "app mobile",
@@ -414,6 +430,7 @@
     "nome": "benchup",
     "url": "https://github.com/BenchUp3D/benchup",
     "resumo": "Modelador 3D gratuito para marcenaria e móveis, em Rust, no desktop e no navegador.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "web app",
@@ -442,6 +459,7 @@
     "nome": "phonebox",
     "url": "https://github.com/ersinkoc/phonebox",
     "resumo": "Transforma um Android velho em painel de mesa do PC, com 113 widgets, por USB ou Wi-Fi, sem nuvem.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "app mobile",
       "app desktop",
@@ -470,6 +488,7 @@
     "nome": "yogurt",
     "url": "https://github.com/FrigadeHQ/yogurt",
     "resumo": "Notas de reunião com IA, privadas, gratuitas e sem bot na chamada",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "roda local",
@@ -499,6 +518,7 @@
     "nome": "modern-web-guidance",
     "url": "https://github.com/GoogleChrome/modern-web-guidance",
     "resumo": "Skills que ensinam agentes a usar recursos modernos da web em vez de padrões legados",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "CLI",
@@ -524,6 +544,7 @@
     "nome": "BIMCraft",
     "url": "https://github.com/IPedrax/BIMCraft",
     "resumo": "BIM aberto em Rust, no estilo do Autodesk Revit: níveis, paredes, plantas, cortes, folhas e IFC.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "servidor MCP",
@@ -552,6 +573,7 @@
     "nome": "SculptForge",
     "url": "https://github.com/islandmed/SculptForge",
     "resumo": "Escultura 3D gratuita e open source, com IA embutida que cria pincéis e modelos a partir de um desenho ou texto.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "Windows",
@@ -581,6 +603,7 @@
     "nome": "Lemon-Studio",
     "url": "https://github.com/ItsAlphaNeon/Lemon-Studio",
     "resumo": "Estação de áudio digital gratuita e open source em Rust, com piano roll, arranjador e mixer, para Windows, Linux e macOS.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "Windows",
@@ -608,6 +631,7 @@
     "nome": "ztd-charts",
     "url": "https://github.com/Junhan2/ztd-charts",
     "resumo": "44 gráficos React animados e acessíveis em SVG puro, com especificação JSON para agentes",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "servidor MCP",
@@ -633,6 +657,7 @@
     "nome": "claude-share",
     "url": "https://github.com/Paradigm-Study/claude-share",
     "resumo": "Plugin que compartilha uma sessão do Claude Code por link, e um colega entra e conversa com o Claude no mesmo código.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -660,6 +685,7 @@
     "nome": "panel",
     "url": "https://github.com/serveroshq/panel",
     "resumo": "Painel web para gerenciar os servidores Linux que você já tem: deploy, backups, monitores e logs.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -688,6 +714,7 @@
     "nome": "mousepods",
     "url": "https://github.com/starman-tech/mousepods",
     "resumo": "Usa o rastreamento de cabeça dos AirPods como mouse e câmera de jogos no Linux, sem aparelho Apple.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "app desktop",
       "Linux",
@@ -713,6 +740,7 @@
     "nome": "cadcraft",
     "url": "https://github.com/storytold/cadcraft",
     "resumo": "CAD 2D e 3D open source em Rust puro, com linha de comando estilo AutoCAD, DXF e DWG, no desktop e no navegador.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "web app",
@@ -742,6 +770,7 @@
     "nome": "gridcraft",
     "url": "https://github.com/storytold/gridcraft",
     "resumo": "Planilha open source e rápida, escrita em Rust puro, no desktop e no navegador",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "web app",
@@ -771,6 +800,7 @@
     "nome": "Mika",
     "url": "https://github.com/wangzan101/Mika",
     "resumo": "Assistente de IA no celular que usa seus apps numa tela de fundo escondida",
+    "categoria": "Agentes de IA",
     "tags": [
       "app mobile",
       "agentes",
@@ -795,6 +825,7 @@
     "nome": "agent-standup",
     "url": "https://github.com/Atoll92/agent-standup",
     "resumo": "Mostra as sessões de Claude Code, Codex e Mistral Vibe como uma reunião animada: quem espera quem e quem está travado.",
+    "categoria": "Agentes de IA",
     "tags": [
       "extensão de navegador",
       "VS Code",
@@ -819,6 +850,7 @@
     "nome": "textfold",
     "url": "https://github.com/chenxiachan/textfold",
     "resumo": "Dobra artigos, PDFs e páginas em 5 níveis de detalhe, do texto completo ao tópico, sem perder as palavras do autor.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "extensão de navegador",
@@ -848,6 +880,7 @@
     "nome": "agentplay",
     "url": "https://github.com/Entelligence-AI/agentplay",
     "resumo": "Reproduz as sessões dos seus agentes de código como mapa e linha do tempo: o que leram, editaram e onde falharam.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "Claude Code",
@@ -872,6 +905,7 @@
     "nome": "esp-sdr",
     "url": "https://github.com/ESPARGOS/esp-sdr",
     "resumo": "Firmware que transforma o rádio Wi-Fi e Bluetooth de uma placa ESP32 comum num rádio definido por software (só recepção).",
+    "categoria": "Hardware/Maker",
     "tags": [
       "firmware",
       "ESP32/microcontrolador",
@@ -898,6 +932,7 @@
     "nome": "exact",
     "url": "https://github.com/expo/exact",
     "resumo": "Da Expo: escreva o app uma vez e rode nativo na web, no macOS, no iOS e no Linux, com um agente de IA testando tudo.",
+    "categoria": "Dev Tools",
     "tags": [
       "SDK",
       "linguagem de programação",
@@ -928,6 +963,7 @@
     "nome": "steamac",
     "url": "https://github.com/fxgl/steamac",
     "resumo": "Roda o SteamOS oficial da Valve numa máquina virtual com GPU acelerada no Mac com Apple Silicon, com jogos de Windows pelo Proton.",
+    "categoria": "Outros",
     "tags": [
       "app desktop",
       "macOS",
@@ -954,6 +990,7 @@
     "nome": "chimera-vocal-synth",
     "url": "https://github.com/jamesondh/chimera-vocal-synth",
     "resumo": "Sintetizador de voz no navegador que simula pulmões, cordas vocais e boca, sem amostras: fala, canta e faz beatbox.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "web app",
       "CLI",
@@ -978,6 +1015,7 @@
     "nome": "skills",
     "url": "https://github.com/juliobsz/skills",
     "resumo": "Skill /awwwards: o agente cria um site de nível de premiação a partir de uma frase e confere no navegador.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -1002,6 +1040,7 @@
     "nome": "rea-video",
     "url": "https://github.com/JuneYaooo/rea-video",
     "resumo": "Desmonta um vídeo cena a cena: diz se foi filmado, gerado por IA, feito em 3D ou em código, e como refazer cada cena.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "CLI",
       "plugin/skill",
@@ -1027,6 +1066,7 @@
     "nome": "esp32sim",
     "url": "https://github.com/mikroverk/esp32sim",
     "resumo": "Emulador de ESP32 que roda o firmware real no computador ou no navegador, sem precisar da placa.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "app desktop",
       "navegador",
@@ -1050,6 +1090,7 @@
     "nome": "ember-cloudflare",
     "url": "https://github.com/NYLLON-SOFTWARE/ember-cloudflare",
     "resumo": "Chat de equipe estilo Slack que roda na sua conta da Cloudflare, sem cobrança por pessoa e com o histórico inteiro.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "nuvem",
@@ -1076,6 +1117,7 @@
     "nome": "oil-ui",
     "url": "https://github.com/oil-oil/oil-ui",
     "resumo": "Skill de design de interface para agentes: escolhe uma direção visual, compara estilos lado a lado e confere em capturas.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -1102,6 +1144,7 @@
     "nome": "oink",
     "url": "https://github.com/oinkvm/oink",
     "resumo": "Um teclado e um mouse para vários Macs e PCs com Windows, com área de transferência, arrastar arquivos e áudio entre eles.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -1129,6 +1172,7 @@
     "nome": "KIKUmap",
     "url": "https://github.com/tang1693/KIKUmap",
     "resumo": "App de barra de menus do Mac que organiza as conversas do Claude e do ChatGPT num mapa mental e mostra o status de cada uma.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -1155,6 +1199,7 @@
     "nome": "CUI",
     "url": "https://github.com/yappologistic/CUI",
     "resumo": "Biblioteca de interface em C, sem dependências, com cerca de 210 componentes animados; um app inteiro fica com ~250 KB.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "Windows",
@@ -1183,6 +1228,7 @@
     "nome": "machine-skill",
     "url": "https://github.com/AirsupHQ/machine-skill",
     "resumo": "Skill do Claude Code que transforma uma frase em simulação 3D interativa e física de qualquer máquina, mais o vídeo para postar.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -1206,6 +1252,7 @@
     "nome": "DEsk",
     "url": "https://github.com/fyzugx/DEsk",
     "resumo": "Ambiente de desktop Wayland para Linux em estilo realista: janelas são folhas de papel sobre uma mesa de madeira.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "Linux",
@@ -1227,6 +1274,7 @@
     "nome": "terminal-mac",
     "url": "https://github.com/govijr/terminal-mac",
     "resumo": "Um macOS inteiro numa máquina virtual, visto e controlado pelo terminal, para agentes usarem o computador sem mexer no seu Mac.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "CLI",
       "macOS",
@@ -1250,6 +1298,7 @@
     "nome": "herdr-app",
     "url": "https://github.com/herdrdev/herdr-app",
     "resumo": "App de desktop para terminais e agentes de código: organiza o trabalho em espaços, mostra quais agentes precisam de você e mantém os terminais rodando com a janela fechada.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "app desktop",
       "macOS",
@@ -1274,6 +1323,7 @@
     "nome": "player",
     "url": "https://github.com/livliv-dev/player",
     "resumo": "Player leve de personagens 2.5D para a web, com sincronização labial e rastreamento do rosto pela webcam; vem com 21 personagens prontos.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "navegador",
@@ -1297,6 +1347,7 @@
     "nome": "DragShift",
     "url": "https://github.com/llamaboi55/DragShift",
     "resumo": "Converte e edita arquivos arrastando e apertando Shift para abrir um menu radial, no Windows, Mac e Linux.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "Windows",
@@ -1321,6 +1372,7 @@
     "nome": "snow-shot",
     "url": "https://github.com/mg-chao/snow-shot",
     "resumo": "Captura e gravação de tela para Windows e macOS, com anotações, OCR e imagem fixada na tela; alternativa grátis ao Snagit e ao CleanShot X.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "Windows",
@@ -1348,6 +1400,7 @@
     "nome": "claude-animated-shorts",
     "url": "https://github.com/mromidev/claude-animated-shorts",
     "resumo": "Skill do Claude Code que cria shorts animados de um minuto: personagens 2D num mundo 3D colorido, com three.js e Remotion.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -1372,6 +1425,7 @@
     "nome": "microduck",
     "url": "https://github.com/pollen-robotics/microduck",
     "resumo": "Robozinho bípede em forma de pato, impresso em 3D, que aprendeu a andar por aprendizado por reforço; projeto aberto da Pollen Robotics.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "firmware",
       "hardware",
@@ -1393,6 +1447,7 @@
     "nome": "quiet-md",
     "url": "https://github.com/s1dashu/quiet-md",
     "resumo": "App de notas nativo e muito rápido para macOS e Windows, desenhado na GPU com Rust, com as notas guardadas no seu computador.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "roda local",
@@ -1417,6 +1472,7 @@
     "nome": "swiftvm",
     "url": "https://github.com/swiftvm-app/swiftvm",
     "resumo": "App nativo para Mac que cria máquinas virtuais macOS, Linux e Windows 11 que se instalam sozinhas, com snapshots e CLI.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "CLI",
@@ -1441,6 +1497,7 @@
     "nome": "BeamNG.Earth",
     "url": "https://github.com/TecnaGamer/BeamNG.Earth",
     "resumo": "Mod que põe a Terra inteira em escala 1:1 no BeamNG.drive, com relevo real, imagem de satélite, prédios e árvores do mundo todo.",
+    "categoria": "Outros",
     "tags": [
       "app desktop",
       "Windows",
@@ -1466,6 +1523,7 @@
     "nome": "3d-model-anything",
     "url": "https://github.com/wesbos/3d-model-anything",
     "resumo": "Escaneie um cômodo com o iPhone e o agente monta uma cena Three.js editável a partir da geometria e das fotos.",
+    "categoria": "Design/UI",
     "tags": [
       "app mobile",
       "iOS",
@@ -1488,6 +1546,7 @@
     "nome": "farol",
     "url": "https://github.com/winnin/farol",
     "resumo": "CLI e GitHub Action brasileiros que mostram o risco de aceitar um pull request e quais arquivos concentram esse risco.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "GitHub",
@@ -1510,6 +1569,7 @@
     "nome": "cicada",
     "url": "https://github.com/wquguru/cicada",
     "resumo": "Legenda ao vivo, tradução simultânea e ata de qualquer áudio do computador (Zoom, Meet, YouTube), no Mac, Windows, Linux e Android.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "app mobile",
@@ -1540,6 +1600,7 @@
     "nome": "CardboardXR",
     "url": "https://github.com/brenpoly/CardboardXR",
     "resumo": "Realidade virtual no celular com óculos tipo Cardboard: rastreamento de cabeça 6DoF, câmera de passagem e rastreamento das mãos; o óculos se imprime em 3D.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "app mobile",
       "Android",
@@ -1567,6 +1628,7 @@
     "nome": "Winc",
     "url": "https://github.com/DEEIX-AI/Winc",
     "resumo": "Editor de texto e código nativo em Rust: abre em 0,1 s, usa 52 MB com 100 mil linhas abertas e edita arquivos de 1 GB.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "macOS",
@@ -1590,6 +1652,7 @@
     "nome": "Claude-Code-Game-Studios",
     "url": "https://github.com/Donchitos/Claude-Code-Game-Studios",
     "resumo": "Transforma o Claude Code num estúdio de jogos: 49 agentes e 74 skills organizados como diretores, líderes e especialistas, da ideia ao lançamento.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -1612,6 +1675,7 @@
     "nome": "tucano",
     "url": "https://github.com/eduwxyz/tucano",
     "resumo": "Seu time de agentes de IA no computador: conversam em canais, escrevem e revisam código e pedem o seu sim antes de mexer no mundo real, usando o Claude Code, o Codex ou o OpenCode.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "macOS",
@@ -1640,6 +1704,7 @@
     "nome": "dimensional-drawing",
     "url": "https://github.com/enesozturk/dimensional-drawing",
     "resumo": "Skill que desenha seus componentes de UI como os desenhos dimensionais da Apple, com medidas, espaçamentos e camadas.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "design",
@@ -1661,6 +1726,7 @@
     "nome": "ImmichGallery",
     "url": "https://github.com/IGOLz/ImmichGallery",
     "resumo": "App nativo de macOS para a biblioteca de fotos do Immich, com a cara do app Fotos da Apple (projeto independente, não oficial).",
+    "categoria": "Self-hosted",
     "tags": [
       "app desktop",
       "macOS",
@@ -1684,6 +1750,7 @@
     "nome": "kiri",
     "url": "https://github.com/libracoder/kiri",
     "resumo": "Runtime de contêineres pequeno e rápido para macOS, Windows e Linux, compatível com o docker, o Compose e o buildx que você já usa.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "app desktop",
       "CLI",
@@ -1713,6 +1780,7 @@
     "nome": "MagoStudio",
     "url": "https://github.com/MagoStudio/MagoStudio",
     "resumo": "Editor de vídeo com IA que roda no seu computador: vai do roteiro ao storyboard e às cenas e reestiliza vídeos, usando a sua GPU pelo ComfyUI.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "roda local",
@@ -1738,6 +1806,7 @@
     "nome": "atlas-filemanager",
     "url": "https://github.com/neondeex/atlas-filemanager",
     "resumo": "Gerenciador de arquivos nativo para Windows, desenhado na GPU com Rust: cinco modos de exibição, abas, busca instantânea e prévia com espaço.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "Windows",
@@ -1762,6 +1831,7 @@
     "nome": "bygga",
     "url": "https://github.com/Nutlope/bygga",
     "resumo": "Monte móveis da IKEA passo a passo em 3D no estilo do manual de papel, com narração e comando de voz.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "3D",
@@ -1784,6 +1854,7 @@
     "nome": "rawmakase",
     "url": "https://github.com/pch/rawmakase",
     "resumo": "Revelador de fotos RAW grátis para Linux, macOS e Windows, com os controles do Lightroom, importação do catálogo .lrcat e dos presets.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "roda local",
@@ -1812,6 +1883,7 @@
     "nome": "sand3d",
     "url": "https://github.com/Sandflow-ai/sand3d",
     "resumo": "Biblioteca Python para modelos de IA criarem objetos 3D como programas curtos, peça por peça, sobre o Blender.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "Blender",
@@ -1836,6 +1908,7 @@
     "nome": "idol-sdk",
     "url": "https://github.com/speridlabs/idol-sdk",
     "resumo": "Transforma uma única foto de objeto em modelo 3D Gaussian splat em menos de 2 s, numa GPU comum com 7 GB.",
+    "categoria": "IA/Modelos",
     "tags": [
       "SDK",
       "GPU",
@@ -1858,6 +1931,7 @@
     "nome": "minilytics",
     "url": "https://github.com/surendrapandar/minilytics",
     "resumo": "Analytics para sites que mostra qual origem de visita gerou receita, rodando no plano grátis da Cloudflare.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "nuvem",
@@ -1882,6 +1956,7 @@
     "nome": "brainotes",
     "url": "https://github.com/swimmingbrain/brainotes",
     "resumo": "Anotações à mão e quadro branco no navegador, com caneta sensível à pressão e o PDF da aula ao lado, sem conta.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "navegador",
@@ -1907,6 +1982,7 @@
     "nome": "bare-browser",
     "url": "https://github.com/BareBrowser/bare-browser",
     "resumo": "Build de Chromium para Android sem Google, com extensões, uBlock Origin e reprodução em segundo plano.",
+    "categoria": "Produtividade",
     "tags": [
       "app mobile",
       "Android",
@@ -1930,6 +2006,7 @@
     "nome": "boardui",
     "url": "https://github.com/BoardUI/boardui",
     "resumo": "Design system React para interfaces de agentes de IA, com código-fonte copiável, chat pronto e servidor MCP.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "design",
@@ -1952,6 +2029,7 @@
     "nome": "openform",
     "url": "https://github.com/dabit3/openform",
     "resumo": "Alternativa open source ao Typeform com uma pergunta por vez, 13 tipos, temas e dashboard, em Next.js e Supabase.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "self-host",
@@ -1976,6 +2054,7 @@
     "nome": "Search",
     "url": "https://github.com/driceroland/Search",
     "resumo": "Navegador para Mac de 9 MB, rápido e silencioso: só abas e a página, sem barra, sem conta e sem sugestões.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -2001,6 +2080,7 @@
     "nome": "create-photo-flipbook-ui",
     "url": "https://github.com/HaichaoLihc/create-photo-flipbook-ui",
     "resumo": "Skill do Codex que transforma fotos em livro interativo com páginas viradas, mais coleção de UIs de galeria.",
+    "categoria": "Design/UI",
     "tags": [
       "plugin/skill",
       "Codex",
@@ -2024,6 +2104,7 @@
     "nome": "ui-skills",
     "url": "https://github.com/ibelick/ui-skills",
     "resumo": "Registro de skills para design engineers com CLI e servidor MCP.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "servidor MCP",
@@ -2046,6 +2127,7 @@
     "nome": "threeui",
     "url": "https://github.com/MengTo/threeui",
     "resumo": "Biblioteca open source de componentes de UI com visuais 3D, com demos ao vivo e código-fonte.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "3D",
@@ -2068,6 +2150,7 @@
     "nome": "gitagent",
     "url": "https://github.com/open-gitagent/gitagent",
     "resumo": "Framework em que o agente de IA é um repositório git: identidade, regras, memória e skills versionados.",
+    "categoria": "Agentes de IA",
     "tags": [
       "biblioteca",
       "CLI",
@@ -2091,6 +2174,7 @@
     "nome": "EpicInfographics",
     "url": "https://github.com/OrRon/EpicInfographics",
     "resumo": "Skill que ensina agentes de IA a projetar infográficos com cara de estúdio, sem aspecto genérico de IA.",
+    "categoria": "Design/UI",
     "tags": [
       "plugin/skill",
       "agentes",
@@ -2113,6 +2197,7 @@
     "nome": "Compositor",
     "url": "https://github.com/robbietilton/Compositor",
     "resumo": "Editor de imagens grátis para Mac, alternativa ao Photoshop, com camadas, máscaras e ferramentas de composição e pós-produção.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "macOS",
@@ -2137,6 +2222,7 @@
     "nome": "mdxcn",
     "url": "https://github.com/shadcn-labs/mdxcn",
     "resumo": "Componentes React para MDX que desenham gráficos e diagramas com glifos de texto.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "navegador",
@@ -2159,6 +2245,7 @@
     "nome": "figcraft",
     "url": "https://github.com/storytold/figcraft",
     "resumo": "Design de interfaces e protótipos colaborativos, alternativa open source ao Figma feita em Rust pela equipe do ArtCraft.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "Windows",
@@ -2185,6 +2272,7 @@
     "nome": "solidcraft",
     "url": "https://github.com/tangency-labs/solidcraft",
     "resumo": "CAD 3D paramétrico em Rust: desenha, restringe e refaz o modelo ao mudar uma medida; desktop, navegador e servidor MCP.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "app desktop",
       "web app",
@@ -2214,6 +2302,7 @@
     "nome": "Backchannel",
     "url": "https://github.com/twalichiewicz/Backchannel",
     "resumo": "Userscript que mostra comentários de HN, Reddit e outras fontes ao lado de qualquer página que você visita.",
+    "categoria": "Produtividade",
     "tags": [
       "extensão de navegador",
       "navegador",
@@ -2236,6 +2325,7 @@
     "nome": "checkmygit",
     "url": "https://github.com/whoisyurii/checkmygit",
     "resumo": "Gera um portfólio visual a partir de qualquer usuário do GitHub, com templates e exportação em PNG.",
+    "categoria": "Dev Tools",
     "tags": [
       "web app",
       "GitHub",
@@ -2258,6 +2348,7 @@
     "nome": "Ghostman",
     "url": "https://github.com/4yk5/Ghostman",
     "resumo": "Cliente de API e inspetor de webhooks no terminal, alternativa leve e local ao Postman.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "roda local",
@@ -2282,6 +2373,7 @@
     "nome": "maka",
     "url": "https://github.com/apache/maka",
     "resumo": "Workspace de agentes de alto desempenho que registra completamente tudo que fez.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "CLI",
@@ -2304,6 +2396,7 @@
     "nome": "initialis",
     "url": "https://github.com/azlen/initialis",
     "resumo": "Explorador infinito de letras capitulares ornamentadas desenhadas na hora pelo navegador.",
+    "categoria": "Design/UI",
     "tags": [
       "web app",
       "navegador",
@@ -2325,6 +2418,7 @@
     "nome": "loop-engineering",
     "url": "https://github.com/cobusgreyling/loop-engineering",
     "resumo": "Biblioteca de padrões e CLI para operar agentes em loop sobre um repositório: triagem, PRs, CI e dependências.",
+    "categoria": "Agentes de IA",
     "tags": [
       "coleção/guia",
       "CLI",
@@ -2350,6 +2444,7 @@
     "nome": "folio",
     "url": "https://github.com/Forward-Future/folio",
     "resumo": "Leitor de PDF leve e aberto para Windows, Mac e Linux: destaca, anota, assina e pergunta à IA sobre o documento.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -2375,6 +2470,7 @@
     "nome": "filebrowser",
     "url": "https://github.com/gtsteffaniak/filebrowser",
     "resumo": "Gerenciador de arquivos web self-hosted com busca instantânea, prévia, compartilhamento e login OIDC/LDAP.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -2399,6 +2495,7 @@
     "nome": "slimdeer",
     "url": "https://github.com/heydeer/slimdeer",
     "resumo": "Comprime PNG, JPEG, WebP e AVIF escolhendo a qualidade sozinho e gera arquivos menores que o TinyPNG, até no navegador.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "CLI",
       "navegador",
@@ -2422,6 +2519,7 @@
     "nome": "nanolight",
     "url": "https://github.com/justrach/nanolight",
     "resumo": "Lançador estilo Spotlight para Mac, Windows e Linux em Zig, com 2 MB e extensões do Raycast.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -2448,6 +2546,7 @@
     "nome": "open-3d-skills",
     "url": "https://github.com/Moh4696/open-3d-skills",
     "resumo": "Oito skills para agentes criarem sites 3D e animados com three.js, filmes de rolagem e vídeo transparente.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -2473,6 +2572,7 @@
     "nome": "effective-html",
     "url": "https://github.com/plannotator/effective-html",
     "resumo": "Skills para agentes criarem artefatos HTML autocontidos, de wireframes a protótipos.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -2496,6 +2596,7 @@
     "nome": "HAS_Prepper_Disk",
     "url": "https://github.com/schematrix/HAS_Prepper_Disk",
     "resumo": "Arquivo de conhecimento offline num Raspberry Pi 5: Wikipédia, mapas e guias de sobrevivência pela própria rede Wi-Fi.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "template/starter",
       "Raspberry Pi",
@@ -2519,6 +2620,7 @@
     "nome": "superlog",
     "url": "https://github.com/superloglabs/superlog",
     "resumo": "Sistema open source de observabilidade com OpenTelemetry que agrupa sinais em incidentes e investiga com agentes.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "API/servidor",
       "self-host",
@@ -2541,6 +2643,7 @@
     "nome": "traccar",
     "url": "https://github.com/traccar/traccar",
     "resumo": "Plataforma de rastreamento GPS para frotas e pessoas, com 200+ protocolos e 2.000 modelos de rastreador.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -2563,6 +2666,7 @@
     "nome": "veloxdb",
     "url": "https://github.com/veloxbase/veloxdb",
     "resumo": "Cliente de banco de dados nativo em Rust e Tauri que conecta 13 engines, de Postgres e MySQL a MongoDB, Redis e ClickHouse.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "macOS",
@@ -2586,6 +2690,7 @@
     "nome": "who-are-you",
     "url": "https://github.com/yt1988/who-are-you",
     "resumo": "Autoteste de privacidade: mostra tudo que um site descobre sobre você sem pedir permissão e se a VPN deixa rastros.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "web app",
       "navegador",
@@ -2609,6 +2714,7 @@
     "nome": "dossier",
     "url": "https://github.com/AienTech/dossier",
     "resumo": "App de busca de emprego no seu servidor: gera currículo e carta sob medida para cada vaga e acompanha as candidaturas.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -2633,6 +2739,7 @@
     "nome": "ayakaleaf-pro",
     "url": "https://github.com/ayaka-notes/ayakaleaf-pro",
     "resumo": "Overleaf self-hosted com quase todos os recursos pagos: SSO, assistente de IA, sync com Git e Dropbox e controle de alterações.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -2658,6 +2765,7 @@
     "nome": "teardown",
     "url": "https://github.com/elvarofficial/teardown",
     "resumo": "Skill do Claude Code que transforma qualquer máquina num simulador 3D desmontável numa página HTML offline.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -2681,6 +2789,7 @@
     "nome": "kanzo",
     "url": "https://github.com/emanuele-em/kanzo",
     "resumo": "Kanban no navegador e servidor MCP num binário de 4,5 MB: você e seus agentes de código dividem as mesmas tarefas.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "servidor MCP",
@@ -2706,6 +2815,7 @@
     "nome": "experiential",
     "url": "https://github.com/experientiallabs/experiential",
     "resumo": "Gateway OpenAI-compatível que unifica modelos, controla gastos por agente e otimiza roteamento a partir do tráfego.",
+    "categoria": "IA/Modelos",
     "tags": [
       "API/servidor",
       "self-host",
@@ -2730,6 +2840,7 @@
     "nome": "blaze",
     "url": "https://github.com/indexable-inc/blaze",
     "resumo": "Compila Rust de forma incremental até 92 vezes mais rápido que o cargo: basta trocar cargo por blaze.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "Linux",
@@ -2752,6 +2863,7 @@
     "nome": "Zero-Breach-Toolkit",
     "url": "https://github.com/interplains/Zero-Breach-Toolkit",
     "resumo": "Procura vestígios de spyware como o Pegasus em PCs, Android e backups de iPhone, num app de dois cliques em 27 idiomas.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "app desktop",
       "Windows",
@@ -2776,6 +2888,7 @@
     "nome": "looseleaf",
     "url": "https://github.com/kevintngo/looseleaf",
     "resumo": "shadcn/ui desenhado à mão: 123 componentes React acessíveis com cara de papel e caneta.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "frontend",
@@ -2797,6 +2910,7 @@
     "nome": "openidea",
     "url": "https://github.com/l0ng-ai/openidea",
     "resumo": "IDE nativa em Rust no estilo IntelliJ IDEA, com debugger, Git e banco, abrindo projetos 10 vezes mais rápido.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "git",
@@ -2820,6 +2934,7 @@
     "nome": "earshot",
     "url": "https://github.com/Leonxlnx/earshot",
     "resumo": "Dá ouvidos aos agentes de IA: descrevem, avaliam e criam sons em código, rodando só na CPU.",
+    "categoria": "Agentes de IA",
     "tags": [
       "servidor MCP",
       "Claude Code",
@@ -2842,6 +2957,7 @@
     "nome": "esp32-usb-to-airprint",
     "url": "https://github.com/ngxson/esp32-usb-to-airprint",
     "resumo": "Transforma impressora USB antiga em impressora e scanner Wi-Fi com AirPrint usando um ESP32-S3 barato.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "firmware",
       "ESP32/microcontrolador",
@@ -2864,6 +2980,7 @@
     "nome": "reanimate",
     "url": "https://github.com/NiazMorshed2007/reanimate",
     "resumo": "Skill do Claude Code que copia animações de sites ou vídeos quadro a quadro e compara até a cópia se mexer igual.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -2886,6 +3003,7 @@
     "nome": "devbox",
     "url": "https://github.com/rudderlabs/devbox",
     "resumo": "Agente que pega um ticket, planeja, codifica, testa e abre o pull request, rodando em sandbox na sua nuvem.",
+    "categoria": "Agentes de IA",
     "tags": [
       "API/servidor",
       "nuvem",
@@ -2911,6 +3029,7 @@
     "nome": "kensaku",
     "url": "https://github.com/yjid/kensaku",
     "resumo": "Busca local instantânea de arquivos que também lê dentro de PDFs, código e prints (OCR), com busca por significado.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "roda local",
@@ -2937,6 +3056,7 @@
     "nome": "yuzic",
     "url": "https://github.com/yuzicapp/yuzic",
     "resumo": "Player de música grátis para iPhone, iPad e Android que toca do Navidrome, Jellyfin, Emby, Plex ou arquivos locais.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app mobile",
       "iOS",
@@ -2960,6 +3080,7 @@
     "nome": "esp-labs-web",
     "url": "https://github.com/agharsallah/esp-labs-web",
     "resumo": "Guia interativo do ESP32-S3 com 32 laboratórios, simuladores, placa em 3D e pinagem ao vivo, em 11 idiomas.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "web app",
       "ESP32/microcontrolador",
@@ -2982,6 +3103,7 @@
     "nome": "learnharness",
     "url": "https://github.com/amosblomqvist/learnharness",
     "resumo": "Agentes de IA que medem o que você já sabe, planejam e ensinam um assunto difícil passo a passo, com grafo de conhecimento.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "agentes",
@@ -3003,6 +3125,7 @@
     "nome": "hop",
     "url": "https://github.com/Arjun-Ingole/hop",
     "resumo": "App do Windows que instala Linux ao lado do Windows sem pen drive: escolhe a distro, o disco e o espaço e clica em instalar.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "Windows",
@@ -3024,6 +3147,7 @@
     "nome": "stack-diagram",
     "url": "https://github.com/caru-ini/stack-diagram",
     "resumo": "Skill para agentes: descreva sua stack numa frase e receba um diagrama de arquitetura com os logos oficiais.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -3046,6 +3170,7 @@
     "nome": "floorplan",
     "url": "https://github.com/haydenschmitty/floorplan",
     "resumo": "Plugin que faz o Claude Code ou o Codex desenhar um mapa interativo do seu código, com cada parte em linguagem simples.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -3068,6 +3193,7 @@
     "nome": "everything",
     "url": "https://github.com/HeyPuter/everything",
     "resumo": "Monorepo que recria em código aberto apps como Excel, Slack, Photoshop e AutoCAD, com demo de cada um no navegador.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "navegador",
@@ -3094,6 +3220,7 @@
     "nome": "horizon",
     "url": "https://github.com/horizon-rust/horizon",
     "resumo": "Minecraft Java Edition reescrito do zero em Rust, conferido contra o jogo original por centenas de testes diferenciais.",
+    "categoria": "Outros",
     "tags": [
       "app desktop",
       "Linux",
@@ -3115,6 +3242,7 @@
     "nome": "omnidiff",
     "url": "https://github.com/ivankovic/omnidiff",
     "resumo": "Diff rápido e que entende o conteúdo: compara código, imagens, fontes, PDFs e arquivos compactados.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "git",
@@ -3136,6 +3264,7 @@
     "nome": "Fieldwatch",
     "url": "https://github.com/OffGridPete/Fieldwatch",
     "resumo": "Observador passivo de Wi-Fi e Bluetooth LE para Android: vê os aparelhos ao redor sem transmitir nada.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "app mobile",
       "Android",
@@ -3159,6 +3288,7 @@
     "nome": "pixelfx",
     "url": "https://github.com/patch-gg/pixelfx",
     "resumo": "244 efeitos de pixel art em código (fogo, explosões, magia) para jogar no navegador ou exportar como sprite sheet, com skill do Claude Code.",
+    "categoria": "Design/UI",
     "tags": [
       "coleção/guia",
       "plugin/skill",
@@ -3183,6 +3313,7 @@
     "nome": "magic",
     "url": "https://github.com/polterguy/magic",
     "resumo": "Gera app full stack (banco, API segura e front) a partir de texto, no seu servidor, alternativa aberta ao Lovable e Bolt.",
+    "categoria": "Dev Tools",
     "tags": [
       "web app",
       "API/servidor",
@@ -3210,6 +3341,7 @@
     "nome": "wordcraft",
     "url": "https://github.com/storytold/wordcraft",
     "resumo": "Reimplementação do Microsoft Word em Rust puro: faixa de opções, estilos, controle de alterações e .docx, inclusive no navegador.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "navegador",
@@ -3234,6 +3366,7 @@
     "nome": "motty",
     "url": "https://github.com/t8y2/motty",
     "resumo": "Cliente SSH nativo em Go que junta terminal, SFTP, túneis, VNC/RDP e assistente de IA numa janela, sem Electron.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "app desktop",
       "terminal",
@@ -3257,6 +3390,7 @@
     "nome": "Termix",
     "url": "https://github.com/Termix-SSH/Termix",
     "resumo": "Alternativa self-hosted e gratuita ao Termius: SSH, área de trabalho remota, arquivos e Docker num painel web com plugins.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -3283,6 +3417,7 @@
     "nome": "dashbeam",
     "url": "https://github.com/tonyantony300/dashbeam",
     "resumo": "Transfere arquivos direto entre aparelhos por P2P criptografado, sem nuvem, com retomada; alternativa ao WeTransfer.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "CLI",
@@ -3309,6 +3444,7 @@
     "nome": "ai-memory",
     "url": "https://github.com/akitaonrails/ai-memory",
     "resumo": "Memória de longo prazo compartilhada entre mais de 20 agentes de código: sai do Claude Code, abre o Codex e continua de onde parou.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "roda local",
@@ -3333,6 +3469,7 @@
     "nome": "bend",
     "url": "https://github.com/bendlang/bend",
     "resumo": "Bend 2, de Victor Taelin: linguagem paralela que roda na GPU e usa leis e provas para conferir o código escrito por IA.",
+    "categoria": "IA/Modelos",
     "tags": [
       "linguagem de programação",
       "GPU",
@@ -3354,6 +3491,7 @@
     "nome": "BrasilAPI",
     "url": "https://github.com/BrasilAPI/BrasilAPI",
     "resumo": "API pública e gratuita com dados do Brasil: CEP, CNPJ, bancos, feriados, DDD e mais, feita pela comunidade.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "API/servidor",
       "nuvem",
@@ -3376,6 +3514,7 @@
     "nome": "winlator",
     "url": "https://github.com/brunodev85/winlator",
     "resumo": "Roda aplicativos e jogos de Windows no Android com Wine e Box64.",
+    "categoria": "Outros",
     "tags": [
       "app mobile",
       "Android",
@@ -3398,6 +3537,7 @@
     "nome": "leis",
     "url": "https://github.com/ctresb/leis",
     "resumo": "Toda a legislação brasileira em Markdown: Constituição e mais de 320 mil normas federais, estaduais e municipais, com link para a fonte.",
+    "categoria": "Outros",
     "tags": [
       "dataset/benchmark",
       "direito",
@@ -3418,6 +3558,7 @@
     "nome": "navi",
     "url": "https://github.com/denisidoro/navi",
     "resumo": "Cheatsheet interativa no terminal: busca o comando, preenche os argumentos e executa.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "CLI",
@@ -3440,6 +3581,7 @@
     "nome": "PhotoGIMP",
     "url": "https://github.com/Diolinux/PhotoGIMP",
     "resumo": "Patch que deixa o GIMP 3 com atalhos, ferramentas e aparência do Photoshop.",
+    "categoria": "Design/UI",
     "tags": [
       "plugin/skill",
       "Linux",
@@ -3466,6 +3608,7 @@
     "nome": "openTPU",
     "url": "https://github.com/FeSens/openTPU",
     "resumo": "Acelerador de IA aberto projetado por agentes de IA: hardware em SystemVerilog, simulador, compilador e uma placa FPGA rodando LLMs.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "firmware",
       "hardware",
@@ -3487,6 +3630,7 @@
     "nome": "VirtualBuddy",
     "url": "https://github.com/insidegui/VirtualBuddy",
     "resumo": "Máquinas virtuais de macOS no Apple Silicon, com instalação guiada e versões beta do sistema.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "macOS",
@@ -3510,6 +3654,7 @@
     "nome": "open-notebook",
     "url": "https://github.com/lfnovo/open-notebook",
     "resumo": "Alternativa open source e self-hosted ao NotebookLM, com vários modelos de IA e podcasts gerados das suas fontes.",
+    "categoria": "IA/Modelos",
     "tags": [
       "web app",
       "self-host",
@@ -3536,6 +3681,7 @@
     "nome": "pgmodeler",
     "url": "https://github.com/nullptrlabs/pgmodeler",
     "resumo": "Modelagem visual de bancos PostgreSQL: diagramas, geração de SQL e comparação com o banco em produção.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "Windows",
@@ -3559,6 +3705,7 @@
     "nome": "reversa",
     "url": "https://github.com/sandeco/reversa",
     "resumo": "Instala num sistema legado e coordena agentes de IA que extraem regras de negócio e geram especificações para os agentes evoluírem o código.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "plugin/skill",
@@ -3581,6 +3728,7 @@
     "nome": "git-city",
     "url": "https://github.com/srizzon/git-city",
     "resumo": "Transforma cada perfil do GitHub num prédio em pixel art 3D numa cidade interativa para sobrevoar.",
+    "categoria": "Design/UI",
     "tags": [
       "web app",
       "GitHub",
@@ -3603,6 +3751,7 @@
     "nome": "easyeffects",
     "url": "https://github.com/wwmm/easyeffects",
     "resumo": "Efeitos de áudio para Linux (PipeWire): equalizador, compressor, limitador e redução de ruído no microfone.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "Linux",
@@ -3625,6 +3774,7 @@
     "nome": "claudemy",
     "url": "https://github.com/assafkip/claudemy",
     "resumo": "Skill do Claude Code que pesquisa um tema na web e monta um curso com aulas em áudio de 2 minutos e fontes citadas.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -3650,6 +3800,7 @@
     "nome": "ascii",
     "url": "https://github.com/bas3line/ascii",
     "resumo": "Arte ASCII animada para páginas web em TypeScript: React, Next.js, Astro e outros.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "frontend",
@@ -3671,6 +3822,7 @@
     "nome": "boop",
     "url": "https://github.com/chrisgreg/boop",
     "resumo": "Caixa de notificações self-hosted para devs: binário Go + SQLite que envia push direto para o iPhone via APNs.",
+    "categoria": "Self-hosted",
     "tags": [
       "API/servidor",
       "self-host",
@@ -3693,6 +3845,7 @@
     "nome": "utopia",
     "url": "https://github.com/deeplethe/utopia",
     "resumo": "Base de conhecimento bitemporal self-hosted para empresas, com ontologia, detecção de conflitos e trilha de auditoria.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "API/servidor",
       "self-host",
@@ -3716,6 +3869,7 @@
     "nome": "TraceMaker",
     "url": "https://github.com/DingoOz/TraceMaker",
     "resumo": "Roteador automático e posicionador de componentes para placas de circuito no KiCad.",
+    "categoria": "Dev Tools",
     "tags": [
       "plugin/skill",
       "hardware",
@@ -3737,6 +3891,7 @@
     "nome": "onkey",
     "url": "https://github.com/dsmurrell/onkey",
     "resumo": "Treinador de canto para Mac: toque uma música no Spotify e cante acompanhando as notas na tela.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "macOS",
@@ -3761,6 +3916,7 @@
     "nome": "ElyOffice",
     "url": "https://github.com/ELY-Open-Source/ElyOffice",
     "resumo": "Suíte de escritório offline para desktop em Rust: texto, planilha, apresentação, PDF, Git e Markdown, sem conta nem nuvem.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "offline",
@@ -3785,6 +3941,7 @@
     "nome": "genex-desktop",
     "url": "https://github.com/genex-games/genex-desktop",
     "resumo": "App desktop para criar jogos com IA, no macOS e Linux.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "macOS",
@@ -3810,6 +3967,7 @@
     "nome": "claude-show-your-work",
     "url": "https://github.com/iamumeransari/claude-show-your-work",
     "resumo": "Plugin do Claude Code que mostra imagens e vídeos no terminal: páginas, gráficos e gravações dos testes.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -3833,6 +3991,7 @@
     "nome": "IntelOwl",
     "url": "https://github.com/intelowlproject/IntelOwl",
     "resumo": "Plataforma para gerenciar inteligência de ameaças em escala, analisando arquivos e indicadores com dezenas de ferramentas.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "API/servidor",
       "self-host",
@@ -3855,6 +4014,7 @@
     "nome": "openchart",
     "url": "https://github.com/longsurf-ai/openchart",
     "resumo": "Plataforma de trading open source com agentes de IA: análise, alertas e pesquisa de oportunidades.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "finanças",
@@ -3878,6 +4038,7 @@
     "nome": "sphinx",
     "url": "https://github.com/parthh01/sphinx",
     "resumo": "Hook de git push que faz perguntas sobre o código gerado por agentes antes de liberar o envio para produção.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "git",
@@ -3900,6 +4061,7 @@
     "nome": "FineTune",
     "url": "https://github.com/ronitsingh10/FineTune",
     "resumo": "App de menu do macOS para volume por app, EQ e roteamento de áudio.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "macOS",
@@ -3921,6 +4083,7 @@
     "nome": "librecalculator",
     "url": "https://github.com/tonyzedginidze/librecalculator",
     "resumo": "Calculadoras gratuitas para saúde, cozinha, construção e mais, que mostram o passo a passo, diagrama e explicação de cada resultado.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "matemática",
@@ -3943,6 +4106,7 @@
     "nome": "devspace",
     "url": "https://github.com/Waishnav/devspace",
     "resumo": "Servidor MCP self-hosted que deixa o ChatGPT ler, editar e rodar código nos seus projetos locais.",
+    "categoria": "Agentes de IA",
     "tags": [
       "servidor MCP",
       "self-host",
@@ -3965,6 +4129,7 @@
     "nome": "prompt2rig",
     "url": "https://github.com/blendi-remade/prompt2rig",
     "resumo": "Escreva um movimento: um modelo de vídeo encena e qualquer personagem 3D com rig repete, inclusive os dedos.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "web app",
       "GPU",
@@ -3990,6 +4155,7 @@
     "nome": "reylo",
     "url": "https://github.com/colinhacks/reylo",
     "resumo": "Importe arquivos .sql direto no TypeScript com inferência de tipos completa, do criador do Zod.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "banco de dados",
@@ -4011,6 +4177,7 @@
     "nome": "ComfyUI",
     "url": "https://github.com/Comfy-Org/ComfyUI",
     "resumo": "Motor modular de criação com IA por nós: imagem, vídeo, 3D e áudio, rodando local.",
+    "categoria": "IA/Modelos",
     "tags": [
       "app desktop",
       "API/servidor",
@@ -4036,6 +4203,7 @@
     "nome": "VoiceStudio",
     "url": "https://github.com/debpalash/VoiceStudio",
     "resumo": "Clonagem e criação de voz, dublagem de vídeo, ditado, transcrição e audiolivros em 646 idiomas, local.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "roda local",
@@ -4062,6 +4230,7 @@
     "nome": "deepseek-harness",
     "url": "https://github.com/deepseek-ai/deepseek-harness",
     "resumo": "Harness de agentes open source da DeepSeek (dsh), em que tudo é plugin.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "agentes",
@@ -4083,6 +4252,7 @@
     "nome": "ponytail",
     "url": "https://github.com/DietrichGebert/ponytail",
     "resumo": "Skill que faz o agente de código escrever menos: 53% menos código e 45% menos tokens no teste do autor, com mais testes.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -4106,6 +4276,7 @@
     "nome": "diff-tour",
     "url": "https://github.com/init-co-jp/diff-tour",
     "resumo": "TUI que transforma uma mudança no Git num tour guiado escrito por IA, explicando o porquê de cada trecho como um revisor sênior.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "git",
@@ -4127,6 +4298,7 @@
     "nome": "lemo-opuscar",
     "url": "https://github.com/lemomo-ai/lemo-opuscar",
     "resumo": "59 estilos de filme feitos em código para o agente dirigir curtas, cada um com um exemplo.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -4149,6 +4321,7 @@
     "nome": "aurelio-finance",
     "url": "https://github.com/LosaLosSantos/aurelio-finance",
     "resumo": "App de finanças pessoais e planejamento que roda no seu computador, com um consultor de IA opcional (OpenRouter).",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "app desktop",
       "roda local",
@@ -4170,6 +4343,7 @@
     "nome": "omnara",
     "url": "https://github.com/omnara-ai/omnara",
     "resumo": "Plataforma open source de agentes gerenciados, alternativa self-hosted ao Claude Managed Agents e ao Agents API.",
+    "categoria": "Agentes de IA",
     "tags": [
       "API/servidor",
       "self-host",
@@ -4195,6 +4369,7 @@
     "nome": "tsrs",
     "url": "https://github.com/oxc-project/tsrs",
     "resumo": "Compilador e language server do TypeScript 7 reescritos em Rust, com menos memória e checagem mais rápida.",
+    "categoria": "Dev Tools",
     "tags": [
       "linguagem de programação",
       "CLI",
@@ -4217,6 +4392,7 @@
     "nome": "atticus-mac",
     "url": "https://github.com/SaarthurR/atticus-mac",
     "resumo": "Assistente de voz para Mac que organiza janelas, acha arquivos, lê a tela e dita texto, usando seu plano do Claude.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -4240,6 +4416,7 @@
     "nome": "motion-prompt",
     "url": "https://github.com/showheyohtaki/motion-prompt",
     "resumo": "Biblioteca de nomes de movimentos, câmeras e efeitos com exemplos animados para pedir exatamente o que quer à IA.",
+    "categoria": "Design/UI",
     "tags": [
       "coleção/guia",
       "animação/motion",
@@ -4262,6 +4439,7 @@
     "nome": "open-intelligent-ui",
     "url": "https://github.com/thesysdev/open-intelligent-ui",
     "resumo": "Versão open source da \"Intelligent UI\" do ChatGPT: respostas com mapas, fotos e roteiros interativos.",
+    "categoria": "Design/UI",
     "tags": [
       "web app",
       "template/starter",
@@ -4287,6 +4465,7 @@
     "nome": "hatchzip",
     "url": "https://github.com/xevrion/hatchzip",
     "resumo": "Extrai arquivos enormes no lugar: o arquivo compactado encolhe enquanto os arquivos saem, sem precisar do dobro de espaço.",
+    "categoria": "Produtividade",
     "tags": [
       "CLI",
       "app desktop",
@@ -4314,6 +4493,7 @@
     "nome": "iris.c",
     "url": "https://github.com/antirez/iris.c",
     "resumo": "Pipeline de inferência de geração de imagens em C puro, sem dependências.",
+    "categoria": "IA/Modelos",
     "tags": [
       "CLI",
       "roda local",
@@ -4335,6 +4515,7 @@
     "nome": "geiger",
     "url": "https://github.com/Atomburstofficial/geiger",
     "resumo": "Comando único que inventaria agentes de IA, servidores MCP e plugins na máquina e o que cada um acessa.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "CLI",
       "segurança",
@@ -4356,6 +4537,7 @@
     "nome": "renfield",
     "url": "https://github.com/ebongard/renfield",
     "resumo": "Assistente de IA self-hosted com satélites de voz em Raspberry Pi, 100+ ferramentas MCP, RAG e Home Assistant.",
+    "categoria": "Self-hosted",
     "tags": [
       "API/servidor",
       "self-host",
@@ -4382,6 +4564,7 @@
     "nome": "get-based",
     "url": "https://github.com/elkimek/get-based",
     "resumo": "Dashboard de saúde open source no navegador para exames, DNA e wearables, com IA opcional e dados locais.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "navegador",
@@ -4405,6 +4588,7 @@
     "nome": "FOSSBilling",
     "url": "https://github.com/FOSSBilling/FOSSBilling",
     "resumo": "Sistema open-source de cobrança e gestão de clientes para provedores de hospedagem e serviços online, em PHP.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "self-host",
@@ -4429,6 +4613,7 @@
     "nome": "Wake",
     "url": "https://github.com/iAmCorey/Wake",
     "resumo": "App desktop em Rust que reúne sessões de agentes de código locais para buscar e retomar.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "macOS",
@@ -4451,6 +4636,7 @@
     "nome": "xfr",
     "url": "https://github.com/lance0/xfr",
     "resumo": "Alternativa moderna ao iperf3 em Rust com TUI ao vivo, multi-cliente, QUIC e MPTCP.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "CLI",
       "TUI",
@@ -4477,6 +4663,7 @@
     "nome": "golive-skill",
     "url": "https://github.com/mikehasa/golive-skill",
     "resumo": "Skill de agente que leva seu app ao ar: hospedagem, banco, auth, domínio, e-mail e pagamentos com sua conta.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -4501,6 +4688,7 @@
     "nome": "scroll-craft",
     "url": "https://github.com/nateherkai/scroll-craft",
     "resumo": "Skill de agente para criar sites premium com scroll animado, com padrão de design e exemplos aprovados.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -4525,6 +4713,7 @@
     "nome": "pixel2motion",
     "url": "https://github.com/nolangz/pixel2motion",
     "resumo": "Skill que converte logos raster em SVG limpo e gera animações de logo em HTML, GIF e vídeo.",
+    "categoria": "Design/UI",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -4549,6 +4738,7 @@
     "nome": "ollaya",
     "url": "https://github.com/ollaya-dev/ollaya",
     "resumo": "Runtime estilo Ollama para modelos de decisão que devolvem probabilidades calibradas em milissegundos.",
+    "categoria": "IA/Modelos",
     "tags": [
       "API/servidor",
       "roda local",
@@ -4571,6 +4761,7 @@
     "nome": "port-killer",
     "url": "https://github.com/productdevbook/port-killer",
     "resumo": "App de menu para monitorar portas, port-forwards do Kubernetes e matar processos.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "macOS",
@@ -4594,6 +4785,7 @@
     "nome": "rootprint",
     "url": "https://github.com/rootprint/rootprint",
     "resumo": "Busca de logs e traces self-hosted direto em armazenamento S3, baseada em Quickwit.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "API/servidor",
       "web app",
@@ -4617,6 +4809,7 @@
     "nome": "kage",
     "url": "https://github.com/tamnd/kage",
     "resumo": "CLI em Go que clona sites com Chrome headless, remove todo JavaScript e gera cópia offline navegável.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "offline",
@@ -4639,6 +4832,7 @@
     "nome": "hapi",
     "url": "https://github.com/tiann/hapi",
     "resumo": "Controle remoto de sessões de Claude Code, Codex e outros agentes pelo celular, web ou Telegram, com relay criptografado.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app mobile",
       "web app",
@@ -4663,6 +4857,7 @@
     "nome": "mural",
     "url": "https://github.com/Chuloo/mural",
     "resumo": "App nativo iPhone e Android para aprender idiomas conversando por voz com uma esfera animada, usando sua chave OpenAI.",
+    "categoria": "Outros",
     "tags": [
       "app mobile",
       "iOS",
@@ -4688,6 +4883,7 @@
     "nome": "shimmer-from-structure",
     "url": "https://github.com/darula-hpp/shimmer-from-structure",
     "resumo": "Biblioteca que gera skeletons shimmer automaticamente medindo a estrutura da UI em React, Vue, Svelte e Angular.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "navegador",
@@ -4709,6 +4905,7 @@
     "nome": "solid-glass",
     "url": "https://github.com/deeplethe/solid-glass",
     "resumo": "Design system para aplicações de IA com estética de vidro sólido: componentes e telas prontas.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "design",
@@ -4730,6 +4927,7 @@
     "nome": "HackerBook",
     "url": "https://github.com/DOSAYGO-STUDIO/HackerBook",
     "resumo": "Arquivo estático e offline de 20 anos do Hacker News rodando no navegador com SQLite em WebAssembly.",
+    "categoria": "Outros",
     "tags": [
       "web app",
       "navegador",
@@ -4753,6 +4951,7 @@
     "nome": "Papermorph",
     "url": "https://github.com/DozenTwelve/Papermorph",
     "resumo": "Skill de IA que transforma livros em páginas web animadas, narradas e interativas.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -4775,6 +4974,7 @@
     "nome": "mygo",
     "url": "https://github.com/egoist/mygo",
     "resumo": "Crie apps desktop em Go com frontend web ou interface nativa.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "macOS",
@@ -4800,6 +5000,7 @@
     "nome": "anydoc",
     "url": "https://github.com/firecrawl/anydoc",
     "resumo": "Biblioteca Rust que converte Word, Excel, PDF e outros em Markdown limpo para LLMs.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "documentos/PDF",
@@ -4821,6 +5022,7 @@
     "nome": "SOMA",
     "url": "https://github.com/Kai-Jungsthoefel/SOMA",
     "resumo": "App de CAD paramétrico em que seu agente de IA escreve o modelo 3D em CadQuery e você revisa, mede e exporta para imprimir.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "app desktop",
       "roda local",
@@ -4846,6 +5048,7 @@
     "nome": "pl_mail",
     "url": "https://github.com/karatektus/pl_mail",
     "resumo": "Cliente de e-mail self-hosted no estilo Gmail, com várias contas (IMAP, Gmail, Outlook) e calendário.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "self-host",
@@ -4869,6 +5072,7 @@
     "nome": "ftop",
     "url": "https://github.com/Nongfsq/ftop",
     "resumo": "Monitor de sistema para Macs Apple Silicon numa janela flutuante de vidro: CPU, memória, rede e o app responsável.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -4892,6 +5096,7 @@
     "nome": "claude-octopus",
     "url": "https://github.com/nyldn/claude-octopus",
     "resumo": "Plugin do Claude Code que orquestra até doze provedores de IA com gates de consenso e dezenas de comandos.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -4913,6 +5118,7 @@
     "nome": "backburner",
     "url": "https://github.com/StayLameBro/backburner",
     "resumo": "Seu iPhone ajuda o Mac a rodar um modelo de 27B, acelerando a leitura do prompt.",
+    "categoria": "IA/Modelos",
     "tags": [
       "CLI",
       "macOS",
@@ -4935,6 +5141,7 @@
     "nome": "company-brain",
     "url": "https://github.com/supermemoryai/company-brain",
     "resumo": "Colega de IA no Slack que memoriza decisões do time, age em ferramentas via MCP e roda na sua conta Cloudflare.",
+    "categoria": "Agentes de IA",
     "tags": [
       "API/servidor",
       "nuvem",
@@ -4958,6 +5165,7 @@
     "nome": "rune",
     "url": "https://github.com/unstablebuild/rune",
     "resumo": "IDE e multiplexador de terminal acelerado por GPU, nativo em Go, com rede P2P criptografada entre suas máquinas.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "app desktop",
       "GPU",
@@ -4980,6 +5188,7 @@
     "nome": "renewlet",
     "url": "https://github.com/zhiyingzzhou/renewlet",
     "resumo": "Controle self-hosted de assinaturas recorrentes com lembretes, orçamento, multi-moeda e API, via Docker ou Cloudflare.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -5002,6 +5211,7 @@
     "nome": "ElatoAI",
     "url": "https://github.com/akdeb/ElatoAI",
     "resumo": "Plataforma open-source de brinquedos e dispositivos ESP32 com agentes de voz em tempo real.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "firmware",
       "ESP32/microcontrolador",
@@ -5025,6 +5235,7 @@
     "nome": "tendedero",
     "url": "https://github.com/alejandrobujan/tendedero",
     "resumo": "App nativo de macOS que pendura cada captura de tela num varal na tela.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -5047,6 +5258,7 @@
     "nome": "LumaBrowser",
     "url": "https://github.com/amurgola/LumaBrowser",
     "resumo": "Navegador com IA local tudo em um: roda modelos, chat, agentes, imagem, voz e música, e deixa agentes controlarem o navegador via MCP.",
+    "categoria": "IA/Modelos",
     "tags": [
       "app desktop",
       "roda local",
@@ -5073,6 +5285,7 @@
     "nome": "degoog",
     "url": "https://github.com/degoog-org/degoog",
     "resumo": "Agregador de buscas self-hosted com plugins, comandos bang e motores personalizados.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -5098,6 +5311,7 @@
     "nome": "aikon",
     "url": "https://github.com/emir/aikon",
     "resumo": "Um Nokia de 2007 não busca mais no Google, então o autor deu a ele Claude e ChatGPT.",
+    "categoria": "Dev Tools",
     "tags": [
       "app mobile",
       "ChatGPT/OpenAI",
@@ -5120,6 +5334,7 @@
     "nome": "big-arrow-on-the-screen",
     "url": "https://github.com/franzenzenhofer/big-arrow-on-the-screen",
     "resumo": "CLI e skill que deixam seus agentes de IA desenharem setas, caixas e texto grandes na tela do Mac.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "CLI",
       "plugin/skill",
@@ -5142,6 +5357,7 @@
     "nome": "zoetrope",
     "url": "https://github.com/furkankly/zoetrope",
     "resumo": "Visualiza sessões do Claude Code e Codex como grafo de fluxo ao vivo no terminal ou navegador.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "navegador",
@@ -5167,6 +5383,7 @@
     "nome": "effortless",
     "url": "https://github.com/HeyCubit/effortless",
     "resumo": "Mod do Claude Code que escolhe o esforço de raciocínio de cada prompt e mostra o uso da conversa.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -5189,6 +5406,7 @@
     "nome": "open-knowledge",
     "url": "https://github.com/inkeep/open-knowledge",
     "resumo": "Editor Markdown WYSIWYG local com integração a Claude e Codex para bases de conhecimento.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "roda local",
@@ -5212,6 +5430,7 @@
     "nome": "kapitsa",
     "url": "https://github.com/nace-ai/kapitsa",
     "resumo": "Motor de inferência otimizado para Apple Silicon que roda Qwen e Nemotron localmente e conecta Claude Code, Codex e opencode.",
+    "categoria": "IA/Modelos",
     "tags": [
       "API/servidor",
       "roda local",
@@ -5236,6 +5455,7 @@
     "nome": "onionshare",
     "url": "https://github.com/onionshare/onionshare",
     "resumo": "Compartilhe arquivos, hospede sites e converse de forma segura e anônima pela rede Tor.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "app desktop",
       "Windows",
@@ -5261,6 +5481,7 @@
     "nome": "cronstable",
     "url": "https://github.com/ptweezy/cronstable",
     "resumo": "Agendador de jobs com novas tentativas, alertas, histórico, workflows e painéis, de uma máquina a um cluster.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "web app",
       "self-host",
@@ -5285,6 +5506,7 @@
     "nome": "oh-my-hermes",
     "url": "https://github.com/rlaope/oh-my-hermes",
     "resumo": "Plugin completo para o Hermes Agent: planejamento, pesquisa, criação, código e memória de projeto.",
+    "categoria": "Agentes de IA",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -5308,6 +5530,7 @@
     "nome": "compose-lint",
     "url": "https://github.com/tmatens/compose-lint",
     "resumo": "Linter de segurança para arquivos Docker Compose que acha configurações perigosas e corrige automaticamente.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "CLI",
       "Docker",
@@ -5330,6 +5553,7 @@
     "nome": "eve",
     "url": "https://github.com/vercel/eve",
     "resumo": "Framework da Vercel para agentes de IA duráveis em que a estrutura de pastas define tools, skills e canais.",
+    "categoria": "Agentes de IA",
     "tags": [
       "biblioteca",
       "agentes",
@@ -5351,6 +5575,7 @@
     "nome": "acryl",
     "url": "https://github.com/acryldev/acryl",
     "resumo": "Ambiente de desenvolvimento agêntico extensível por plugins onde qualquer agente de código é trocável.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "agentes",
@@ -5372,6 +5597,7 @@
     "nome": "SCM",
     "url": "https://github.com/allenv0/SCM",
     "resumo": "Busca profunda com IA em todas as fotos e quadros de vídeo de qualquer pasta, localmente.",
+    "categoria": "IA/Modelos",
     "tags": [
       "app desktop",
       "macOS",
@@ -5397,6 +5623,7 @@
     "nome": "antfly",
     "url": "https://github.com/antflydb/antfly",
     "resumo": "Banco de dados de busca e inferência em Zig com BM25, vetores, grafo e RAG embutido.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "banco de dados",
       "API/servidor",
@@ -5420,6 +5647,7 @@
     "nome": "skill-scanner",
     "url": "https://github.com/cisco-ai-defense/skill-scanner",
     "resumo": "Scanner da Cisco que detecta prompt injection e código malicioso em Agent Skills, com SARIF e CI/CD.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "CLI",
       "segurança",
@@ -5441,6 +5669,7 @@
     "nome": "OrcaReplay",
     "url": "https://github.com/Continuum-AI-Corp/OrcaReplay",
     "resumo": "Grava execuções de agentes de código e as reproduz offline, byte a byte, com fork em outro modelo.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "offline",
@@ -5464,6 +5693,7 @@
     "nome": "highball",
     "url": "https://github.com/gauthierpiarrette/highball",
     "resumo": "App macOS que configura Wine e renderizadores para rodar jogos de Windows em Apple Silicon.",
+    "categoria": "Outros",
     "tags": [
       "app desktop",
       "macOS",
@@ -5488,6 +5718,7 @@
     "nome": "hopp",
     "url": "https://github.com/gethopp/hopp",
     "resumo": "Pair programming open source com compartilhamento de tela de baixa latência, alternativa ao Tuple.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "macOS",
@@ -5513,6 +5744,7 @@
     "nome": "TwinDesk",
     "url": "https://github.com/InukaAsith/TwinDesk",
     "resumo": "Usa Mac, Windows, Linux e Android como uma só mesa: tela estendida, mouse, teclado, arquivos, área de transferência e chamadas.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "app mobile",
@@ -5539,6 +5771,7 @@
     "nome": "pocket-tts",
     "url": "https://github.com/kyutai-labs/pocket-tts",
     "resumo": "Text-to-speech leve de 100M de parâmetros que roda em CPU, com clonagem de voz e suporte a português.",
+    "categoria": "IA/Modelos",
     "tags": [
       "modelo de IA",
       "roda local",
@@ -5561,6 +5794,7 @@
     "nome": "omarchy",
     "url": "https://github.com/omacom/omarchy",
     "resumo": "Distribuição Linux do DHH, bonita e voltada a agentes, com manual completo.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "coleção/guia",
       "Linux",
@@ -5583,6 +5817,7 @@
     "nome": "betterwispr",
     "url": "https://github.com/opennookorg/betterwispr",
     "resumo": "Ditado por voz gratuito e offline para macOS, alternativa ao Wispr Flow, com Whisper, Parakeet ou o reconhecimento da Apple.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -5609,6 +5844,7 @@
     "nome": "nodewarden",
     "url": "https://github.com/shuaiplus/nodewarden",
     "resumo": "Servidor compatível com Bitwarden rodando em Cloudflare Workers.",
+    "categoria": "Self-hosted",
     "tags": [
       "API/servidor",
       "self-host",
@@ -5634,6 +5870,7 @@
     "nome": "sockudo",
     "url": "https://github.com/sockudo/sockudo",
     "resumo": "Servidor realtime em Rust compatível com Pusher, com histórico, push e transporte de IA.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "API/servidor",
       "self-host",
@@ -5658,6 +5895,7 @@
     "nome": "owly",
     "url": "https://github.com/t4t5/owly",
     "resumo": "AirDrop entre iPhone e notebooks Linux, usando o mesmo protocolo de Wi-Fi da Apple.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "app desktop",
       "Linux",
@@ -5683,6 +5921,7 @@
     "nome": "skills",
     "url": "https://github.com/vercel-labs/skills",
     "resumo": "CLI oficial do ecossistema de agent skills, instala skills em mais de 70 agentes com npx.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "CLI",
       "plugin/skill",
@@ -5704,6 +5943,7 @@
     "nome": "house-control",
     "url": "https://github.com/0xProbabillity/house-control",
     "resumo": "Sua casa como modelo 3D ao vivo na barra do Mac e no iPhone, controlando luzes e ar-condicionado via Home Assistant, Hue e Apple Home.",
+    "categoria": "Self-hosted",
     "tags": [
       "app desktop",
       "app mobile",
@@ -5729,6 +5969,7 @@
     "nome": "Snitch",
     "url": "https://github.com/aixisstudio/Snitch",
     "resumo": "Monitor de rede em tempo real com firewall de saída: veja e bloqueie cada conexão que o computador faz.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "app desktop",
       "Linux",
@@ -5755,6 +5996,7 @@
     "nome": "Amagine3D",
     "url": "https://github.com/amagine-ai/Amagine3D",
     "resumo": "Gera enclosures e estruturas 3D editáveis a partir de requisitos de hardware, exportando STEP/STL.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "web app",
       "3D",
@@ -5777,6 +6019,7 @@
     "nome": "indra",
     "url": "https://github.com/datalab-to/indra",
     "resumo": "Modelo de OCR minúsculo que roda na CPU, lê mais de 80 idiomas e manuscritos e converte PDFs e imagens em Markdown ou JSON.",
+    "categoria": "IA/Modelos",
     "tags": [
       "modelo de IA",
       "roda local",
@@ -5801,6 +6044,7 @@
     "nome": "desigma",
     "url": "https://github.com/deepfounder-ai/desigma",
     "resumo": "Alternativa gratuita e offline ao Figma feita em Rust, com auto layout, componentes, protótipos, apresentações e importação de .fig.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "offline",
@@ -5824,6 +6068,7 @@
     "nome": "cleanyourtv",
     "url": "https://github.com/Gathin23/cleanyourtv",
     "resumo": "Tira anúncios e apps de fábrica de TVs Android e Google TV pelo Wi-Fi e instala uma tela inicial estilo Apple TV.",
+    "categoria": "Outros",
     "tags": [
       "CLI",
       "Android",
@@ -5847,6 +6092,7 @@
     "nome": "Filee",
     "url": "https://github.com/KnifeLemon/Filee",
     "resumo": "Conversor de arquivos offline: arraste e solte para converter 255 formatos de imagem, PDF, Office, vídeo e áudio.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "roda local",
@@ -5870,6 +6116,7 @@
     "nome": "glide",
     "url": "https://github.com/michaelshimeles/glide",
     "resumo": "Gravador de tela para macOS no estilo Screen Studio, com zoom automático nos cliques, fundos e exportação em MP4 ou GIF.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "macOS",
@@ -5893,6 +6140,7 @@
     "nome": "net-merge",
     "url": "https://github.com/net-merge/net-merge",
     "resumo": "Use Wi-Fi, cabo e celular ao mesmo tempo, somando a velocidade de todas as conexões no Windows, Mac e Linux.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "app desktop",
       "Windows",
@@ -5917,6 +6165,7 @@
     "nome": "slides-grab",
     "url": "https://github.com/NomaDamas/slides-grab",
     "resumo": "Gera slides em HTML com agentes e permite selecionar áreas no editor para pedir ajustes, exportando PDF.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "web app",
@@ -5943,6 +6192,7 @@
     "nome": "hqtui",
     "url": "https://github.com/profullstack/hqtui",
     "resumo": "Biblioteca de dashboards de terminal estilo btop em várias linguagens.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "biblioteca",
       "terminal",
@@ -5964,6 +6214,7 @@
     "nome": "talorys",
     "url": "https://github.com/rociiu/talorys",
     "resumo": "Agente pessoal de IA que roda na sua conta da Cloudflare: chat, memória, tarefas, notas e rotinas agendadas.",
+    "categoria": "Agentes de IA",
     "tags": [
       "API/servidor",
       "nuvem",
@@ -5987,6 +6238,7 @@
     "nome": "sill",
     "url": "https://github.com/Saffsanity/sill",
     "resumo": "Use qualquer janela do Mac no iPhone ou iPad com toque, Apple Pencil e teclado, sem conta nem servidor.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "app mobile",
@@ -6011,6 +6263,7 @@
     "nome": "editonny",
     "url": "https://github.com/soumatheusgomes/editonny",
     "resumo": "Skill para Claude Code e Codex que edita vídeo por conversa: corta pausas, legenda, ajusta áudio e cria cenas animadas.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -6035,6 +6288,7 @@
     "nome": "opendesk",
     "url": "https://github.com/useopendesk/opendesk",
     "resumo": "Central de atendimento open source com e-mail, chat do site e base de ajuda numa caixa só, com IA que responde.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "self-host",
@@ -6061,6 +6315,7 @@
     "nome": "ClawRouter",
     "url": "https://github.com/BlockRunAI/ClawRouter",
     "resumo": "Roteador de LLMs que escolhe o modelo mais barato capaz e permite agentes pagarem com USDC.",
+    "categoria": "Agentes de IA",
     "tags": [
       "API/servidor",
       "agentes",
@@ -6083,6 +6338,7 @@
     "nome": "dashlit",
     "url": "https://github.com/codewec/dashlit",
     "resumo": "Dashboard self-hosted de links e serviços em binário Go único, com monitoramento, OIDC e temas.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -6105,6 +6361,7 @@
     "nome": "openbot",
     "url": "https://github.com/CopilotKit/openbot",
     "resumo": "Template de assistente de IA corporativo self-hosted, com colegas de IA que têm navegador e ferramentas próprias.",
+    "categoria": "Agentes de IA",
     "tags": [
       "template/starter",
       "self-host",
@@ -6127,6 +6384,7 @@
     "nome": "diri",
     "url": "https://github.com/cristicretu/diri",
     "resumo": "App nativo em Rust para rodar dezenas de agentes de código em paralelo com worktrees e revisão de diffs.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "Claude Code",
@@ -6150,6 +6408,7 @@
     "nome": "fabro",
     "url": "https://github.com/fabro-sh/fabro",
     "resumo": "Fábrica de software open source em que você define o processo como grafo DOT e agentes executam com gates humanos.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "agentes",
@@ -6171,6 +6430,7 @@
     "nome": "FreeVideo",
     "url": "https://github.com/FlashML-org/FreeVideo",
     "resumo": "Gera vídeos com IA no computador que você já tem, rodando modelos abertos localmente.",
+    "categoria": "IA/Modelos",
     "tags": [
       "app desktop",
       "roda local",
@@ -6194,6 +6454,7 @@
     "nome": "morphicons",
     "url": "https://github.com/guillermolg00/morphicons",
     "resumo": "Biblioteca React que transforma qualquer ícone em outro com animação de mola, sem dependências.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "navegador",
@@ -6217,6 +6478,7 @@
     "nome": "helicalinsight",
     "url": "https://github.com/helicalinsight/helicalinsight",
     "resumo": "Plataforma de BI open source embarcável com chat analítico por IA, dashboards e relatórios.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "self-host",
@@ -6241,6 +6503,7 @@
     "nome": "CLI-Anything",
     "url": "https://github.com/HKUDS/CLI-Anything",
     "resumo": "Gera CLIs para tornar qualquer software utilizável por agentes de IA, com hub comunitário de ferramentas.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "agentes",
@@ -6262,6 +6525,7 @@
     "nome": "inlark",
     "url": "https://github.com/inlark/inlark",
     "resumo": "Cliente de e-mail desktop rápido e bonito, para Linux, Windows e Mac, sem assinatura nem telemetria.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "Linux",
@@ -6286,6 +6550,7 @@
     "nome": "mStream",
     "url": "https://github.com/IrosTheBeggar/mStream",
     "resumo": "Servidor de streaming de música self-hosted com apps móveis, capas automáticas, DLNA e sincronização sem configuração.",
+    "categoria": "Self-hosted",
     "tags": [
       "API/servidor",
       "self-host",
@@ -6308,6 +6573,7 @@
     "nome": "jumper",
     "url": "https://github.com/KingKongRobotics/jumper",
     "resumo": "Jumper, um robô caranguejo com 22 articulações, e o kit de IA para criar seus movimentos e cenas.",
+    "categoria": "IA/Modelos",
     "tags": [
       "firmware",
       "hardware",
@@ -6329,6 +6595,7 @@
     "nome": "habblaud",
     "url": "https://github.com/marmottajr/habblaud",
     "resumo": "Escritório virtual em pixel art para os agentes do Claude Code e Codex: cada projeto é uma sala, cada agente um personagem. Projeto brasileiro.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "Claude Code",
@@ -6352,6 +6619,7 @@
     "nome": "OpenShell",
     "url": "https://github.com/NVIDIA/OpenShell",
     "resumo": "Runtime seguro da NVIDIA que isola agentes autônomos de IA com políticas aplicadas no kernel.",
+    "categoria": "Agentes de IA",
     "tags": [
       "API/servidor",
       "Linux",
@@ -6374,6 +6642,7 @@
     "nome": "VisionState",
     "url": "https://github.com/oleost/VisionState",
     "resumo": "Ensina uma IA local o que sua câmera vê e transforma em sensores do Home Assistant (portão aberto, carro na garagem).",
+    "categoria": "IA/Modelos",
     "tags": [
       "API/servidor",
       "roda local",
@@ -6397,6 +6666,7 @@
     "nome": "wanderer",
     "url": "https://github.com/open-wanderer/wanderer",
     "resumo": "Banco de trilhas self-hosted: guarde, organize e compartilhe suas trilhas de GPS com mapas.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -6418,6 +6688,7 @@
     "nome": "impeccable",
     "url": "https://github.com/pbakaus/impeccable",
     "resumo": "Skill com 24 comandos e detector de regras para design de frontend gerado por IA.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "design",
@@ -6439,6 +6710,7 @@
     "nome": "rooms",
     "url": "https://github.com/saragordic/rooms",
     "resumo": "App de Mac que restaura janelas e layout de cada projeto com um atalho.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -6460,6 +6732,7 @@
     "nome": "claude-squad",
     "url": "https://github.com/smtg-ai/claude-squad",
     "resumo": "App de terminal que gerencia vários agentes de código em workspaces separados.",
+    "categoria": "Agentes de IA",
     "tags": [
       "TUI",
       "Claude Code",
@@ -6483,6 +6756,7 @@
     "nome": "zeroshot",
     "url": "https://github.com/the-open-engine/zeroshot",
     "resumo": "Orquestra multiagentes em que um implementa e outros revisam de forma independente até as checagens passarem.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "Claude Code",
@@ -6506,6 +6780,7 @@
     "nome": "opensre",
     "url": "https://github.com/Tracer-Cloud/opensre",
     "resumo": "Framework open source para construir agentes de IA de SRE conectados a mais de 60 ferramentas.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "biblioteca",
       "agentes",
@@ -6528,6 +6803,7 @@
     "nome": "json-render",
     "url": "https://github.com/vercel-labs/json-render",
     "resumo": "Framework de UI generativa: a IA gera JSON restrito ao seu catálogo e renderiza em React, Vue, PDF, vídeo e 3D.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "frontend",
@@ -6549,6 +6825,7 @@
     "nome": "explainroo",
     "url": "https://github.com/vincentsch/explainroo",
     "resumo": "Vídeos explicativos e demos de produto feitos pelo seu agente de IA.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "plugin/skill",
       "roda local",
@@ -6573,6 +6850,7 @@
     "nome": "withoutbg-python",
     "url": "https://github.com/withoutbg/withoutbg-python",
     "resumo": "Biblioteca Python para remover fundo de imagens localmente com pesos abertos ou via API na nuvem.",
+    "categoria": "IA/Modelos",
     "tags": [
       "biblioteca",
       "roda local",
@@ -6595,6 +6873,7 @@
     "nome": "OpenOats",
     "url": "https://github.com/yazinsai/OpenOats",
     "resumo": "App de macOS que transcreve reuniões localmente e sugere falas buscando nas suas notas em tempo real.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -6621,6 +6900,7 @@
     "nome": "humanizer",
     "url": "https://github.com/blader/humanizer",
     "resumo": "Skill que faz texto de IA soar humano, baseada nos sinais de escrita de IA da Wikipedia.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -6644,6 +6924,7 @@
     "nome": "SCSKiller",
     "url": "https://github.com/BlueHeisenberg/SCSKiller",
     "resumo": "Acaba com o travamento de compilação de shaders nos jogos do PC, compilando tudo antes de jogar.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "Windows",
@@ -6666,6 +6947,7 @@
     "nome": "mission-control",
     "url": "https://github.com/builderz-labs/mission-control",
     "resumo": "Painel self-hosted para operar agentes de IA: dispara tarefas, revisa execuções, acompanha gastos e falhas.",
+    "categoria": "Agentes de IA",
     "tags": [
       "web app",
       "self-host",
@@ -6691,6 +6973,7 @@
     "nome": "Codewhale",
     "url": "https://github.com/codewhale-hq/Codewhale",
     "resumo": "Agente de código open-source para terminal que funciona com mais de 40 provedores de modelos, hospedados ou locais.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "TUI",
@@ -6717,6 +7000,7 @@
     "nome": "openGym",
     "url": "https://github.com/DuarteSantos8/openGym",
     "resumo": "Rastreador de treino e peso self-hosted com PWA, login por passkey e 1.324 exercícios animados.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "app mobile",
@@ -6742,6 +7026,7 @@
     "nome": "artemis",
     "url": "https://github.com/google/artemis",
     "resumo": "Permite que assistentes de IA e testes controlem celulares Android reais, com MCP para IDEs.",
+    "categoria": "Agentes de IA",
     "tags": [
       "biblioteca",
       "servidor MCP",
@@ -6766,6 +7051,7 @@
     "nome": "MangoDisk",
     "url": "https://github.com/harry0703/MangoDisk",
     "resumo": "App multiplataforma de limpeza de disco, análise de armazenamento e privacidade.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -6792,6 +7078,7 @@
     "nome": "tapflow",
     "url": "https://github.com/jo-duchan/tapflow",
     "resumo": "Alternativa self-hosted ao Appetize e BrowserStack: simuladores iOS e Android no navegador para o time de QA.",
+    "categoria": "Dev Tools",
     "tags": [
       "web app",
       "self-host",
@@ -6819,6 +7106,7 @@
     "nome": "neonplan3d",
     "url": "https://github.com/Mastershort/neonplan3d",
     "resumo": "Planta 3D da casa para o Home Assistant: desenhe a casa e veja os dispositivos ao vivo.",
+    "categoria": "Self-hosted",
     "tags": [
       "plugin/skill",
       "Home Assistant",
@@ -6841,6 +7129,7 @@
     "nome": "finder-menu",
     "url": "https://github.com/nikgrbn/finder-menu",
     "resumo": "Opções que faltam no clique direito do Finder: novo arquivo, abrir terminal aqui, copiar caminho e abrir com.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -6863,6 +7152,7 @@
     "nome": "esp32-iphone-agent",
     "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
     "resumo": "Deixa um modelo de IA usar um iPhone de verdade com um ESP32 de US$ 7: vê pelo AirPlay e toca como mouse e teclado USB.",
+    "categoria": "Hardware/Maker",
     "tags": [
       "firmware",
       "ESP32/microcontrolador",
@@ -6887,6 +7177,7 @@
     "nome": "openfilm",
     "url": "https://github.com/openfilm/openfilm",
     "resumo": "Agente de vídeo open source: seu agente de código escreve o filme em páginas web e você edita num estúdio local.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "roda local",
@@ -6912,6 +7203,7 @@
     "nome": "openusage",
     "url": "https://github.com/robinebers/openusage",
     "resumo": "App de barra de menu do macOS que mostra o uso das assinaturas de IA de código.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -6936,6 +7228,7 @@
     "nome": "rustrak",
     "url": "https://github.com/rustrak/rustrak",
     "resumo": "Rastreador de erros self-hosted compatível com os SDKs do Sentry, com logs, transações e traces de agentes de IA.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "API/servidor",
       "self-host",
@@ -6960,6 +7253,7 @@
     "nome": "mesh-avatar-studio",
     "url": "https://github.com/shinshin86/mesh-avatar-studio",
     "resumo": "Transforma uma ilustração num avatar 2D animado com malha, com ajuda de um agente de código.",
+    "categoria": "Design/UI",
     "tags": [
       "app desktop",
       "Claude Code",
@@ -6983,6 +7277,7 @@
     "nome": "television",
     "url": "https://github.com/alexpasmantier/television",
     "resumo": "Buscador fuzzy muito rápido, portátil e configurável para o terminal.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "CLI",
@@ -7007,6 +7302,7 @@
     "nome": "laranode",
     "url": "https://github.com/crivion/laranode",
     "resumo": "Painel de hospedagem open source, alternativa ao cPanel e ao Plesk, para gerenciar sites, bancos e SSL num VPS.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "web app",
       "self-host",
@@ -7033,6 +7329,7 @@
     "nome": "reitti",
     "url": "https://github.com/dedicatedcode/reitti",
     "resumo": "Rastreia e analisa sua localização no seu servidor: linha do tempo, visitas, viagens e lugares frequentes.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -7058,6 +7355,7 @@
     "nome": "showtime",
     "url": "https://github.com/FavioVazquez/showtime",
     "resumo": "Estúdio de vídeo local para o seu agente de código: descreva o vídeo numa frase e ele produz.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -7081,6 +7379,7 @@
     "nome": "Reminal",
     "url": "https://github.com/harshalgajjar/Reminal",
     "resumo": "Mostra todas as janelas, desktops e terminais do seu computador no navegador, mesmo com a tampa do MacBook fechada.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "web app",
@@ -7106,6 +7405,7 @@
     "nome": "langfuse",
     "url": "https://github.com/langfuse/langfuse",
     "resumo": "Plataforma open source de engenharia de LLM: observabilidade, prompts, avaliações e datasets, self-hosted.",
+    "categoria": "Dev Tools",
     "tags": [
       "web app",
       "API/servidor",
@@ -7129,6 +7429,7 @@
     "nome": "m3e-canvas",
     "url": "https://github.com/lnkiai/m3e-canvas",
     "resumo": "Editor no navegador para desenhar telas Material 3 Expressive e copiar um prompt para sua IA de código.",
+    "categoria": "Design/UI",
     "tags": [
       "web app",
       "navegador",
@@ -7152,6 +7453,7 @@
     "nome": "Soup",
     "url": "https://github.com/MakazhanAlpamys/Soup",
     "resumo": "CLI para fazer fine-tuning de LLMs com um comando, inclusive modelo de 8B em GPU de 4 GB.",
+    "categoria": "IA/Modelos",
     "tags": [
       "CLI",
       "GPU",
@@ -7175,6 +7477,7 @@
     "nome": "mailcheap",
     "url": "https://github.com/marclou/mailcheap",
     "resumo": "Newsletter self-hosted sobre o Amazon SES: editor, lista, formulários e arquivo público, a cerca de US$ 0,10 por mil e-mails.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -7201,6 +7504,7 @@
     "nome": "tapmap",
     "url": "https://github.com/olalie/tapmap",
     "resumo": "App que mostra no mapa em tempo real para onde seu computador se conecta, com histórico e relatórios.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "app desktop",
       "Docker",
@@ -7224,6 +7528,7 @@
     "nome": "RemoveMacAI",
     "url": "https://github.com/omlahore/RemoveMacAI",
     "resumo": "Faxina no macOS: desliga o Apple Intelligence, a coleta de dados, anúncios e pop-ups.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "CLI",
@@ -7246,6 +7551,7 @@
     "nome": "onecli",
     "url": "https://github.com/onecli/onecli",
     "resumo": "Plataforma open source para times rodarem um agente de IA sandboxed por pessoa, com cofre de credenciais e políticas.",
+    "categoria": "Agentes de IA",
     "tags": [
       "API/servidor",
       "self-host",
@@ -7268,6 +7574,7 @@
     "nome": "RustGIS",
     "url": "https://github.com/opengeos/RustGIS",
     "resumo": "GIS rápido e gratuito em Rust puro, nativo em Windows, macOS e Linux e também no navegador.",
+    "categoria": "Outros",
     "tags": [
       "app desktop",
       "Windows",
@@ -7293,6 +7600,7 @@
     "nome": "hindsight",
     "url": "https://github.com/vectorize-io/hindsight",
     "resumo": "Sistema de memória para agentes de IA focado em aprender, com SOTA no LongMemEval, Docker e MCP.",
+    "categoria": "Agentes de IA",
     "tags": [
       "biblioteca",
       "API/servidor",
@@ -7316,6 +7624,7 @@
     "nome": "worklenz",
     "url": "https://github.com/Worklenz/worklenz",
     "resumo": "Ferramenta completa de gestão de projetos para equipes, open source, hospedada ou self-hosted.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "self-host",
@@ -7341,6 +7650,7 @@
     "nome": "anidoodle",
     "url": "https://github.com/alexgreensh/anidoodle",
     "resumo": "Skill que gera ilustrações, filmes e arte interativa desenhada à mão, como código.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -7364,6 +7674,7 @@
     "nome": "SeeCode",
     "url": "https://github.com/Aryanutkarsh/SeeCode",
     "resumo": "Diagramas animados e exploráveis para agentes de código, exportáveis como SVG, PNG, GIF ou MP4.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -7387,6 +7698,7 @@
     "nome": "axton-obsidian-visual-skills",
     "url": "https://github.com/axtonliu/axton-obsidian-visual-skills",
     "resumo": "Skills do Claude Code que geram Canvas, Excalidraw e Mermaid para o Obsidian.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -7409,6 +7721,7 @@
     "nome": "whiteboard",
     "url": "https://github.com/devdotfast/whiteboard",
     "resumo": "App desktop open source em que agentes desenham no canvas diagramas e diffs semânticos do código que escreveram.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "agentes",
@@ -7430,6 +7743,7 @@
     "nome": "lottie",
     "url": "https://github.com/diffusionstudio/lottie",
     "resumo": "Skill que faz agentes de código gerarem animações Lottie prontas a partir de texto, com player ao vivo.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -7453,6 +7767,7 @@
     "nome": "mortiflix-oss",
     "url": "https://github.com/GTKottman/mortiflix-oss",
     "resumo": "Estúdio de motion design local: o Claude cria o vídeo passo a passo e você ajusta.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "roda local",
@@ -7477,6 +7792,7 @@
     "nome": "reladraw",
     "url": "https://github.com/reladraw/reladraw",
     "resumo": "Linguagem de texto para diagramas onde você diz onde cada item fica.",
+    "categoria": "Dev Tools",
     "tags": [
       "linguagem de programação",
       "navegador",
@@ -7498,6 +7814,7 @@
     "nome": "remocn-studio",
     "url": "https://github.com/Remocn/remocn-studio",
     "resumo": "Editor de vídeo para agentes: o seu agente de código faz o vídeo como um projeto Remotion seu.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "agentes",
@@ -7520,6 +7837,7 @@
     "nome": "AutoFigure-Edit",
     "url": "https://github.com/ResearAI/AutoFigure-Edit",
     "resumo": "Transforma o método de um paper em figuras SVG totalmente editáveis, com editor embutido.",
+    "categoria": "IA/Modelos",
     "tags": [
       "web app",
       "imagem",
@@ -7542,6 +7860,7 @@
     "nome": "motionmaxxing",
     "url": "https://github.com/Tejashmakwana/motionmaxxing",
     "resumo": "Skill de agente que transforma vídeos de IA genéricos em filmes com cara de motion designer.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "vídeo",
@@ -7563,6 +7882,7 @@
     "nome": "manimgx",
     "url": "https://github.com/academa-labs/manimgx",
     "resumo": "Motor de animação compatível com a API do Manim, em Rust e wgpu, até 90 vezes mais rápido; feito para agentes.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "biblioteca",
       "GPU",
@@ -7587,6 +7907,7 @@
     "nome": "DigUp",
     "url": "https://github.com/ARahim3/DigUp",
     "resumo": "Busca os arquivos do Mac pelo conteúdo (fotos, PDFs, gravações, vídeos) com o EmbeddingGemma 2, tudo local.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "roda local",
@@ -7612,6 +7933,7 @@
     "nome": "Edit-Banana",
     "url": "https://github.com/BIT-DataLab/Edit-Banana",
     "resumo": "Converte imagens e diagramas estáticos em arquivos DrawIO totalmente editáveis usando SAM 3 e modelos multimodais.",
+    "categoria": "IA/Modelos",
     "tags": [
       "biblioteca",
       "GPU",
@@ -7634,6 +7956,7 @@
     "nome": "ChartGPU",
     "url": "https://github.com/ChartGPU/ChartGPU",
     "resumo": "Biblioteca de gráficos com WebGPU para milhões de pontos, streaming em tempo real e séries 3D.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "navegador",
@@ -7657,6 +7980,7 @@
     "nome": "concat",
     "url": "https://github.com/jub0t/concat",
     "resumo": "Editor de vídeo open source multiplataforma que se propõe a substituir o CapCut.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "roda local",
@@ -7681,6 +8005,7 @@
     "nome": "shaders",
     "url": "https://github.com/shader-effects-inc/shaders",
     "resumo": "Componentes de efeitos com WebGPU para React, Vue, Svelte, Solid, JS e Framer.",
+    "categoria": "Design/UI",
     "tags": [
       "biblioteca",
       "navegador",
@@ -7705,6 +8030,7 @@
     "nome": "doory",
     "url": "https://github.com/shaongitbd/doory",
     "resumo": "Alternativa open source ao Canva: editor de design no navegador com modelos, exportação em PNG, PDF e MP4 e self-host.",
+    "categoria": "Design/UI",
     "tags": [
       "web app",
       "self-host",
@@ -7730,6 +8056,7 @@
     "nome": "OpenMAIC",
     "url": "https://github.com/THU-MAIC/OpenMAIC",
     "resumo": "Plataforma multiagente que gera aulas imersivas e interativas com um clique.",
+    "categoria": "Agentes de IA",
     "tags": [
       "web app",
       "educação",
@@ -7751,6 +8078,7 @@
     "nome": "anatomy",
     "url": "https://github.com/wheresryan22/anatomy",
     "resumo": "Skill que faz o Claude explicar conceitos técnicos com ilustrações isométricas interativas: cada ideia vira uma máquina que se mexe.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -7774,6 +8102,7 @@
     "nome": "local-dream",
     "url": "https://github.com/xororz/local-dream",
     "resumo": "Roda Stable Diffusion no Android, acelerado pela NPU dos chips Snapdragon.",
+    "categoria": "IA/Modelos",
     "tags": [
       "app mobile",
       "Android",
@@ -7797,6 +8126,7 @@
     "nome": "Haven",
     "url": "https://github.com/ancsemi/Haven",
     "resumo": "Alternativa privada ao Discord que roda no seu servidor: chat, arquivos e voz, sem nuvem nem telemetria.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -7822,6 +8152,7 @@
     "nome": "baserow",
     "url": "https://github.com/baserow/baserow",
     "resumo": "Alternativa open source ao Airtable: bancos de dados, automações, apps e agentes de IA sem código.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "self-host",
@@ -7848,6 +8179,7 @@
     "nome": "CyberStrike",
     "url": "https://github.com/CyberStrikeus/CyberStrike",
     "resumo": "Agente de IA open source para segurança ofensiva: testes de invasão automatizados com 13 agentes e milhares de skills.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "CLI",
       "segurança",
@@ -7869,6 +8201,7 @@
     "nome": "openpost",
     "url": "https://github.com/getopenpost/openpost",
     "resumo": "Alternativa open source a Buffer, Canva e CapCut: escreve, desenha, edita vídeo e agenda posts nas redes.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "servidor MCP",
@@ -7899,6 +8232,7 @@
     "nome": "SurfSense",
     "url": "https://github.com/MODSetter/SurfSense",
     "resumo": "Alternativa ao NotebookLM que roda offline: agente de IA que pesquisa, transforma e edita seus documentos na sua máquina.",
+    "categoria": "Agentes de IA",
     "tags": [
       "web app",
       "self-host",
@@ -7927,6 +8261,7 @@
     "nome": "YuE",
     "url": "https://github.com/multimodal-art-projection/YuE",
     "resumo": "YuE2: modelo aberto de geração de músicas completas com voz, com planejamento simbólico (a base do YuE2 Studio).",
+    "categoria": "IA/Modelos",
     "tags": [
       "modelo de IA",
       "GPU",
@@ -7951,6 +8286,7 @@
     "nome": "android-reverse-engineering-skill",
     "url": "https://github.com/SimoneAvogadro/android-reverse-engineering-skill",
     "resumo": "Skill do Claude Code para engenharia reversa de apps Android: descompila, analisa e explica o app.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -7974,6 +8310,7 @@
     "nome": "testsprite-cli",
     "url": "https://github.com/TestSprite/testsprite-cli",
     "resumo": "CLI que abre seu app como usuário real, testa e mostra ao agente de código o que quebrou.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "testes",
@@ -7995,6 +8332,7 @@
     "nome": "OpenViking",
     "url": "https://github.com/volcengine/OpenViking",
     "resumo": "Banco de contexto open source da Volcengine que organiza memória, conhecimento e skills como sistema de arquivos para agentes.",
+    "categoria": "Agentes de IA",
     "tags": [
       "biblioteca",
       "API/servidor",
@@ -8019,6 +8357,7 @@
     "nome": "terminal-code",
     "url": "https://github.com/zenbu-labs/terminal-code",
     "resumo": "Roda o VS Code dentro do terminal combinando terminal-browser e code-server, com suporte a SSH.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "terminal",
@@ -8040,6 +8379,7 @@
     "nome": "diagram-design",
     "url": "https://github.com/cathrynlavery/diagram-design",
     "resumo": "Skill que gera diagramas editoriais (44 tipos) num único HTML + SVG, com as cores e fontes da sua marca.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -8064,6 +8404,7 @@
     "nome": "text-to-cad",
     "url": "https://github.com/earthtojake/text-to-cad",
     "resumo": "Skill que dá ao agente de IA o poder de modelar peças em CAD a partir de texto.",
+    "categoria": "Design/UI",
     "tags": [
       "plugin/skill",
       "3D",
@@ -8087,6 +8428,7 @@
     "nome": "raddebugger",
     "url": "https://github.com/EpicGames/raddebugger",
     "resumo": "Debugger gráfico nativo e multiprocesso da Epic Games, para Windows.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "Windows",
@@ -8108,6 +8450,7 @@
     "nome": "hyperframes",
     "url": "https://github.com/heygen-com/hyperframes",
     "resumo": "Escreva HTML e renderize vídeo: composição com HTML/CSS/GSAP feita para agentes de IA.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "biblioteca",
       "roda local",
@@ -8131,6 +8474,7 @@
     "nome": "airllm",
     "url": "https://github.com/lyogavin/airllm",
     "resumo": "Roda modelos de 70B numa GPU de 4 GB sem quantização, carregando uma camada por vez; suporta até o Kimi K3 (2,8T).",
+    "categoria": "IA/Modelos",
     "tags": [
       "biblioteca",
       "GPU",
@@ -8153,6 +8497,7 @@
     "nome": "skills",
     "url": "https://github.com/mattpocock/skills",
     "resumo": "Coleção de skills para agentes de código, direto do diretório .agents do Matt Pocock.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "coleção/guia",
       "plugin/skill",
@@ -8174,6 +8519,7 @@
     "nome": "rea",
     "url": "https://github.com/morluto/rea",
     "resumo": "MCP que deixa o agente fazer engenharia reversa de binários nativos, apps JavaScript/Electron, .NET e sites, com Ghidra, IDA ou Hopper.",
+    "categoria": "Agentes de IA",
     "tags": [
       "servidor MCP",
       "CLI",
@@ -8197,6 +8543,7 @@
     "nome": "openrig",
     "url": "https://github.com/mvschwarz/openrig",
     "resumo": "Monta uma rede de agentes (Claude Code, Codex, Pi) em times persistentes, com papéis e contexto compartilhado.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "Claude Code",
@@ -8219,6 +8566,7 @@
     "nome": "e2e",
     "url": "https://github.com/tester-army/e2e",
     "resumo": "Framework de testes ponta a ponta para apps web e mobile.",
+    "categoria": "Dev Tools",
     "tags": [
       "biblioteca",
       "testes",
@@ -8241,6 +8589,7 @@
     "nome": "claude-mem",
     "url": "https://github.com/thedotmack/claude-mem",
     "resumo": "Memória persistente entre sessões para agentes: registra o que o agente faz e devolve o contexto relevante depois.",
+    "categoria": "Agentes de IA",
     "tags": [
       "plugin/skill",
       "roda local",
@@ -8264,6 +8613,7 @@
     "nome": "Hatchdoor",
     "url": "https://github.com/BatterWorks/Hatchdoor",
     "resumo": "Self-host de vaults Obsidian com interface web e servidor MCP para agentes lerem e editarem notas.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "servidor MCP",
@@ -8288,6 +8638,7 @@
     "nome": "Dev-Janitor",
     "url": "https://github.com/cocojojo5213/Dev-Janitor",
     "resumo": "App desktop que limpa node_modules, caches e lixo de ferramentas de IA, gerencia CLIs e escaneia segredos expostos.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "macOS",
@@ -8312,6 +8663,7 @@
     "nome": "genoffice",
     "url": "https://github.com/genspark-ai/genoffice",
     "resumo": "Suíte de escritório open source com IA que edita docx, xlsx, pptx e PDF nativos.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "web app",
@@ -8337,6 +8689,7 @@
     "nome": "logo-design-skill",
     "url": "https://github.com/kaankiziltug/logo-design-skill",
     "resumo": "Skill para Claude e outros agentes que guia a criação de logos, com biblioteca de mais de 1.400 SVGs de referência.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -8361,6 +8714,7 @@
     "nome": "netwatch",
     "url": "https://github.com/matthart1983/netwatch",
     "resumo": "Diagnóstico de rede em TUI com captura ao vivo, decode L7, processos por conexão e motor de diagnóstico.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "Linux",
@@ -8386,6 +8740,7 @@
     "nome": "muesli",
     "url": "https://github.com/Muesli-HQ/muesli",
     "resumo": "App nativo de macOS para ditado e transcrição de reuniões com processamento local no Apple Silicon.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -8413,6 +8768,7 @@
     "nome": "openshorts",
     "url": "https://github.com/mutonby/openshorts",
     "resumo": "Plataforma open source que transforma vídeos longos em shorts, gera vídeos UGC com atores de IA e ferramentas de YouTube.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "web app",
       "self-host",
@@ -8438,6 +8794,7 @@
     "nome": "bento",
     "url": "https://github.com/nyblnet/bento",
     "resumo": "Alternativa ao PowerPoint contida em um único arquivo HTML, com editor, apresentador e colaboração criptografada.",
+    "categoria": "Produtividade",
     "tags": [
       "web app",
       "navegador",
@@ -8463,6 +8820,7 @@
     "nome": "planning-with-files",
     "url": "https://github.com/OthmanAdi/planning-with-files",
     "resumo": "Skill de planejamento que mantém o plano do agente em arquivos, sobrevivendo a /clear e compactação.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -8486,6 +8844,7 @@
     "nome": "pgterm",
     "url": "https://github.com/pgrundev/pgterm",
     "resumo": "Painel TUI tipo htop para monitorar vários bancos Postgres, com diagnósticos e SQL.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "terminal",
@@ -8508,6 +8867,7 @@
     "nome": "birdview",
     "url": "https://github.com/Qiuner/birdview",
     "resumo": "Skill que gera uma página HTML interativa com arquitetura e plano de mudança antes de o agente codar.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -8530,6 +8890,7 @@
     "nome": "repowise",
     "url": "https://github.com/repowise-dev/repowise",
     "resumo": "Indexa código, grafo de chamadas e histórico git para agentes entenderem a base sem redescobrir.",
+    "categoria": "Agentes de IA",
     "tags": [
       "servidor MCP",
       "CLI",
@@ -8553,6 +8914,7 @@
     "nome": "capptivo",
     "url": "https://github.com/SECHAK-AG/capptivo",
     "resumo": "Alternativa open source ao Screen Studio para gravar telas com zoom automático seguindo o cursor.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "macOS",
@@ -8578,6 +8940,7 @@
     "nome": "YuE2-Studio",
     "url": "https://github.com/timoncool/YuE2-Studio",
     "resumo": "Estúdio desktop que gera músicas completas com partitura editável localmente na GPU, com MCP e player estilo Winamp.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "roda local",
@@ -8603,6 +8966,7 @@
     "nome": "archify",
     "url": "https://github.com/tt-a1i/archify",
     "resumo": "Skill que transforma uma descrição ou um repositório em diagramas HTML interativos de arquitetura.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -8626,6 +8990,7 @@
     "nome": "openclaude",
     "url": "https://github.com/Twigpine/openclaude",
     "resumo": "CLI de agente de código open-source compatível com OpenAI, Gemini, Ollama e outros provedores, com MCP e agentes.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "terminal",
@@ -8650,6 +9015,7 @@
     "nome": "codenotch",
     "url": "https://github.com/vinzdg/codenotch",
     "resumo": "App macOS e Windows que fixa um notch na tela mostrando o uso dos limites de Claude Code e outros assistentes.",
+    "categoria": "Dev Tools",
     "tags": [
       "app desktop",
       "macOS",
@@ -8675,6 +9041,7 @@
     "nome": "vorssaint-utils",
     "url": "https://github.com/vorssaint/vorssaint-utils",
     "resumo": "Um ícone na barra de menu do Mac que substitui dezenas de utilitários pagos, grátis e local.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "macOS",
@@ -8697,6 +9064,7 @@
     "nome": "Editable-Design",
     "url": "https://github.com/yejy53/Editable-Design",
     "resumo": "Skill que gera pôsteres e infográficos editáveis com camadas reais, editor visual e exportação para PowerPoint.",
+    "categoria": "Design/UI",
     "tags": [
       "plugin/skill",
       "design",
@@ -8719,6 +9087,7 @@
     "nome": "grepai",
     "url": "https://github.com/yoanbernabeu/grepai",
     "resumo": "CLI que faz busca semântica em código com embeddings locais, reduz tokens de agentes e oferece MCP.",
+    "categoria": "Dev Tools",
     "tags": [
       "CLI",
       "servidor MCP",
@@ -8745,6 +9114,7 @@
     "nome": "bookorbit",
     "url": "https://github.com/bookorbit/bookorbit",
     "resumo": "Plataforma self-hosted de biblioteca para ebooks, PDFs, audiobooks e quadrinhos com apps iOS.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -8769,6 +9139,7 @@
     "nome": "crawlseo",
     "url": "https://github.com/crawlseo/crawlseo",
     "resumo": "Painel de SEO self-hosted gratuito com Search Console, crawler, Core Web Vitals e servidor MCP.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -8792,6 +9163,7 @@
     "nome": "dockhand",
     "url": "https://github.com/Finsys/dockhand",
     "resumo": "Interface moderna para gerenciar Docker: containers, stacks Compose, deploy via Git, terminal e scan de vulnerabilidades.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "web app",
       "self-host",
@@ -8817,6 +9189,7 @@
     "nome": "expense-budget-tracker",
     "url": "https://github.com/kirill-markin/expense-budget-tracker",
     "resumo": "Rastreador de despesas e orçamento self-hosted em Postgres, multi-moeda, com servidor MCP e API SQL para agentes.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "servidor MCP",
@@ -8840,6 +9213,7 @@
     "nome": "usage-pulse",
     "url": "https://github.com/NoobyGains/usage-pulse",
     "resumo": "Barra de status em Python que mostra limites de sessão, semana, custo e temas animados no Claude Code.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -8862,6 +9236,7 @@
     "nome": "openship",
     "url": "https://github.com/oblien/openship",
     "resumo": "Plataforma open source e self-hosted de deploy com CI/CD, roteamento e TLS, com app desktop, web e CLI.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "API/servidor",
       "CLI",
@@ -8884,6 +9259,7 @@
     "nome": "agent-orchestrator",
     "url": "https://github.com/OrchestratorInc/agent-orchestrator",
     "resumo": "App que planeja, executa e supervisiona agentes de código com Kanban de PRs, CI e revisões.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "app mobile",
@@ -8910,6 +9286,7 @@
     "nome": "app-store-screenshots",
     "url": "https://github.com/ParthJadhav/app-store-screenshots",
     "resumo": "Skill que monta um editor Next.js para criar screenshots de App Store e Google Play prontas para exportar.",
+    "categoria": "Design/UI",
     "tags": [
       "plugin/skill",
       "design",
@@ -8932,6 +9309,7 @@
     "nome": "useagent",
     "url": "https://github.com/useagenthq/useagent",
     "resumo": "Colega de IA open source e self-hosted que dá computador, navegador e terminal a agentes como Claude Code e Codex.",
+    "categoria": "Agentes de IA",
     "tags": [
       "web app",
       "self-host",
@@ -8959,6 +9337,7 @@
     "nome": "note67",
     "url": "https://github.com/ZapYap-com/note67",
     "resumo": "Assistente local de notas de reunião com transcrição Whisper e resumos por IA, tudo no seu dispositivo.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "roda local",
@@ -8985,6 +9364,7 @@
     "nome": "logdeck",
     "url": "https://github.com/AmoabaKelvin/logdeck",
     "resumo": "Logs, alertas e gestão de containers Docker/Podman em um único binário Go, com CLI e servidor MCP.",
+    "categoria": "Self-hosted",
     "tags": [
       "CLI",
       "servidor MCP",
@@ -9009,6 +9389,7 @@
     "nome": "openreel-video",
     "url": "https://github.com/Augani/openreel-video",
     "resumo": "Editor de vídeo open-source no navegador e desktop, sem marca d'água, com legendas, áudio e cor.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "web app",
       "app desktop",
@@ -9033,6 +9414,7 @@
     "nome": "webssh",
     "url": "https://github.com/bifrost0x/webssh",
     "resumo": "Workspace SSH e SFTP auto-hospedado e multiusuário para homelabs e times.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -9058,6 +9440,7 @@
     "nome": "gods-eye-view",
     "url": "https://github.com/bilawalsidhu/gods-eye-view",
     "resumo": "Simulador de satélite espião no navegador com globo 3D e dados públicos ao vivo.",
+    "categoria": "Outros",
     "tags": [
       "web app",
       "navegador",
@@ -9080,6 +9463,7 @@
     "nome": "bridgeclip",
     "url": "https://github.com/bridge-mind/bridgeclip",
     "resumo": "App desktop open-source que transforma vídeos longos em clipes curtos legendados com IA.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "vídeo",
@@ -9103,6 +9487,7 @@
     "nome": "Handy",
     "url": "https://github.com/cjpais/Handy",
     "resumo": "App desktop gratuito e offline de ditado por voz com Whisper/Parakeet que cola o texto em qualquer campo.",
+    "categoria": "Produtividade",
     "tags": [
       "app desktop",
       "offline",
@@ -9129,6 +9514,7 @@
     "nome": "cogsend",
     "url": "https://github.com/cogsend/cogsend",
     "resumo": "Agendador de redes sociais self-hosted na Cloudflare para Mastodon, Bluesky, LinkedIn, Threads e X, com MCP.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -9152,6 +9538,7 @@
     "nome": "openwork",
     "url": "https://github.com/different-ai/openwork",
     "resumo": "Alternativa open source ao Claude Cowork: app desktop em que agentes trabalham nos seus arquivos com 50+ modelos.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "agentes",
@@ -9176,6 +9563,7 @@
     "nome": "kept",
     "url": "https://github.com/ericerkz/kept",
     "resumo": "App de notas self-hosted estilo Google Keep, com checklists, lembretes, apps iOS/Android e servidor MCP.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "app mobile",
@@ -9203,6 +9591,7 @@
     "nome": "open-seo",
     "url": "https://github.com/every-app/open-seo",
     "resumo": "Alternativa open source ao Semrush e Ahrefs com pay-as-you-go via DataForSEO, MCP e skills para agentes.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "servidor MCP",
@@ -9228,6 +9617,7 @@
     "nome": "textream",
     "url": "https://github.com/f/textream",
     "resumo": "Teleprompter gratuito para Mac e iPhone que destaca cada palavra falada, com overlay estilo Dynamic Island.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "app mobile",
@@ -9252,6 +9642,7 @@
     "nome": "emdash",
     "url": "https://github.com/generalaction/emdash",
     "resumo": "App desktop para rodar vários agentes de código em paralelo, cada um num Git worktree, local ou via SSH.",
+    "categoria": "Agentes de IA",
     "tags": [
       "app desktop",
       "Claude Code",
@@ -9274,6 +9665,7 @@
     "nome": "mailflare",
     "url": "https://github.com/hieunc229/mailflare",
     "resumo": "Caixa de e-mail self-hosted para domínios próprios sobre Cloudflare, com Resend ou SES, calendário e caixas compartilhadas.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -9296,6 +9688,7 @@
     "nome": "ffmpeg-skill",
     "url": "https://github.com/kajisho5/ffmpeg-skill",
     "resumo": "Skill que dá ao agente de código um editor de vídeo local com FFmpeg, com 53 demos antes e depois.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "servidor MCP",
@@ -9319,6 +9712,7 @@
     "nome": "cc-safety-net",
     "url": "https://github.com/kenryu42/cc-safety-net",
     "resumo": "Plugin que bloqueia comandos destrutivos e acesso a segredos antes que o agente de código execute.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "plugin/skill",
       "Claude Code",
@@ -9342,6 +9736,7 @@
     "nome": "dify",
     "url": "https://github.com/langgenius/dify",
     "resumo": "Plataforma open source para criar apps de IA com workflows visuais, RAG e agentes.",
+    "categoria": "Agentes de IA",
     "tags": [
       "web app",
       "self-host",
@@ -9366,6 +9761,7 @@
     "nome": "OpenArchiver",
     "url": "https://github.com/LogicLabs-OU/OpenArchiver",
     "resumo": "Plataforma self-hosted para arquivar e buscar e-mails do Gmail, Microsoft 365, IMAP e PST.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -9388,6 +9784,7 @@
     "nome": "dockge",
     "url": "https://github.com/louislam/dockge",
     "resumo": "Gerenciador web e reativo de stacks docker compose, do criador do Uptime Kuma.",
+    "categoria": "Self-hosted",
     "tags": [
       "web app",
       "self-host",
@@ -9412,6 +9809,7 @@
     "nome": "sqlit",
     "url": "https://github.com/Maxteabag/sqlit",
     "resumo": "TUI estilo lazygit para conectar e consultar dezenas de bancos de dados pelo terminal.",
+    "categoria": "Terminal/TUI",
     "tags": [
       "TUI",
       "terminal",
@@ -9433,6 +9831,7 @@
     "nome": "ezbookkeeping",
     "url": "https://github.com/mayswind/ezbookkeeping",
     "resumo": "App de finanças pessoais self-hosted, leve, com PWA, importação de vários formatos e recursos de IA.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "self-host",
@@ -9454,6 +9853,7 @@
     "nome": "DeskcommCRM",
     "url": "https://github.com/melgarafael/DeskcommCRM",
     "resumo": "CRM open source brasileiro com agentes de IA que atendem e vendem no WhatsApp, rodando na sua VPS.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "self-host",
@@ -9481,6 +9881,7 @@
     "nome": "vibecraft",
     "url": "https://github.com/Nearcyan/vibecraft",
     "resumo": "Interface visual em 3D que mostra seu Claude Code trabalhando como num ateliê, com áudio espacial.",
+    "categoria": "Skills/Claude Code",
     "tags": [
       "web app",
       "Claude Code",
@@ -9504,6 +9905,7 @@
     "nome": "openobserve",
     "url": "https://github.com/openobserve/openobserve",
     "resumo": "Alternativa open source ao Datadog para logs, métricas, traces e RUM, em Rust com custo de storage muito menor.",
+    "categoria": "Infra/DevOps",
     "tags": [
       "API/servidor",
       "self-host",
@@ -9530,6 +9932,7 @@
     "nome": "presenton",
     "url": "https://github.com/presenton/presenton",
     "resumo": "Gerador open source de apresentações com IA, alternativa ao Gamma e Canva, com API.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "API/servidor",
@@ -9557,6 +9960,7 @@
     "nome": "pasteguard",
     "url": "https://github.com/sgasser/pasteguard",
     "resumo": "Mascara dados pessoais e segredos antes de chegarem a ChatGPT, Claude e agentes.",
+    "categoria": "Segurança/Redes",
     "tags": [
       "extensão de navegador",
       "API/servidor",
@@ -9581,6 +9985,7 @@
     "nome": "Taskosaur",
     "url": "https://github.com/Taskosaur/Taskosaur",
     "resumo": "Gerenciador de projetos open source com IA conversacional que executa tarefas por conversa.",
+    "categoria": "Negócios/Finanças",
     "tags": [
       "web app",
       "self-host",
@@ -9606,6 +10011,7 @@
     "nome": "agent-browser",
     "url": "https://github.com/vercel-labs/agent-browser",
     "resumo": "CLI nativo em Rust da Vercel que automatiza o navegador para agentes de IA com snapshots e refs.",
+    "categoria": "Agentes de IA",
     "tags": [
       "CLI",
       "navegador automatizado",
@@ -9627,6 +10033,7 @@
     "nome": "Recordly",
     "url": "https://github.com/webadderallorg/Recordly",
     "resumo": "Gravador e editor de tela open source com zoom automático, cursor suavizado e molduras estilizadas para demos.",
+    "categoria": "Mídia/Vídeo/Áudio",
     "tags": [
       "app desktop",
       "macOS",
@@ -9652,6 +10059,7 @@
     "nome": "breakscale",
     "url": "https://github.com/workersio/breakscale",
     "resumo": "Simulador de design de sistemas com simulação real de eventos: monte a arquitetura e aumente a carga até quebrar.",
+    "categoria": "Dev Tools",
     "tags": [
       "web app",
       "navegador",
