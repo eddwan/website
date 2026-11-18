@@ -18,7 +18,7 @@ const videos = [...aparicoes].sort((a, b) => b.data.getTime() - a.data.getTime()
 const filtro = (campo: string, valor: string) => `/repositorios?${new URLSearchParams({ [campo]: valor })}`;
 ---
 
-<Base titulo={`${nome} (${repo.id})`} descricao={resumo}>
+<Base titulo={`${nome} (${repo.id})`} descricao={resumo} imagem={`/og/repositorios/${repo.id}.png`}>
   <article>
     <header class="cab">
       <div class="grid-bg"></div>
