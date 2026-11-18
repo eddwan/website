@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import RepoCard from '../../components/RepoCard.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+
+const ultimaAparicao = (r: { data: { aparicoes: { data: Date }[] } }) =>
+  Math.max(...r.data.aparicoes.map((a) => a.data.getTime()));
+// Mais recentes primeiro; no empate, mantém a ordem do JSON (a ordem do vídeo)
+const repos = (await getCollection('repositorios')).sort((a, b) => ultimaAparicao(b) - ultimaAparicao(a));
+---
+
+<Base titulo="Repositórios" descricao="Os repositórios open source que já apareceram nos vídeos do canal.">
+  <CabecalhoPagina
+    eyebrow={`${repos.length} repositórios`}
+    titulo="Repositórios"
+    lead="Todos os projetos open source que já apareceram nos vídeos do canal, do mais recente ao mais antigo."
+  />
+
+  <div class="container grade">
+    {repos.map((repo) => <RepoCard repo={repo} />)}
+  </div>
+</Base>
+
+<style>
+  .grade {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  }
+</style>
