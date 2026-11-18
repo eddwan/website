@@ -55,6 +55,8 @@ const repositorios = defineCollection({
       resumo: z.string().min(1),
       // Coluna Categoria da planilha (ex.: "Agentes de IA", "Dev Tools"): uma por repositório
       categoria: z.string().min(1),
+      // Coluna Subcategoria da planilha: detalha a categoria (ex.: "Frontend" em Dev Tools)
+      subcategoria: z.string().min(1),
       tags: z.array(z.string()).min(1),
       // Ferramentas que o repositório substitui (ex.: "Notion", "Photoshop")
       alternativaA: z.array(z.string()).default([]),
