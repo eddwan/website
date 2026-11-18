@@ -1,0 +1,564 @@
+---
+import Base from '../../layouts/Base.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+import { COMPONENTES, CONEXOES, LIVES, type Componente } from '../../data/votacao-progresso';
+
+// Diagrama da votação desenhado no build (SVG puro). O script no fim só troca classes conforme a live escolhida.
+const W = 160;
+const H = 64;
+const LARGURA = 1740;
+const ALTURA = 730;
+
+const porId = new Map(COMPONENTES.map((c) => [c.id, c]));
+const caixa = (c: Componente) => ({ x: c.x, y: c.y, w: c.w ?? W, h: c.h ?? H });
+
+type Lado = 'top' | 'bottom' | 'left' | 'right';
+// Ponto de saída/chegada. Num lado de cima/baixo, usa o x do outro componente quando ele cabe na caixa (linha reta).
+function ancora(c: Componente, lado: Lado, outro: Componente) {
+  const a = caixa(c);
+  const b = caixa(outro);
+  const cxOutro = b.x + b.w / 2;
+  const cyOutro = b.y + b.h / 2;
+  if (lado === 'top' || lado === 'bottom') {
+    const x = cxOutro > a.x + 12 && cxOutro < a.x + a.w - 12 ? cxOutro : a.x + a.w / 2;
+    return { x, y: lado === 'top' ? a.y : a.y + a.h };
+  }
+  const y = cyOutro > a.y + 12 && cyOutro < a.y + a.h - 12 ? cyOutro : a.y + a.h / 2;
+  return { x: lado === 'left' ? a.x : a.x + a.w, y };
+}
+
+function rota(de: Componente, para: Componente, lados: [Lado, Lado]) {
+  const p = ancora(de, lados[0], para);
+  const q = ancora(para, lados[1], de);
+  const hDe = lados[0] === 'left' || lados[0] === 'right';
+  const hPara = lados[1] === 'left' || lados[1] === 'right';
+  let pts: { x: number; y: number }[];
+  if (hDe && hPara) {
+    const mx = (p.x + q.x) / 2;
+    pts = p.y === q.y ? [p, q] : [p, { x: mx, y: p.y }, { x: mx, y: q.y }, q];
+  } else if (!hDe && !hPara) {
+    const my = (p.y + q.y) / 2;
+    pts = p.x === q.x ? [p, q] : [p, { x: p.x, y: my }, { x: q.x, y: my }, q];
+  } else if (hDe) {
+    pts = [p, { x: q.x, y: p.y }, q];
+  } else {
+    pts = [p, { x: p.x, y: q.y }, q];
+  }
+  // Rótulo no meio do trecho mais longo
+  let melhor = 0;
+  let meio = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+  for (let i = 0; i < pts.length - 1; i++) {
+    const d = Math.abs(pts[i + 1].x - pts[i].x) + Math.abs(pts[i + 1].y - pts[i].y);
+    if (d > melhor) {
+      melhor = d;
+      meio = { x: (pts[i].x + pts[i + 1].x) / 2, y: (pts[i].y + pts[i + 1].y) / 2 };
+    }
+  }
+  return { d: 'M' + pts.map((t) => `${t.x},${t.y}`).join(' L'), meio };
+}
+
+const linhas = CONEXOES.map((c) => {
+  const de = porId.get(c.de)!;
+  const para = porId.get(c.para)!;
+  return { ...c, lives: c.lives ?? para.lives, ...rota(de, para, c.lados) };
+});
+
+const ultimaConcluida = Math.max(0, ...LIVES.filter((l) => l.concluida).map((l) => l.n));
+const pronto = (c: Componente) => c.lives.length > 0 && Math.min(...c.lives) <= ultimaConcluida;
+const fmtData = (iso: string) => {
+  const [, m, d] = iso.split('-');
+  return `${d}/${m}`;
+};
+const DIAS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+const diaSemana = (iso: string) => DIAS[new Date(`${iso}T12:00:00-03:00`).getUTCDay()];
+
+const TIPOS = [
+  ['frontend', 'Páginas'],
+  ['backend', 'Código no Worker ou script'],
+  ['banco', 'Dados'],
+  ['nuvem', 'Serviço na nuvem'],
+  ['seguranca', 'Segurança'],
+  ['externo', 'Pessoas e serviços de fora'],
+];
+---
+
+<Base
+  titulo="Progresso da votação"
+  descricao="A votação open source do eddwan.com sendo construída em 10 lives, de 17/11 a 02/12/2026: o que já foi feito e o que vem em cada live, no diagrama da arquitetura."
+>
+  <CabecalhoPagina
+    eyebrow="10 lives · 17/11 a 02/12"
+    titulo="Progresso da votação"
+    lead="A votação open source do eddwan.com está sendo construída ao vivo no canal, com o Claude Code. Escolha uma live para ver o que ela toca na arquitetura."
+  />
+
+  <section class="container prog">
+    <div class="controles">
+      <div class="modo" role="group" aria-label="Como destacar">
+        <button type="button" class="modo-btn ativo" data-modo="ate">Até esta live</button>
+        <button type="button" class="modo-btn" data-modo="so">Só esta live</button>
+        <button type="button" class="modo-btn" data-modo="tudo">Tudo</button>
+      </div>
+      <p class="status-geral"><b>{ultimaConcluida}</b> de 10 lives concluídas</p>
+    </div>
+
+    <ol class="linha" aria-label="Lives">
+      {
+        LIVES.map((l) => (
+          <li>
+            <button type="button" class:list={['live', l.concluida && 'feita']} data-n={l.n} data-data={l.data}>
+              <span class="num">Live {l.n}</span>
+              <span class="dia">
+                {diaSemana(l.data)} {fmtData(l.data)}
+              </span>
+              <span class="tit">{l.titulo}</span>
+            </button>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="painel" id="painel" aria-live="polite">
+      {
+        LIVES.map((l) => (
+          <article class="info" data-n={l.n} hidden={l.n !== 1}>
+            <p class="info-topo">
+              <span class="info-num">Live {l.n}</span>
+              <span class="info-data">
+                {diaSemana(l.data)}, {fmtData(l.data)}, 20h às 21h30
+              </span>
+              <span class:list={['selo', l.concluida ? 'selo-feita' : 'selo-prox']} data-selo>
+                {l.concluida ? 'Concluída' : 'Planejada'}
+              </span>
+            </p>
+            <h2>{l.titulo}</h2>
+            <p class="info-resumo">{l.resumo}</p>
+            <p class="info-links">
+              <a href={`https://github.com/eddwan/website/issues/${l.issue}`} rel="noopener">
+                Issue #{l.issue}
+              </a>
+              {l.video && (
+                <a href={`https://www.youtube.com/watch?v=${l.video}`} rel="noopener">
+                  {l.concluida ? 'Gravação' : 'Live no YouTube'}
+                </a>
+              )}
+              {l.post && <a href={l.post}>Post com os prompts</a>}
+            </p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="tela">
+      <svg viewBox={`0 0 ${LARGURA} ${ALTURA}`} role="img" aria-label="Diagrama da arquitetura da votação open source do eddwan.com" id="diagrama">
+        <defs>
+          <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+          </marker>
+        </defs>
+        <rect x="525" y="172" width="940" height="252" rx="18" class="regiao" />
+        <text x="541" y="166" class="regiao-txt">Cloudflare Worker (plano grátis)</text>
+        <rect x="25" y="322" width="190" height="252" rx="18" class="regiao" />
+        <text x="41" y="590" class="regiao-txt">Máquina do Ed</text>
+        {
+          linhas.map((l) => (
+            <g class:list={['con', l.tracejada && 'tracejada']} data-lives={l.lives.join(' ')}>
+              <path d={l.d} marker-end="url(#seta)" />
+              <rect x={l.meio.x - l.rotulo.length * 3.6 - 6} y={l.meio.y - 9} width={l.rotulo.length * 7.2 + 12} height="18" rx="5" class="con-fundo" />
+              <text x={l.meio.x} y={l.meio.y + 4} class="con-txt">
+                {l.rotulo}
+              </text>
+            </g>
+          ))
+        }
+        {
+          COMPONENTES.map((c) => {
+            const b = caixa(c);
+            return (
+              <g class:list={['comp', `t-${c.tipo}`, pronto(c) && 'pronto']} data-lives={c.lives.join(' ')}>
+                <title>{`${c.rotulo}: ${c.sub}. Lives ${c.lives.join(', ')}.`}</title>
+                <rect x={b.x} y={b.y} width={b.w} height={b.h} rx="12" class="comp-caixa" />
+                <text x={b.x + b.w / 2} y={b.y + b.h / 2 - 4} class="comp-rot">
+                  {c.rotulo}
+                </text>
+                <text x={b.x + b.w / 2} y={b.y + b.h / 2 + 13} class="comp-sub">
+                  {c.sub}
+                </text>
+                <text x={b.x + b.w - 8} y={b.y - 6} class="comp-tag">
+                  {(pronto(c) ? '✓ ' : '') + (c.lives.length > 1 ? 'Lives ' : 'Live ') + c.lives.join(', ')}
+                </text>
+              </g>
+            );
+          })
+        }
+      </svg>
+    </div>
+
+    <ul class="legenda">
+      {
+        TIPOS.map(([t, nome]) => (
+          <li>
+            <span class:list={['amostra', `t-${t}`]} />
+            {nome}
+          </li>
+        ))
+      }
+      <li><span class="amostra amostra-tracejada" />Ligação assíncrona ou de reserva</li>
+    </ul>
+
+    <p class="nota">
+      Tudo no plano grátis da Cloudflare. A arquitetura completa está no
+      <a href="/blog/vou-construir-uma-votacao-open-source-com-custo-zero-a-arquitetura-peca-por-peca">vídeo de apresentação</a>, e cada live
+      tem a sua issue no <a href="https://github.com/users/eddwan/projects/5" rel="noopener">GitHub Project</a>. Quer ajudar? Comente na issue
+      da próxima live ou mande um PR para a <code>develop</code>.
+    </p>
+  </section>
+</Base>
+
+<style>
+  .prog {
+    padding-bottom: clamp(3rem, 8vw, 5rem);
+    display: grid;
+    gap: 1.25rem;
+  }
+  .controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .modo {
+    display: inline-flex;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .modo-btn {
+    font: 600 0.85rem var(--f-body);
+    color: var(--text-2);
+    background: none;
+    border: 0;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .modo-btn.ativo {
+    background: var(--surface-2);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+  .status-geral {
+    margin: 0;
+    font: 0.85rem var(--f-mono);
+    color: var(--muted);
+  }
+  .status-geral b {
+    color: var(--b1);
+  }
+  .linha {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(10, minmax(118px, 1fr));
+    gap: 0.5rem;
+    overflow-x: auto;
+  }
+  .live {
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    display: grid;
+    gap: 2px;
+    padding: 0.7rem 0.75rem;
+    border-radius: var(--r-sm);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--text-2);
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .live:hover {
+    border-color: var(--line-2);
+  }
+  .live .num {
+    font: 600 0.72rem var(--f-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .live .dia {
+    font: 0.72rem var(--f-mono);
+    color: var(--muted);
+  }
+  .live .tit {
+    font: 650 0.86rem/1.25 var(--f-display);
+    color: var(--text);
+  }
+  .live.feita .num::after {
+    content: ' ✓';
+    color: var(--b1);
+  }
+  .live.hoje {
+    border-color: rgba(255, 51, 85, 0.6);
+  }
+  .live.hoje .num::after {
+    content: ' · hoje';
+    color: #ff5577;
+  }
+  .live.sel {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
+      var(--g-ob) border-box;
+    border: 1.5px solid transparent;
+  }
+  .painel {
+    min-height: 9.5rem;
+  }
+  .info {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 1.1rem 1.3rem;
+  }
+  .info-topo {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.8rem;
+    font: 0.78rem var(--f-mono);
+    color: var(--muted);
+  }
+  .info-num {
+    color: var(--o1);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .selo {
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+  }
+  .selo-feita {
+    background: rgba(3, 231, 252, 0.12);
+    color: var(--b1);
+  }
+  .selo-prox {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-2);
+  }
+  .selo-hoje {
+    background: #ff0033;
+    color: #fff;
+  }
+  .info h2 {
+    margin: 0.35rem 0 0.25rem;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    letter-spacing: -0.03em;
+  }
+  .info-resumo {
+    margin: 0;
+    color: var(--text-2);
+    max-width: 62ch;
+  }
+  .info-links {
+    margin: 0.7rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+    font-size: 0.9rem;
+  }
+  .info-links a {
+    color: var(--b1);
+  }
+  .tela {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--bg-2);
+    padding: 0.75rem;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    min-width: 900px;
+    height: auto;
+    font-family: var(--f-body);
+  }
+  .regiao {
+    fill: rgba(255, 255, 255, 0.015);
+    stroke: var(--line-2);
+    stroke-dasharray: 5 6;
+  }
+  .regiao-txt {
+    font: 600 12px var(--f-mono);
+    fill: var(--muted);
+  }
+  .comp,
+  .con {
+    transition: opacity 0.35s var(--ease);
+  }
+  .comp-caixa {
+    fill: var(--surface);
+    stroke: var(--cor);
+    stroke-width: 1.5;
+  }
+  .comp-rot {
+    font: 700 14px var(--f-display);
+    fill: var(--text);
+    text-anchor: middle;
+  }
+  .comp-sub {
+    font-size: 11px;
+    fill: var(--text-2);
+    text-anchor: middle;
+  }
+  .comp-tag {
+    font: 600 11px var(--f-mono);
+    fill: var(--cor);
+    text-anchor: end;
+  }
+  .t-frontend { --cor: #0183fb; }
+  .t-backend { --cor: #fe7602; }
+  .t-banco { --cor: #03e7fc; }
+  .t-nuvem { --cor: #9aa4b2; }
+  .t-seguranca { --cor: #ff5577; }
+  .t-externo { --cor: #c9d1dc; }
+  .comp.pronto .comp-caixa {
+    fill: color-mix(in srgb, var(--cor) 14%, var(--surface));
+  }
+  .con {
+    color: var(--muted);
+  }
+  .con path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+  .con.tracejada path {
+    stroke-dasharray: 6 5;
+  }
+  .con-fundo {
+    fill: var(--bg-2);
+  }
+  .con-txt {
+    font: 11px var(--f-mono);
+    fill: var(--text-2);
+    text-anchor: middle;
+  }
+  /* Destaque da live escolhida: o que não está ativo fica apagado */
+  svg.filtrando .comp:not(.ativo),
+  svg.filtrando .con:not(.ativo) {
+    opacity: 0.16;
+  }
+  svg.filtrando .comp.ativo .comp-caixa {
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cor) 55%, transparent));
+  }
+  svg.filtrando .con.ativo {
+    color: var(--o1);
+  }
+  .legenda {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    color: var(--text-2);
+  }
+  .legenda li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .amostra {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 2px solid var(--cor);
+  }
+  .amostra-tracejada {
+    width: 22px;
+    height: 0;
+    border: 0;
+    border-top: 2px dashed var(--muted);
+    border-radius: 0;
+  }
+  .nota {
+    margin: 0;
+    color: var(--text-2);
+    max-width: var(--w-text);
+  }
+  .nota a {
+    color: var(--b1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .comp,
+    .con,
+    .live {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const svg = document.getElementById('diagrama') as unknown as SVGSVGElement | null;
+  const botoes = Array.from(document.querySelectorAll<HTMLButtonElement>('.live'));
+  const modos = Array.from(document.querySelectorAll<HTMLButtonElement>('.modo-btn'));
+  const infos = Array.from(document.querySelectorAll<HTMLElement>('.info'));
+  const itens = svg ? Array.from(svg.querySelectorAll<SVGGElement>('.comp, .con')) : [];
+
+  // Hoje no horário de Brasília (AAAA-MM-DD)
+  const hoje = new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 10);
+  let modo = 'ate';
+  let atual = 1;
+
+  // Live inicial: a de hoje; senão a próxima ainda não concluída; senão a última
+  const deHoje = botoes.find((b) => b.dataset.data === hoje);
+  const proxima = botoes.find((b) => !b.classList.contains('feita') && (b.dataset.data ?? '') >= hoje);
+  atual = Number((deHoje ?? proxima ?? botoes[botoes.length - 1])?.dataset.n ?? 1);
+  if (deHoje && !deHoje.classList.contains('feita')) {
+    deHoje.classList.add('hoje');
+    const selo = document.querySelector<HTMLElement>(`.info[data-n="${deHoje.dataset.n}"] [data-selo]`);
+    if (selo) {
+      selo.textContent = 'Hoje, 20h';
+      selo.className = 'selo selo-hoje';
+    }
+  }
+
+  function aplicar() {
+    botoes.forEach((b) => b.classList.toggle('sel', Number(b.dataset.n) === atual));
+    infos.forEach((i) => (i.hidden = Number(i.dataset.n) !== atual));
+    modos.forEach((m) => m.classList.toggle('ativo', m.dataset.modo === modo));
+    if (!svg) return;
+    svg.classList.toggle('filtrando', modo !== 'tudo');
+    for (const el of itens) {
+      const lives = (el.dataset.lives ?? '').split(' ').filter(Boolean).map(Number);
+      const ativo = modo === 'so' ? lives.includes(atual) : lives.some((n) => n <= atual);
+      el.classList.toggle('ativo', ativo);
+    }
+  }
+
+  botoes.forEach((b) =>
+    b.addEventListener('click', () => {
+      atual = Number(b.dataset.n);
+      if (modo === 'tudo') modo = 'ate';
+      aplicar();
+    }),
+  );
+  modos.forEach((m) =>
+    m.addEventListener('click', () => {
+      modo = m.dataset.modo ?? 'ate';
+      aplicar();
+    }),
+  );
+  aplicar();
+</script>

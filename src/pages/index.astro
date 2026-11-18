@@ -40,7 +40,7 @@ const terminal = posts.slice(0, 3).map((p) => ({
       <div class="hero-texto">
         {/* LIVES-VOTACAO: enquanto houver lives, a pílula do topo anuncia as lives no lugar do post novo */}
         {lives ? (
-          <a class="hero-status hero-status-live" href={lives.link} rel="noopener">
+          <a class="hero-status hero-status-live" href="/votacao/progresso">
             <span class="pulso pulso-live" aria-hidden="true" />
             <span class="hero-status-rot">{lives.rotulo}</span>
             <span class="hero-status-tit">{lives.texto}</span>
@@ -133,6 +133,7 @@ const terminal = posts.slice(0, 3).map((p) => ({
               <span>
                 De <strong>17/11 a 02/12</strong>, lives de <strong>terça a sexta, das 20h às 21h30</strong>,
                 construindo ao vivo a votação open source do eddwan.com com inteligência artificial (Claude Code).
+                <a href="/votacao/progresso">Veja o que já foi feito em cada live</a>.
               </span>
             </p>
           )
@@ -705,6 +706,10 @@ const terminal = posts.slice(0, 3).map((p) => ({
   }
   .inscrever-lives strong {
     color: var(--text);
+    font-weight: 600;
+  }
+  .inscrever-lives a {
+    color: var(--b1);
     font-weight: 600;
   }
   .inscrever-acoes {
