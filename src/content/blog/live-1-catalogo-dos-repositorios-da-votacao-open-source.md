@@ -20,6 +20,8 @@ rascunho: false
 
 Na terça, 17/11, começou a série de 10 lives em que eu construo a votação open source do eddwan.com: quem assiste vai votar nos repositórios dos próximos vídeos e sugerir repositórios novos. A arquitetura completa está no [vídeo e no post de apresentação](/blog/vou-construir-uma-votacao-open-source-com-custo-zero-a-arquitetura-peca-por-peca). As lives são de terça a sexta, das 20h às 21h30, até 02/12, e cada uma tem a sua issue no [GitHub Project](https://github.com/users/eddwan/projects/5).
 
+O que já foi feito e o que vem em cada live está na [página de progresso da votação](/votacao/progresso), com o diagrama da arquitetura e uma linha do tempo das 10 lives.
+
 Antes de votar em repositório, o site precisa saber quais repositórios existem. Foi isso que a Live 1 resolveu.
 
 ## O que ficou pronto
