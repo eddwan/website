@@ -22,6 +22,10 @@ const filtros = [
     opcoes: contagem(repos.map((r) => (r.data.linguagem ? [r.data.linguagem] : []))),
   },
 ];
+// Subcategorias de cada categoria (o mesmo nome pode existir em mais de uma); o script mostra só as da categoria escolhida
+const subcategorias = filtros[0].opcoes.flatMap(({ valor: cat }) =>
+  contagem(repos.filter((r) => r.data.categoria === cat).map((r) => [r.data.subcategoria])).map((o) => ({ ...o, cat })),
+);
 ---
 
 <Base titulo="Repositórios" descricao="Os repositórios open source que já apareceram nos vídeos do canal.">
@@ -38,17 +42,32 @@ const filtros = [
       </label>
       {
         filtros.map((f) => (
-          <label class="campo">
-            <span>{f.rotulo}</span>
-            <select name={f.nome}>
-              <option value="">{f.todas}</option>
-              {f.opcoes.map((o) => (
-                <option value={o.valor}>
-                  {o.valor} ({o.total})
-                </option>
-              ))}
-            </select>
-          </label>
+          <>
+            <label class="campo">
+              <span>{f.rotulo}</span>
+              <select name={f.nome}>
+                <option value="">{f.todas}</option>
+                {f.opcoes.map((o) => (
+                  <option value={o.valor}>
+                    {o.valor} ({o.total})
+                  </option>
+                ))}
+              </select>
+            </label>
+            {f.nome === 'cat' && (
+              <label class="campo">
+                <span>Subcategoria</span>
+                <select name="sub" disabled>
+                  <option value="">Escolha uma categoria</option>
+                  {subcategorias.map((o) => (
+                    <option value={o.valor} data-cat={o.cat}>
+                      {o.valor} ({o.total})
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </>
         ))
       }
       <div class="rodape">
@@ -72,7 +91,21 @@ const filtros = [
     const cards = [...document.querySelectorAll('.repo')];
     const contador = form.querySelector('.contador');
     const vazio = document.querySelector('.vazio');
-    const campos = ['q', 'cat', 'tag', 'alt', 'ling'];
+    const campos = ['q', 'cat', 'sub', 'tag', 'alt', 'ling'];
+    const cat = form.elements.cat;
+    const sub = form.elements.sub;
+    // Todas as subcategorias saem do select e voltam só as da categoria escolhida
+    // (esconder <option> com hidden não funciona no Safari)
+    const vazia = sub.options[0];
+    const todasSubs = [...sub.options].slice(1);
+    function atualizaSubs() {
+      const atual = sub.value;
+      const daCategoria = todasSubs.filter((o) => o.dataset.cat === cat.value);
+      sub.replaceChildren(vazia, ...daCategoria);
+      vazia.textContent = cat.value ? 'Todas as subcategorias' : 'Escolha uma categoria';
+      sub.disabled = !cat.value;
+      sub.value = daCategoria.some((o) => o.value === atual) ? atual : '';
+    }
     // Mesma regra do normaliza() de src/lib/repositorios.ts
     const normaliza = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
     const tem = (lista, valor) => !valor || (lista ? lista.split('|').includes(valor) : false);
@@ -86,6 +119,7 @@ const filtros = [
         const mostra =
           termos.every((t) => d.busca.includes(t)) &&
           (!v.cat || d.cat === v.cat) &&
+          (!v.sub || d.sub === v.sub) &&
           tem(d.tags, v.tag) &&
           tem(d.alt, v.alt) &&
           (!v.ling || d.ling === v.ling);
@@ -105,6 +139,8 @@ const filtros = [
     // Ao abrir, aplica os filtros da URL (valores que não existem nas opções são ignorados)
     const url = new URLSearchParams(location.search);
     for (const c of campos) {
+      // A subcategoria só vale dentro da categoria que veio antes na URL
+      if (c === 'sub') atualizaSubs();
       const valor = url.get(c);
       if (!valor) continue;
       const campo = form.elements[c];
@@ -112,10 +148,17 @@ const filtros = [
       campo.value = valor;
     }
 
+    // Roda antes do filtra do form (o evento chega primeiro no próprio select)
+    cat.addEventListener('input', atualizaSubs);
     form.addEventListener('input', filtra);
     form.addEventListener('submit', (e) => e.preventDefault());
-    // O reset limpa os campos depois do evento; filtra no próximo ciclo
-    form.addEventListener('reset', () => setTimeout(filtra));
+    // O reset limpa os campos depois do evento; atualiza e filtra no próximo ciclo
+    form.addEventListener('reset', () =>
+      setTimeout(() => {
+        atualizaSubs();
+        filtra();
+      }),
+    );
     form.hidden = false;
     filtra();
   })();
@@ -162,6 +205,10 @@ const filtros = [
     color: var(--text);
     font: inherit;
     font-size: 0.95rem;
+  }
+  .campo select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   .campo input:focus-visible,
   .campo select:focus-visible {

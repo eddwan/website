@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { repo } = Astro.props;
-const { nome, url, resumo, categoria, tags, alternativaA, linguagem, licenca, aparicoes } = repo.data;
+const { nome, url, resumo, categoria, subcategoria, tags, alternativaA, linguagem, licenca, aparicoes } = repo.data;
 // Vídeo mais recente primeiro
 const videos = [...aparicoes].sort((a, b) => b.data.getTime() - a.data.getTime());
 const filtro = (campo: string, valor: string) => `/repositorios?${new URLSearchParams({ [campo]: valor })}`;
@@ -27,6 +27,8 @@ const filtro = (campo: string, valor: string) => `/repositorios?${new URLSearchP
           <a href="/repositorios">Repositórios</a>
           <span aria-hidden="true">/</span>
           <a class="tag" href={filtro('cat', categoria)}>{categoria}</a>
+          <span aria-hidden="true">/</span>
+          <a href={`/repositorios?${new URLSearchParams({ cat: categoria, sub: subcategoria })}`}>{subcategoria}</a>
         </nav>
         <h1>{nome}</h1>
         <p class="dono">{repo.id}</p>

@@ -6,7 +6,7 @@ interface Props {
   repo: CollectionEntry<'repositorios'>;
 }
 const { repo } = Astro.props;
-const { nome, resumo, categoria, linguagem, licenca, tags, alternativaA, aparicoes } = repo.data;
+const { nome, resumo, categoria, subcategoria, linguagem, licenca, tags, alternativaA, aparicoes } = repo.data;
 const href = `/repositorios/${repo.id}`;
 // A aparição mais recente define o volume mostrado no cartão
 const ultima = aparicoes.reduce((a, b) => (b.data > a.data ? b : a));
@@ -17,6 +17,7 @@ const busca = normaliza([nome, resumo, ...tags].join(' '));
 <article
   class="card repo"
   data-cat={categoria}
+  data-sub={subcategoria}
   data-tags={tags.join('|')}
   data-alt={alternativaA.join('|')}
   data-ling={linguagem ?? ''}
