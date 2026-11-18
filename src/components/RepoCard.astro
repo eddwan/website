@@ -1,17 +1,27 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { normaliza } from '../lib/repositorios';
 
 interface Props {
   repo: CollectionEntry<'repositorios'>;
 }
 const { repo } = Astro.props;
-const { nome, resumo, linguagem, licenca, tags, aparicoes } = repo.data;
+const { nome, resumo, categoria, linguagem, licenca, tags, alternativaA, aparicoes } = repo.data;
 const href = `/repositorios/${repo.id}`;
 // A aparição mais recente define o volume mostrado no cartão
 const ultima = aparicoes.reduce((a, b) => (b.data > a.data ? b : a));
+// Usados pelos filtros da /repositorios; listas separadas por "|", que não aparece nas tags
+const busca = normaliza([nome, resumo, ...tags].join(' '));
 ---
 
-<article class="card repo">
+<article
+  class="card repo"
+  data-cat={categoria}
+  data-tags={tags.join('|')}
+  data-alt={alternativaA.join('|')}
+  data-ling={linguagem ?? ''}
+  data-busca={busca}
+>
   <p class="meta">
     <span class="tag tag-o">{ultima.volume}</span>
     {linguagem && <span>{linguagem}</span>}
@@ -30,6 +40,9 @@ const ultima = aparicoes.reduce((a, b) => (b.data > a.data ? b : a));
     flex-direction: column;
     gap: 0.6rem;
     padding: 1.25rem 1.35rem 1.5rem;
+  }
+  .repo[hidden] {
+    display: none;
   }
   .meta {
     display: flex;
