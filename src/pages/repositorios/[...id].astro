@@ -86,7 +86,7 @@ const filtro = (campo: string, valor: string) => `/repositorios?${new URLSearchP
                 <span class="tag tag-o">{v.volume}</span>
                 <time datetime={v.data.toISOString()}>{formataData(v.data)}</time>
               </p>
-              <YouTube id={v.videoId} titulo={`${v.volume}: ${nome}`} />
+              <YouTube id={v.videoId} titulo={`${v.volume}: ${nome}`} formato={v.volume.startsWith('Short') ? 'short' : 'video'} />
             </div>
           ))
         }
