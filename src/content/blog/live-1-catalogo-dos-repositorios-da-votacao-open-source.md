@@ -137,8 +137,8 @@ O que funcionou bem nesses pedidos:
 - **Dizer o que não pode sair.** "Nunca exportar notas, alertas, peso nem posição" é mais seguro do que confiar que o script vai escolher bem.
 - **Corrigir na origem, não no JSON.** O arquivo é gerado. Se eu editasse à mão, a próxima exportação apagaria a correção.
 
-## Próxima live
+## A live seguinte
 
-Na quarta, 18/11, às 20h, o catálogo vira página: `eddwan.com/repositorios`, com busca e filtros por tag, linguagem e "alternativa a", e uma página para cada repositório ([issue #16](https://github.com/eddwan/website/issues/16)). Quer ajudar? Comente na issue antes da live ou mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
+A Live 2 foi na quarta, 18/11: o catálogo virou a página [eddwan.com/repositorios](/repositorios), com busca e filtros por categoria, tag, "alternativa a" e linguagem, e uma página para cada repositório. O que foi feito, a gravação e os prompts estão no [post da Live 2](/blog/live-2-pagina-de-repositorios-com-busca-e-filtros).
 
 O código foi escrito ao vivo com o Claude Code, com cada passo revisado por mim na tela antes do commit.
