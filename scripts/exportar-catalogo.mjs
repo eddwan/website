@@ -162,6 +162,8 @@ const coluna = (nome) => {
 const C = {
   repo: coluna('Repositório'),
   link: coluna('Link'),
+  categoria: coluna('Categoria'),
+  subcategoria: coluna('Subcategoria'),
   resumo: coluna('Resumo'),
   status: coluna('Status YouTube'),
   video: coluna('Vídeo'),
@@ -173,7 +175,8 @@ const C = {
 };
 
 const buscarVideoId = criarBuscaVideoId(canal);
-const catalogo = [];
+// Uma entrada por repositório: quem saiu em mais de um vídeo junta as aparições
+const catalogo = new Map();
 const semVideoId = [];
 const incompletos = [];
 
@@ -193,6 +196,8 @@ for (const l of linhas) {
     nome: id.split('/')[1],
     url: String(l[C.link] ?? '').trim(),
     resumo: String(l[C.resumo] ?? '').trim(),
+    categoria: String(l[C.categoria] ?? '').trim(),
+    subcategoria: String(l[C.subcategoria] ?? '').trim(),
     tags: lista(l[C.tags]),
     alternativaA: lista(l[C.alternativa]),
     ...(l[C.linguagem] ? { linguagem: String(l[C.linguagem]).trim() } : {}),
@@ -200,24 +205,34 @@ for (const l of linhas) {
     aparicoes: [{ videoId, volume: video.volume, data: paraData(l[C.data]) }],
   };
 
-  const faltando = ['url', 'resumo', 'licenca'].filter((k) => !repo[k]);
+  const faltando = ['url', 'resumo', 'categoria', 'subcategoria', 'licenca'].filter((k) => !repo[k]);
   if (!repo.tags.length) faltando.push('tags');
   if (!repo.aparicoes[0].data) faltando.push('data');
   if (faltando.length) {
     incompletos.push(`${id} (falta ${faltando.join(', ')})`);
     continue;
   }
-  catalogo.push({ repo, posicao: video.posicao });
+  const anterior = catalogo.get(id);
+  if (!anterior) {
+    catalogo.set(id, { repo, posicao: video.posicao });
+    continue;
+  }
+  const aparicoes = [...anterior.repo.aparicoes, ...repo.aparicoes]
+    .filter((a, i, todas) => todas.findIndex((b) => b.videoId === a.videoId) === i)
+    .sort((a, b) => b.data.localeCompare(a.data));
+  // Resumo, tags e demais campos vêm da linha do vídeo mais recente
+  const recente = repo.aparicoes[0].data > anterior.repo.aparicoes[0].data ? { repo, posicao: video.posicao } : anterior;
+  catalogo.set(id, { repo: { ...recente.repo, aparicoes }, posicao: recente.posicao });
 }
 
-// Mais recente primeiro; no mesmo vídeo, pela ordem do vídeo
-catalogo.sort(
+// Pela aparição mais recente; no mesmo vídeo, pela ordem do vídeo
+const ordenado = [...catalogo.values()].sort(
   (a, b) =>
     b.repo.aparicoes[0].data.localeCompare(a.repo.aparicoes[0].data) ||
     a.posicao - b.posicao ||
     a.repo.id.localeCompare(b.repo.id),
 );
-const repositorios = catalogo.map((c) => c.repo);
+const repositorios = ordenado.map((c) => c.repo);
 writeFileSync(SAIDA, JSON.stringify(repositorios, null, 2) + '\n');
 
 const videos = new Set(repositorios.flatMap((r) => r.aparicoes.map((a) => a.videoId)));

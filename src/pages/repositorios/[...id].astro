@@ -1,0 +1,220 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import YouTube from '../../components/YouTube.astro';
+import Icone from '../../components/Icone.astro';
+import { formataData } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const repos = await getCollection('repositorios');
+  // O id já é dono/repo, então vira /repositorios/dono/repo
+  return repos.map((repo) => ({ params: { id: repo.id }, props: { repo } }));
+}
+
+const { repo } = Astro.props;
+const { nome, url, resumo, categoria, subcategoria, tags, alternativaA, linguagem, licenca, aparicoes } = repo.data;
+// Vídeo mais recente primeiro
+const videos = [...aparicoes].sort((a, b) => b.data.getTime() - a.data.getTime());
+const filtro = (campo: string, valor: string) => `/repositorios?${new URLSearchParams({ [campo]: valor })}`;
+---
+
+<Base titulo={`${nome} (${repo.id})`} descricao={resumo} imagem={`/og/repositorios/${repo.id}.png`}>
+  <article>
+    <header class="cab">
+      <div class="grid-bg"></div>
+      <div class="container cab-in">
+        <nav class="trilha" aria-label="Você está em">
+          <a href="/repositorios">Repositórios</a>
+          <span aria-hidden="true">/</span>
+          <a class="tag" href={filtro('cat', categoria)}>{categoria}</a>
+          <span aria-hidden="true">/</span>
+          <a href={`/repositorios?${new URLSearchParams({ cat: categoria, sub: subcategoria })}`}>{subcategoria}</a>
+        </nav>
+        <h1>{nome}</h1>
+        <p class="dono">{repo.id}</p>
+        <p class="desc">{resumo}</p>
+        <a class="btn" href={url} rel="noopener"><Icone nome="github" /> Ver no GitHub</a>
+      </div>
+    </header>
+
+    <div class="container corpo">
+      <dl class="ficha">
+        {
+          linguagem && (
+            <div>
+              <dt>Linguagem</dt>
+              <dd>
+                <a href={filtro('ling', linguagem)}>{linguagem}</a>
+              </dd>
+            </div>
+          )
+        }
+        <div>
+          <dt>Licença</dt>
+          <dd>{licenca}</dd>
+        </div>
+        {
+          alternativaA.length > 0 && (
+            <div>
+              <dt>Alternativa a</dt>
+              <dd class="lista">
+                {alternativaA.map((a) => (
+                  <a href={filtro('alt', a)}>{a}</a>
+                ))}
+              </dd>
+            </div>
+          )
+        }
+        <div class="largo">
+          <dt>Tags</dt>
+          <dd class="tags">
+            {tags.map((t) => (
+              <a class="tag" href={filtro('tag', t)}>
+                #{t}
+              </a>
+            ))}
+          </dd>
+        </div>
+      </dl>
+
+      <section class="videos">
+        <h2>{videos.length === 1 ? 'No vídeo' : 'Nos vídeos'}</h2>
+        {
+          videos.map((v) => (
+            <div class="video">
+              <p class="video-meta">
+                <span class="tag tag-o">{v.volume}</span>
+                <time datetime={v.data.toISOString()}>{formataData(v.data)}</time>
+              </p>
+              <YouTube id={v.videoId} titulo={`${v.volume}: ${nome}`} formato={v.volume.startsWith('Short') ? 'short' : 'video'} />
+            </div>
+          ))
+        }
+      </section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .cab {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 7vw, 4.5rem) clamp(2rem, 4vw, 2.5rem);
+  }
+  .cab-in {
+    max-width: 62rem;
+  }
+  .trilha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .trilha a:not(.tag) {
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  .trilha a:hover {
+    color: var(--o1);
+  }
+  .trilha .tag {
+    text-decoration: none;
+  }
+  h1 {
+    margin-top: 1.25rem;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    overflow-wrap: anywhere;
+  }
+  .dono {
+    margin: 0.75rem 0 0;
+    font-family: var(--f-mono);
+    font-size: 0.9rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  .desc {
+    margin: 1.25rem 0 2rem;
+    max-width: 44rem;
+    font-size: clamp(1.08rem, 2vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--text-2);
+  }
+
+  .corpo {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    max-width: 62rem;
+  }
+  .ficha {
+    display: grid;
+    gap: 1.25rem 2rem;
+    margin: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--surface);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+  .ficha .largo {
+    grid-column: 1 / -1;
+  }
+  dt {
+    margin-bottom: 0.4rem;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    color: var(--text);
+  }
+  dd a:not(.tag) {
+    color: var(--text);
+  }
+  dd a:not(.tag):hover {
+    color: var(--o1);
+  }
+  .lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tags a {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+
+  .videos h2 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+  .video {
+    margin-top: 1.25rem;
+  }
+  .video + .video {
+    margin-top: 2.5rem;
+  }
+  .video-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0 0 0.9rem;
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+</style>
