@@ -1,12 +1,17 @@
-// Cloudflare Workers com arquivos estáticos (sem código de Worker): o Astro gera dist/ e o
-// wrangler sobe tudo. Publicar: npm run cf:deploy (faz o build antes). Prévia: npm run cf:dev.
+// Cloudflare Workers com arquivos estáticos: o Astro gera dist/ e o wrangler sobe tudo. O código do
+// Worker (worker/index.ts) só roda em /api/*; o resto sai direto do dist/.
+// Publicar: npm run cf:deploy (faz o build antes). Prévia: npm run cf:dev. Tipos: npm run cf:types.
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "eddwan-website",
   "account_id": "b3eef8e6bc57c9ea990f64e4be208686",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./dist",
+    // env.ASSETS no Worker; só /api/* passa pelo Worker antes dos arquivos estáticos
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     // /sobre serve dist/sobre/index.html (/sobre/ redireciona para /sobre); o resto que não existir cai no 404 do Astro
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "404-page"

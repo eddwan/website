@@ -169,12 +169,14 @@ Também dá para publicar sem merge: Actions → Deploy → *Run workflow* (ou `
 
 ## Publicar no Cloudflare Workers
 
-O site roda como **Worker só de arquivos estáticos** (sem código de servidor): o `astro build` gera o `dist/` e o `wrangler` sobe tudo para a conta **Hallen Tech** da Cloudflare. O plano gratuito cobre com folga (requisições a arquivos estáticos não contam no limite do Worker).
+O site roda como **Worker com arquivos estáticos**: o `astro build` gera o `dist/` e o `wrangler` sobe tudo para a conta **Hallen Tech** da Cloudflare. O código do Worker (`worker/index.ts`) só roda em `/api/*` (`run_worker_first`); o resto do site sai direto do `dist/`, sem passar por ele. O plano gratuito cobre com folga: requisições a arquivos estáticos não contam no limite do Worker, só as de `/api/*` (100 mil por dia no plano gratuito).
 **Não publique sem o Eddwan aprovar.**
 
 | Arquivo | Para quê |
 | --- | --- |
-| `wrangler.jsonc` | Nome do Worker (`eddwan-website`), conta, pasta `dist/`, domínio `eddwan.com`, 404 do Astro, URLs sem barra no fim |
+| `wrangler.jsonc` | Nome do Worker (`eddwan-website`), conta, entrada `worker/index.ts`, pasta `dist/` (binding `ASSETS`), domínio `eddwan.com`, 404 do Astro, URLs sem barra no fim |
+| `worker/index.ts` | A API: `GET /api/saude` responde `{ "ok": true }`; outra rota de `/api` dá 404 em JSON |
+| `worker/worker-configuration.d.ts` | Tipos do Worker (`Env`, runtime), gerados por `npm run cf:types`; rode de novo ao mudar o `wrangler.jsonc` |
 | `public/_headers` | Cabeçalhos de segurança e cache longo para `/_astro/*` (arquivos com hash) |
 
 ```bash
@@ -182,10 +184,11 @@ npx wrangler login     # uma vez por máquina (conta Hallen Tech)
 npm run cf:check       # build + simulação do deploy (não envia nada)
 npm run cf:dev         # build + o site no motor do Cloudflare em http://localhost:8787
 npm run cf:deploy      # build + publica de verdade
+npm run cf:types       # regera os tipos do Worker (worker/worker-configuration.d.ts)
 ```
 
 - **Domínio:** a zona `eddwan.com` já está na Cloudflare. A rota com `custom_domain` cria o registro DNS e o certificado no deploy. Não pode existir registro A/AAAA/CNAME com o mesmo nome antes.
-- **www:** fica com outro Worker, `eddwan-www-redirect` (`cloudflare/www-redirect/`), que responde 301 para `https://eddwan.com` mantendo caminho e parâmetros. Só ele roda código, e só para quem entra pelo www. Publicar: `npm run cf:deploy-www`. Se um dia preferir uma Redirect Rule da zona (Rules → Redirect Rules → modelo “Redirect from WWW to root”), apague antes esse Worker e o domínio personalizado dele.
+- **www:** fica com outro Worker, `eddwan-www-redirect` (`cloudflare/www-redirect/`), que responde 301 para `https://eddwan.com` mantendo caminho e parâmetros. Ele roda para toda requisição que entra pelo www. Publicar: `npm run cf:deploy-www`. Se um dia preferir uma Redirect Rule da zona (Rules → Redirect Rules → modelo “Redirect from WWW to root”), apague antes esse Worker e o domínio personalizado dele.
 - **URLs:** sem barra no fim (`/sobre`). `trailingSlash: 'never'` no Astro e `drop-trailing-slash` no Cloudflare; `/sobre/` redireciona para `/sobre`.
 - O endereço `*.workers.dev` e as URLs de prévia estão desligados: o site só responde no domínio.
 - Depois de publicar, conferir `https://eddwan.com`, `/sobre`, `/rss.xml`, `/sitemap-index.xml`, uma imagem `/og/...png` e uma página inexistente (deve dar o 404 do site).
