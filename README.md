@@ -38,6 +38,28 @@ npm run build      # gera dist/ (SEM_FEED_YOUTUBE=1 para não ler o feed do YouT
 npm run preview    # serve o dist/ como vai ficar no ar
 ```
 
+## API e banco local
+
+A API (`/api/*`, em `worker/index.ts`) roda no motor do Cloudflare na sua máquina, com um banco D1 local. Não precisa de conta na Cloudflare nem de login.
+
+```bash
+npm ci
+npx wrangler d1 migrations apply eddwan-votos --local   # cria o banco local e roda migrations/
+npm run cf:dev                                           # build + site e API em http://localhost:8787
+curl http://localhost:8787/api/saude                     # {"ok":true,"banco":"ok","esquema":"1"}
+```
+
+O `npm run dev` do Astro (porta 4321) só serve as páginas: ele não roda o Worker, então lá `/api/*` não existe.
+
+- **Onde fica o banco:** em `.wrangler/state/v3/d1/`, fora do Git (`.wrangler/` está no `.gitignore`). O site no ar usa outro banco, o D1 `eddwan-votos` da Cloudflare.
+- **`/api/saude` com 503** (`{"ok":false,"banco":"erro"}`): o banco local está sem as migrações; rode o comando de `--local` acima.
+- **Zerar o banco:** pare o `cf:dev`, apague a pasta e rode as migrações de novo:
+  ```bash
+  rm -rf .wrangler/state/v3/d1
+  npx wrangler d1 migrations apply eddwan-votos --local
+  ```
+- **Migração nova:** `npx wrangler d1 migrations create eddwan-votos <nome>`, escreva o SQL no arquivo criado em `migrations/` e aplique com `--local`. No ar, o deploy aplica sozinho (`deploy.yml`).
+
 ## Escrever um post
 
 ```bash
