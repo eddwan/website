@@ -38,7 +38,7 @@ const subcategorias = filtros[0].opcoes.flatMap(({ valor: cat }) =>
     <form class="filtros" role="search" aria-label="Filtrar repositórios" hidden>
       <label class="campo busca">
         <span>Buscar</span>
-        <input type="search" name="q" placeholder="Nome, resumo ou tag" autocomplete="off" />
+        <input type="search" name="q" placeholder="Nome, dono, resumo, tag ou ferramenta" autocomplete="off" />
       </label>
       {
         filtros.map((f) => (
