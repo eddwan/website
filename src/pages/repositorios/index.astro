@@ -1,0 +1,252 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import RepoCard from '../../components/RepoCard.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+import { contagem } from '../../lib/repositorios';
+
+const ultimaAparicao = (r: { data: { aparicoes: { data: Date }[] } }) =>
+  Math.max(...r.data.aparicoes.map((a) => a.data.getTime()));
+// Mais recentes primeiro; no empate, mantém a ordem do JSON (a ordem do vídeo)
+const repos = (await getCollection('repositorios')).sort((a, b) => ultimaAparicao(b) - ultimaAparicao(a));
+
+// Opções dos filtros, geradas no build com a contagem de cada uma
+const filtros = [
+  { nome: 'cat', rotulo: 'Categoria', todas: 'Todas as categorias', opcoes: contagem(repos.map((r) => [r.data.categoria])) },
+  { nome: 'tag', rotulo: 'Tag', todas: 'Todas as tags', opcoes: contagem(repos.map((r) => r.data.tags)) },
+  { nome: 'alt', rotulo: 'Alternativa a', todas: 'Qualquer ferramenta', opcoes: contagem(repos.map((r) => r.data.alternativaA)) },
+  {
+    nome: 'ling',
+    rotulo: 'Linguagem',
+    todas: 'Todas as linguagens',
+    opcoes: contagem(repos.map((r) => (r.data.linguagem ? [r.data.linguagem] : []))),
+  },
+];
+// Subcategorias de cada categoria (o mesmo nome pode existir em mais de uma); o script mostra só as da categoria escolhida
+const subcategorias = filtros[0].opcoes.flatMap(({ valor: cat }) =>
+  contagem(repos.filter((r) => r.data.categoria === cat).map((r) => [r.data.subcategoria])).map((o) => ({ ...o, cat })),
+);
+---
+
+<Base titulo="Repositórios" descricao="Os repositórios open source que já apareceram nos vídeos do canal.">
+  <CabecalhoPagina
+    eyebrow={`${repos.length} repositórios`}
+    titulo="Repositórios"
+    lead="Todos os projetos open source que já apareceram nos vídeos do canal, do mais recente ao mais antigo."
+  >
+    <!-- Escondido até o script rodar: sem JavaScript, fica só a lista completa -->
+    <form class="filtros" role="search" aria-label="Filtrar repositórios" hidden>
+      <label class="campo busca">
+        <span>Buscar</span>
+        <input type="search" name="q" placeholder="Nome, resumo ou tag" autocomplete="off" />
+      </label>
+      {
+        filtros.map((f) => (
+          <>
+            <label class="campo">
+              <span>{f.rotulo}</span>
+              <select name={f.nome}>
+                <option value="">{f.todas}</option>
+                {f.opcoes.map((o) => (
+                  <option value={o.valor}>
+                    {o.valor} ({o.total})
+                  </option>
+                ))}
+              </select>
+            </label>
+            {f.nome === 'cat' && (
+              <label class="campo">
+                <span>Subcategoria</span>
+                <select name="sub" disabled>
+                  <option value="">Escolha uma categoria</option>
+                  {subcategorias.map((o) => (
+                    <option value={o.valor} data-cat={o.cat}>
+                      {o.valor} ({o.total})
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </>
+        ))
+      }
+      <div class="rodape">
+        <p class="contador" aria-live="polite">{repos.length} de {repos.length} repositórios</p>
+        <button type="reset" class="btn btn-ghost limpar">Limpar filtros</button>
+      </div>
+    </form>
+  </CabecalhoPagina>
+
+  <div class="container">
+    <div class="grade">
+      {repos.map((repo) => <RepoCard repo={repo} />)}
+    </div>
+    <p class="vazio" hidden>Nenhum repositório com esses filtros.</p>
+  </div>
+</Base>
+
+<script is:inline>
+  (() => {
+    const form = document.querySelector('.filtros');
+    const cards = [...document.querySelectorAll('.repo')];
+    const contador = form.querySelector('.contador');
+    const vazio = document.querySelector('.vazio');
+    const campos = ['q', 'cat', 'sub', 'tag', 'alt', 'ling'];
+    const cat = form.elements.cat;
+    const sub = form.elements.sub;
+    // Todas as subcategorias saem do select e voltam só as da categoria escolhida
+    // (esconder <option> com hidden não funciona no Safari)
+    const vazia = sub.options[0];
+    const todasSubs = [...sub.options].slice(1);
+    function atualizaSubs() {
+      const atual = sub.value;
+      const daCategoria = todasSubs.filter((o) => o.dataset.cat === cat.value);
+      sub.replaceChildren(vazia, ...daCategoria);
+      vazia.textContent = cat.value ? 'Todas as subcategorias' : 'Escolha uma categoria';
+      sub.disabled = !cat.value;
+      sub.value = daCategoria.some((o) => o.value === atual) ? atual : '';
+    }
+    // Mesma regra do normaliza() de src/lib/repositorios.ts
+    const normaliza = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const tem = (lista, valor) => !valor || (lista ? lista.split('|').includes(valor) : false);
+
+    function filtra() {
+      const v = Object.fromEntries(campos.map((c) => [c, form.elements[c].value]));
+      const termos = normaliza(v.q).split(/\s+/).filter(Boolean);
+      let visiveis = 0;
+      for (const card of cards) {
+        const d = card.dataset;
+        const mostra =
+          termos.every((t) => d.busca.includes(t)) &&
+          (!v.cat || d.cat === v.cat) &&
+          (!v.sub || d.sub === v.sub) &&
+          tem(d.tags, v.tag) &&
+          tem(d.alt, v.alt) &&
+          (!v.ling || d.ling === v.ling);
+        card.hidden = !mostra;
+        if (mostra) visiveis++;
+      }
+      contador.textContent = `${visiveis} de ${cards.length} repositórios`;
+      vazio.hidden = visiveis > 0;
+
+      // Guarda os filtros na URL, só os preenchidos
+      const params = new URLSearchParams();
+      for (const c of campos) if (v[c].trim()) params.set(c, v[c].trim());
+      const qs = params.toString();
+      history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+    }
+
+    // Ao abrir, aplica os filtros da URL (valores que não existem nas opções são ignorados)
+    const url = new URLSearchParams(location.search);
+    for (const c of campos) {
+      // A subcategoria só vale dentro da categoria que veio antes na URL
+      if (c === 'sub') atualizaSubs();
+      const valor = url.get(c);
+      if (!valor) continue;
+      const campo = form.elements[c];
+      if (campo.tagName === 'SELECT' && ![...campo.options].some((o) => o.value === valor)) continue;
+      campo.value = valor;
+    }
+
+    // Roda antes do filtra do form (o evento chega primeiro no próprio select)
+    cat.addEventListener('input', atualizaSubs);
+    form.addEventListener('input', filtra);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    // O reset limpa os campos depois do evento; atualiza e filtra no próximo ciclo
+    form.addEventListener('reset', () =>
+      setTimeout(() => {
+        atualizaSubs();
+        filtra();
+      }),
+    );
+    form.hidden = false;
+    filtra();
+  })();
+</script>
+
+<style>
+  .filtros {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.25rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r);
+    background: var(--surface);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+  .filtros[hidden] {
+    display: none;
+  }
+  .busca {
+    grid-column: 1 / -1;
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+  .campo span {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .campo input,
+  .campo select {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    background: var(--bg-2);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.95rem;
+  }
+  .campo select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .campo input:focus-visible,
+  .campo select:focus-visible {
+    outline: 2px solid var(--o2);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+  .rodape {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .contador {
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: 0.85rem;
+    color: var(--text-2);
+  }
+  .limpar {
+    min-height: 2.5rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .grade {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  }
+  .vazio {
+    padding: 3rem 0;
+    text-align: center;
+    color: var(--muted);
+  }
+  .vazio[hidden] {
+    display: none;
+  }
+</style>

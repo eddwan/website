@@ -20,6 +20,7 @@ export const LINKS = {
 export const NAV = [
   { href: '/blog', rotulo: 'Blog' },
   { href: '/videos', rotulo: 'Vídeos' },
+  { href: '/repositorios', rotulo: 'Repositórios' },
   { href: '/portfolio', rotulo: 'Portfólio' },
   { href: '/sobre', rotulo: 'Sobre' },
 ];

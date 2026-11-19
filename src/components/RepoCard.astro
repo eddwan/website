@@ -1,0 +1,104 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { normaliza } from '../lib/repositorios';
+
+interface Props {
+  repo: CollectionEntry<'repositorios'>;
+}
+const { repo } = Astro.props;
+const { nome, resumo, categoria, subcategoria, linguagem, licenca, tags, alternativaA, aparicoes } = repo.data;
+const href = `/repositorios/${repo.id}`;
+// A aparição mais recente define o volume mostrado no cartão
+const ultima = aparicoes.reduce((a, b) => (b.data > a.data ? b : a));
+// Usados pelos filtros da /repositorios; listas separadas por "|", que não aparece nas tags
+const busca = normaliza([nome, resumo, ...tags].join(' '));
+---
+
+<article
+  class="card repo"
+  data-cat={categoria}
+  data-sub={subcategoria}
+  data-tags={tags.join('|')}
+  data-alt={alternativaA.join('|')}
+  data-ling={linguagem ?? ''}
+  data-busca={busca}
+>
+  <p class="meta">
+    <span class="tag tag-o">{ultima.volume}</span>
+    {linguagem && <span>{linguagem}</span>}
+    <span>{licenca}</span>
+  </p>
+  <h3><a href={href}>{nome}</a></h3>
+  <p class="dono">{repo.id}</p>
+  <p class="desc">{resumo}</p>
+  <p class="tags">{tags.slice(0, 3).map((t) => <span>#{t}</span>)}</p>
+</article>
+
+<style>
+  .repo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.25rem 1.35rem 1.5rem;
+  }
+  .repo[hidden] {
+    display: none;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.8rem;
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  h3 {
+    font-size: 1.35rem;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    overflow-wrap: anywhere;
+  }
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .repo:hover h3 a {
+    color: var(--o1);
+  }
+  .dono {
+    margin: -0.35rem 0 0;
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  .desc {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.96rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    margin: auto 0 0;
+    padding-top: 0.5rem;
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    color: var(--b1);
+  }
+</style>

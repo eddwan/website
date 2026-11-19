@@ -162,6 +162,8 @@ const coluna = (nome) => {
 const C = {
   repo: coluna('Repositório'),
   link: coluna('Link'),
+  categoria: coluna('Categoria'),
+  subcategoria: coluna('Subcategoria'),
   resumo: coluna('Resumo'),
   status: coluna('Status YouTube'),
   video: coluna('Vídeo'),
@@ -193,6 +195,8 @@ for (const l of linhas) {
     nome: id.split('/')[1],
     url: String(l[C.link] ?? '').trim(),
     resumo: String(l[C.resumo] ?? '').trim(),
+    categoria: String(l[C.categoria] ?? '').trim(),
+    subcategoria: String(l[C.subcategoria] ?? '').trim(),
     tags: lista(l[C.tags]),
     alternativaA: lista(l[C.alternativa]),
     ...(l[C.linguagem] ? { linguagem: String(l[C.linguagem]).trim() } : {}),
@@ -200,7 +204,7 @@ for (const l of linhas) {
     aparicoes: [{ videoId, volume: video.volume, data: paraData(l[C.data]) }],
   };
 
-  const faltando = ['url', 'resumo', 'licenca'].filter((k) => !repo[k]);
+  const faltando = ['url', 'resumo', 'categoria', 'subcategoria', 'licenca'].filter((k) => !repo[k]);
   if (!repo.tags.length) faltando.push('tags');
   if (!repo.aparicoes[0].data) faltando.push('data');
   if (faltando.length) {
