@@ -10,8 +10,9 @@ const { nome, resumo, categoria, subcategoria, linguagem, licenca, tags, alterna
 const href = `/repositorios/${repo.id}`;
 // A aparição mais recente define o volume mostrado no cartão
 const ultima = aparicoes.reduce((a, b) => (b.data > a.data ? b : a));
-// Usados pelos filtros da /repositorios; listas separadas por "|", que não aparece nas tags
-const busca = normaliza([nome, resumo, ...tags].join(' '));
+// Usados pelos filtros da /repositorios; listas separadas por "|", que não aparece nas tags.
+// A busca cobre dono/repo (o nome já está no id), resumo, tags e as ferramentas de "alternativa a"
+const busca = normaliza([repo.id, resumo, ...tags, ...alternativaA].join(' '));
 ---
 
 <article
@@ -28,7 +29,7 @@ const busca = normaliza([nome, resumo, ...tags].join(' '));
     {linguagem && <span>{linguagem}</span>}
     <span>{licenca}</span>
   </p>
-  <h3><a href={href}>{nome}</a></h3>
+  <h2><a href={href}>{nome}</a></h2>
   <p class="dono">{repo.id}</p>
   <p class="desc">{resumo}</p>
   <p class="tags">{tags.slice(0, 3).map((t) => <span>#{t}</span>)}</p>
@@ -55,23 +56,23 @@ const busca = normaliza([nome, resumo, ...tags].join(' '));
     font-size: 0.75rem;
     color: var(--muted);
   }
-  h3 {
+  h2 {
     font-size: 1.35rem;
     line-height: 1.15;
     letter-spacing: -0.025em;
     overflow-wrap: anywhere;
   }
-  h3 a {
+  h2 a {
     color: var(--text);
     text-decoration: none;
   }
-  h3 a::after {
+  h2 a::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 1;
   }
-  .repo:hover h3 a {
+  .repo:hover h2 a {
     color: var(--o1);
   }
   .dono {

@@ -38,7 +38,7 @@ const subcategorias = filtros[0].opcoes.flatMap(({ valor: cat }) =>
     <form class="filtros" role="search" aria-label="Filtrar repositórios" hidden>
       <label class="campo busca">
         <span>Buscar</span>
-        <input type="search" name="q" placeholder="Nome, resumo ou tag" autocomplete="off" />
+        <input type="search" name="q" placeholder="Nome, dono, resumo, tag ou ferramenta" autocomplete="off" />
       </label>
       {
         filtros.map((f) => (
@@ -83,86 +83,87 @@ const subcategorias = filtros[0].opcoes.flatMap(({ valor: cat }) =>
     </div>
     <p class="vazio" hidden>Nenhum repositório com esses filtros.</p>
   </div>
-</Base>
 
-<script is:inline>
-  (() => {
-    const form = document.querySelector('.filtros');
-    const cards = [...document.querySelectorAll('.repo')];
-    const contador = form.querySelector('.contador');
-    const vazio = document.querySelector('.vazio');
-    const campos = ['q', 'cat', 'sub', 'tag', 'alt', 'ling'];
-    const cat = form.elements.cat;
-    const sub = form.elements.sub;
-    // Todas as subcategorias saem do select e voltam só as da categoria escolhida
-    // (esconder <option> com hidden não funciona no Safari)
-    const vazia = sub.options[0];
-    const todasSubs = [...sub.options].slice(1);
-    function atualizaSubs() {
-      const atual = sub.value;
-      const daCategoria = todasSubs.filter((o) => o.dataset.cat === cat.value);
-      sub.replaceChildren(vazia, ...daCategoria);
-      vazia.textContent = cat.value ? 'Todas as subcategorias' : 'Escolha uma categoria';
-      sub.disabled = !cat.value;
-      sub.value = daCategoria.some((o) => o.value === atual) ? atual : '';
-    }
-    // Mesma regra do normaliza() de src/lib/repositorios.ts
-    const normaliza = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-    const tem = (lista, valor) => !valor || (lista ? lista.split('|').includes(valor) : false);
-
-    function filtra() {
-      const v = Object.fromEntries(campos.map((c) => [c, form.elements[c].value]));
-      const termos = normaliza(v.q).split(/\s+/).filter(Boolean);
-      let visiveis = 0;
-      for (const card of cards) {
-        const d = card.dataset;
-        const mostra =
-          termos.every((t) => d.busca.includes(t)) &&
-          (!v.cat || d.cat === v.cat) &&
-          (!v.sub || d.sub === v.sub) &&
-          tem(d.tags, v.tag) &&
-          tem(d.alt, v.alt) &&
-          (!v.ling || d.ling === v.ling);
-        card.hidden = !mostra;
-        if (mostra) visiveis++;
+  <!-- Dentro do Base para sair no <body>; depois da grade, que ele precisa encontrar -->
+  <script is:inline>
+    (() => {
+      const form = document.querySelector('.filtros');
+      const cards = [...document.querySelectorAll('.repo')];
+      const contador = form.querySelector('.contador');
+      const vazio = document.querySelector('.vazio');
+      const campos = ['q', 'cat', 'sub', 'tag', 'alt', 'ling'];
+      const cat = form.elements.cat;
+      const sub = form.elements.sub;
+      // Todas as subcategorias saem do select e voltam só as da categoria escolhida
+      // (esconder <option> com hidden não funciona no Safari)
+      const vazia = sub.options[0];
+      const todasSubs = [...sub.options].slice(1);
+      function atualizaSubs() {
+        const atual = sub.value;
+        const daCategoria = todasSubs.filter((o) => o.dataset.cat === cat.value);
+        sub.replaceChildren(vazia, ...daCategoria);
+        vazia.textContent = cat.value ? 'Todas as subcategorias' : 'Escolha uma categoria';
+        sub.disabled = !cat.value;
+        sub.value = daCategoria.some((o) => o.value === atual) ? atual : '';
       }
-      contador.textContent = `${visiveis} de ${cards.length} repositórios`;
-      vazio.hidden = visiveis > 0;
+      // Mesma regra do normaliza() de src/lib/repositorios.ts
+      const normaliza = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+      const tem = (lista, valor) => !valor || (lista ? lista.split('|').includes(valor) : false);
 
-      // Guarda os filtros na URL, só os preenchidos
-      const params = new URLSearchParams();
-      for (const c of campos) if (v[c].trim()) params.set(c, v[c].trim());
-      const qs = params.toString();
-      history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
-    }
+      function filtra() {
+        const v = Object.fromEntries(campos.map((c) => [c, form.elements[c].value]));
+        const termos = normaliza(v.q).split(/\s+/).filter(Boolean);
+        let visiveis = 0;
+        for (const card of cards) {
+          const d = card.dataset;
+          const mostra =
+            termos.every((t) => d.busca.includes(t)) &&
+            (!v.cat || d.cat === v.cat) &&
+            (!v.sub || d.sub === v.sub) &&
+            tem(d.tags, v.tag) &&
+            tem(d.alt, v.alt) &&
+            (!v.ling || d.ling === v.ling);
+          card.hidden = !mostra;
+          if (mostra) visiveis++;
+        }
+        contador.textContent = `${visiveis} de ${cards.length} repositórios`;
+        vazio.hidden = visiveis > 0;
 
-    // Ao abrir, aplica os filtros da URL (valores que não existem nas opções são ignorados)
-    const url = new URLSearchParams(location.search);
-    for (const c of campos) {
-      // A subcategoria só vale dentro da categoria que veio antes na URL
-      if (c === 'sub') atualizaSubs();
-      const valor = url.get(c);
-      if (!valor) continue;
-      const campo = form.elements[c];
-      if (campo.tagName === 'SELECT' && ![...campo.options].some((o) => o.value === valor)) continue;
-      campo.value = valor;
-    }
+        // Guarda os filtros na URL, só os preenchidos
+        const params = new URLSearchParams();
+        for (const c of campos) if (v[c].trim()) params.set(c, v[c].trim());
+        const qs = params.toString();
+        history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+      }
 
-    // Roda antes do filtra do form (o evento chega primeiro no próprio select)
-    cat.addEventListener('input', atualizaSubs);
-    form.addEventListener('input', filtra);
-    form.addEventListener('submit', (e) => e.preventDefault());
-    // O reset limpa os campos depois do evento; atualiza e filtra no próximo ciclo
-    form.addEventListener('reset', () =>
-      setTimeout(() => {
-        atualizaSubs();
-        filtra();
-      }),
-    );
-    form.hidden = false;
-    filtra();
-  })();
-</script>
+      // Ao abrir, aplica os filtros da URL (valores que não existem nas opções são ignorados)
+      const url = new URLSearchParams(location.search);
+      for (const c of campos) {
+        // A subcategoria só vale dentro da categoria que veio antes na URL
+        if (c === 'sub') atualizaSubs();
+        const valor = url.get(c);
+        if (!valor) continue;
+        const campo = form.elements[c];
+        if (campo.tagName === 'SELECT' && ![...campo.options].some((o) => o.value === valor)) continue;
+        campo.value = valor;
+      }
+
+      // Roda antes do filtra do form (o evento chega primeiro no próprio select)
+      cat.addEventListener('input', atualizaSubs);
+      form.addEventListener('input', filtra);
+      form.addEventListener('submit', (e) => e.preventDefault());
+      // O reset limpa os campos depois do evento; atualiza e filtra no próximo ciclo
+      form.addEventListener('reset', () =>
+        setTimeout(() => {
+          atualizaSubs();
+          filtra();
+        }),
+      );
+      form.hidden = false;
+      filtra();
+    })();
+  </script>
+</Base>
 
 <style>
   .filtros {
