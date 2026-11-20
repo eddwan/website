@@ -142,8 +142,8 @@ O que funcionou bem nesses pedidos:
 - **Dizer a restrição, não só o resultado.** "Sem framework no cliente" e "sem JavaScript, mostra a lista completa" decidem a arquitetura melhor do que pedir "uma página com filtros".
 - **Pedir a medida junto.** "Me diga quanto tempo levou antes e depois" transformou as imagens de compartilhamento numa decisão com número, não num build que ficou lento sem ninguém notar.
 
-## Próxima live
+## A live seguinte
 
-Na quinta, 19/11, às 20h, a votação sai do site estático: o Worker passa a responder em `/api` e nasce o banco de dados D1, onde vão ficar os votos ([issue #17](https://github.com/eddwan/website/issues/17)). Achou algum problema na [página de repositórios](/repositorios)? Abra uma issue ou mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
+A Live 3 foi na quinta, 19/11: o site deixou de ser só estático, com um Worker respondendo em `/api` e o banco de dados D1 onde vão ficar os votos, já com migrações pelo GitHub Actions. O que foi feito, a gravação e os prompts estão no [post da Live 3](/blog/live-3-api-e-banco-d1-na-cloudflare). Achou algum problema na [página de repositórios](/repositorios)? Abra uma issue ou mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
 
 O código foi escrito ao vivo com o Claude Code, com cada passo revisado por mim na tela antes do commit.
