@@ -41,4 +41,22 @@ export default {
     // Rede de segurança: com run_worker_first só em /api/*, o resto nem chega ao Worker.
     return env.ASSETS.fetch(request);
   },
+
+  // Cron Trigger diário (triggers.crons no wrangler.jsonc): apaga códigos e sessões vencidos.
+  // Sem rota HTTP: só a Cloudflare dispara (no local, /__scheduled com --test-scheduled).
+  async scheduled(controller, env): Promise<void> {
+    const agora = Math.floor(controller.scheduledTime / 1000); // segundos Unix, como expira_em
+    try {
+      const [codigos, sessoes] = await env.DB.batch([
+        env.DB.prepare('DELETE FROM codigos WHERE expira_em < ?').bind(agora),
+        env.DB.prepare('DELETE FROM sessoes WHERE expira_em < ?').bind(agora),
+      ]);
+      console.log(
+        `Limpeza (${controller.cron}): ${codigos.meta.changes} código(s) e ${sessoes.meta.changes} sessão(ões) vencidos apagados`,
+      );
+    } catch (erro) {
+      console.error('Falha na limpeza de códigos e sessões vencidos', erro);
+      throw erro; // marca a execução do cron como falha no painel
+    }
+  },
 } satisfies ExportedHandler<Env>;
