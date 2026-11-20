@@ -1,6 +1,8 @@
 # Publica em https://eddwan.com no Cloudflare Workers a cada push na main (o merge da develop na
 # main gera esse push), de 3 em 3 horas (vídeos novos do canal) e à mão em Actions.
-# Precisa do secret CLOUDFLARE_API_TOKEN (modelo "Edit Cloudflare Workers"; ver README).
+# Antes do deploy aplica as migrações novas (migrations/) no banco D1 eddwan-votos do ar.
+# Precisa do secret CLOUDFLARE_API_TOKEN (modelo "Edit Cloudflare Workers" com permissão de edição
+# do D1; ver README). A conta e o banco vêm do wrangler.jsonc.
 name: Deploy
 
 on:
@@ -56,11 +58,16 @@ jobs:
             git push origin HEAD:develop || echo "::notice::A develop tem commits próprios; os posts chegam a ela no próximo merge da main."
             echo "::notice::Posts novos: $(git diff --name-only HEAD~1 | tr '\n' ' ')"
           fi
+      # Só aplica as migrações que o banco do ar ainda não tem (o D1 guarda quais já rodaram).
+      # Se uma falhar, o job para aqui e o site no ar continua na versão anterior.
+      - name: Migrações do banco D1 (no ar)
+        run: npx wrangler d1 migrations apply eddwan-votos --remote
       - name: Build e deploy do site
         run: npm run cf:deploy
       - name: Deploy do redirecionamento do www
         run: npm run cf:deploy-www
       - name: Conferir o site no ar
+        # Páginas do site e /api/saude (200 só se o Worker responde e o banco D1 lê a tabela meta).
         # A proteção contra robôs da Cloudflare pode responder 403 aos IPs do GitHub. Nesse caso
         # fica um aviso (o deploy já deu certo); qualquer outro código diferente do esperado falha.
         run: |
@@ -78,7 +85,7 @@ jobs:
             return 1
           }
           falhou=0
-          for caminho in / /sobre /portfolio /videos /blog /rss.xml /sitemap-index.xml; do
+          for caminho in / /sobre /portfolio /videos /blog /rss.xml /sitemap-index.xml /api/saude; do
             confere "https://eddwan.com$caminho" 200 || falhou=1
           done
           confere https://www.eddwan.com/sobre "301 https://eddwan.com/sobre" || falhou=1
