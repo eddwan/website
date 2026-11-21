@@ -39,3 +39,17 @@ export const POSTHOG = {
   // Só conta visitas no domínio de produção (nada no npm run dev, na prévia local ou no wrangler dev)
   dominios: ['eddwan.com'],
 };
+
+// Turnstile (anti-robô da Cloudflare). A sitekey é pública por natureza: vai no HTML. O segredo fica só no Worker.
+// A chave do eddwan.com só funciona no domínio; no local entra a chave de teste da Cloudflare, que sempre passa.
+const TURNSTILE_SITEKEY_PRODUCAO = '0x4AAAAAAGK-ePFy2b4rdXLWh5Pzk792qvo';
+export const TURNSTILE_SITEKEY_TESTE = '1x00000000000000000000AA';
+const HOSTS_LOCAIS = ['localhost', '127.0.0.1', '[::1]'];
+
+// No npm run dev já sai a de teste no build. O cf:dev é um build de produção servido em localhost:8787, por isso
+// quem roda no navegador deve usar turnstileSitekey(location.hostname).
+export const TURNSTILE_SITEKEY = import.meta.env.DEV ? TURNSTILE_SITEKEY_TESTE : TURNSTILE_SITEKEY_PRODUCAO;
+
+export function turnstileSitekey(hostname: string): string {
+  return HOSTS_LOCAIS.includes(hostname) ? TURNSTILE_SITEKEY_TESTE : TURNSTILE_SITEKEY;
+}
