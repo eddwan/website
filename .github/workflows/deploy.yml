@@ -2,7 +2,7 @@
 # main gera esse push), de 3 em 3 horas (vídeos novos do canal) e à mão em Actions.
 # Antes do deploy aplica as migrações novas (migrations/) no banco D1 eddwan-votos do ar.
 # Precisa do secret CLOUDFLARE_API_TOKEN (modelo "Edit Cloudflare Workers" com permissão de edição
-# do D1; ver README). A conta e o banco vêm do wrangler.jsonc.
+# do D1; ver README) e da variável PUBLIC_TURNSTILE_SITEKEY. A conta e o banco vêm do wrangler.jsonc.
 name: Deploy
 
 on:
@@ -31,7 +31,17 @@ jobs:
       url: https://eddwan.com
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # Sitekey pública do Turnstile do eddwan.com (variável do Actions, não secret). O Astro embute no build.
+      PUBLIC_TURNSTILE_SITEKEY: ${{ vars.PUBLIC_TURNSTILE_SITEKEY }}
     steps:
+      # Sem a sitekey o build sairia com a chave de teste e o widget não funcionaria no ar: para antes de
+      # mexer em qualquer coisa (posts, banco, deploy).
+      - name: Conferir a variável PUBLIC_TURNSTILE_SITEKEY
+        run: |
+          if [ -z "$PUBLIC_TURNSTILE_SITEKEY" ]; then
+            echo "::error::Variável PUBLIC_TURNSTILE_SITEKEY vazia. Cadastre em Settings → Secrets and variables → Actions → Variables (ver README)."
+            exit 1
+          fi
       # Com a main protegida, só a chave de deploy DEPLOY_KEY_POSTS (liberada na regra da main)
       # consegue enviar os posts automáticos direto para ela. Sem o secret, usa o token padrão.
       - uses: actions/checkout@v5
