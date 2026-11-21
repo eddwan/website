@@ -170,8 +170,8 @@ O que funcionou bem nesses pedidos:
 - **Dizer o que não pode acontecer:** "sem mudar nada no resto do site", "sem dependência nova", "nenhuma chave nos YAMLs". Essas frases pesam tanto quanto a descrição do que fazer.
 - **Pedir o teste junto**, com os comandos exatos: `curl` nas rotas, e apagar o `.wrangler/` para provar que o README funciona para quem chega agora.
 
-## Próxima live
+## A live seguinte
 
-Na sexta, 20/11, às 20h, entram as tabelas do login (usuários, códigos e sessões) e o Turnstile, a proteção contra robôs da Cloudflare, conferido no Worker. Na segunda metade, como em toda sexta, eu reviso ao vivo os PRs da comunidade ([issue #18](https://github.com/eddwan/website/issues/18)). Quer ver o seu PR revisado? Mande para a `develop` até lá (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
+A Live 4 foi na sexta, 20/11: o banco ganhou as tabelas do login, sem guardar nenhum e-mail em texto, uma faxina diária por Cron Trigger e o Turnstile, o anti-robô da Cloudflare, conferido no Worker. O que foi feito, a gravação, os prompts e a explicação do HMAC estão no [post da Live 4](/blog/live-4-tabelas-do-login-e-turnstile-na-cloudflare). Quer contribuir? Mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
 
 O código foi escrito ao vivo com o Claude Code, com cada passo revisado por mim na tela antes do commit.
