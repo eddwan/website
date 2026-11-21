@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Cloudflare (wrangler)
 .wrangler/
+# Segredos locais do Worker (o modelo .dev.vars.example vai para o Git)
+.dev.vars*
+!.dev.vars.example

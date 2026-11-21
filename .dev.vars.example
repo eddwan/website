@@ -1,0 +1,5 @@
+# Variáveis do Worker para rodar local (wrangler dev). Copie para .dev.vars (que fica fora do Git):
+#   cp .dev.vars.example .dev.vars
+# Chave secreta de TESTE pública da Cloudflare: sempre passa, não precisa de conta.
+# No ar o segredo real vem de: npx wrangler secret put TURNSTILE_SECRET
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA

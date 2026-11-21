@@ -40,5 +40,12 @@
 			"database_id": "8efc4cb3-40bc-48d3-937a-87846712e1d6",
 			"migrations_dir": "migrations"
 		}
-	]
+	],
+	// Cron Trigger: todo dia às 06:00 UTC o handler scheduled do Worker apaga códigos e sessões vencidos.
+	// Teste local: npm run cf:dev -- --test-scheduled e curl "http://localhost:8787/__scheduled?cron=0+6+*+*+*"
+	"triggers": {
+		"crons": [
+			"0 6 * * *"
+		]
+	}
 }

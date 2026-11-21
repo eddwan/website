@@ -44,13 +44,15 @@ A API (`/api/*`, em `worker/index.ts`) roda no motor do Cloudflare na sua máqui
 
 ```bash
 npm ci
+cp .dev.vars.example .dev.vars                           # segredos locais do Worker (chave de teste do Turnstile)
 npx wrangler d1 migrations apply eddwan-votos --local   # cria o banco local e roda migrations/
 npm run cf:dev                                           # build + site e API em http://localhost:8787
-curl http://localhost:8787/api/saude                     # {"ok":true,"banco":"ok","esquema":"1"}
+curl http://localhost:8787/api/saude                     # {"ok":true,"banco":"ok","esquema":"2"}
 ```
 
 O `npm run dev` do Astro (porta 4321) só serve as páginas: ele não roda o Worker, então lá `/api/*` não existe.
 
+- **`.dev.vars`:** são os segredos do Worker na sua máquina, e o `wrangler dev` lê esse arquivo sozinho. Ele fica fora do Git (`.gitignore`); o modelo é o `.dev.vars.example`. A chave dele é a de teste pública da Cloudflare, que sempre passa, então dá para testar o Turnstile sem conta em http://localhost:8787/votacao/teste (em localhost a página usa a sitekey de teste). No ar, o segredo real vem de `npx wrangler secret put TURNSTILE_SECRET`.
 - **Onde fica o banco:** em `.wrangler/state/v3/d1/`, fora do Git (`.wrangler/` está no `.gitignore`). O site no ar usa outro banco, o D1 `eddwan-votos` da Cloudflare.
 - **`/api/saude` com 503** (`{"ok":false,"banco":"erro"}`): o banco local está sem as migrações; rode o comando de `--local` acima.
 - **Zerar o banco:** pare o `cf:dev`, apague a pasta e rode as migrações de novo:
@@ -188,6 +190,8 @@ gh run watch                                       # acompanha o deploy
 Também dá para publicar sem merge: Actions → Deploy → *Run workflow* (ou `gh workflow run deploy.yml`).
 
 **Secret obrigatório:** `CLOUDFLARE_API_TOKEN`, criado em dash.cloudflare.com → My Profile → API Tokens → *Create Token* → modelo **Edit Cloudflare Workers**, com *Account Resources* = Hallen Tech e *Zone Resources* = eddwan.com. Guardar no repositório com `gh secret set CLOUDFLARE_API_TOKEN -R eddwan/website` (o comando pede o valor sem mostrar). O ID da conta já está nos `wrangler.jsonc`.
+
+**Variável obrigatória:** `PUBLIC_TURNSTILE_SITEKEY`, a sitekey do widget do Turnstile do eddwan.com (dash.cloudflare.com → Turnstile). Ela é pública e vai no HTML, por isso fica nas *variáveis* do Actions, não nos secrets: `gh variable set PUBLIC_TURNSTILE_SITEKEY -R eddwan/website --body <sitekey>`. Sem ela, o deploy para logo no primeiro passo. O CI e os builds locais não precisam dela: sem a variável entra a chave de teste da Cloudflare. O segredo do Turnstile não fica no GitHub: ele vai direto para o Worker com `npx wrangler secret put TURNSTILE_SECRET`.
 
 ## Publicar no Cloudflare Workers
 

@@ -10,7 +10,8 @@ export default defineConfig({
   site,
   // URLs sem barra no fim (/sobre), iguais aos links do site; o Cloudflare serve dist/sobre/index.html nelas
   trailingSlash: 'never',
-  integrations: [sitemap()],
+  // Páginas de teste ficam fora do sitemap (e têm noindex no Base)
+  integrations: [sitemap({ filter: (pagina) => !pagina.includes('/votacao/teste') })],
   markdown: {
     shikiConfig: { theme: 'github-dark-dimmed' },
   },
