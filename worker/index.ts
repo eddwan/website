@@ -2,6 +2,9 @@
 // sendo servido direto do dist/ pela Cloudflare, sem passar por aqui.
 // Tipos (Env, ExportedHandler): npm run cf:types gera worker/worker-configuration.d.ts.
 // env.DB é o banco D1 eddwan-votos (migrações em migrations/).
+// env.TURNSTILE_SECRET: no ar via wrangler secret put; no local, em .dev.vars (modelo em .dev.vars.example).
+
+import { verificarTurnstile } from './turnstile';
 
 function json(dados: unknown, status = 200, cabecalhos: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(dados), {
@@ -34,6 +37,24 @@ export default {
           console.error('Falha ao ler o banco em /api/saude', erro);
           return json({ ok: false, banco: 'erro' }, 503);
         }
+      }
+      if (pathname === '/api/turnstile/teste') {
+        if (request.method !== 'POST') {
+          return json({ erro: 'Método não permitido' }, 405, { Allow: 'POST' });
+        }
+        // Formulário ilegível (corpo vazio, Content-Type errado) conta como sem token: recusa
+        let token: string | null = null;
+        try {
+          const campo = (await request.formData()).get('cf-turnstile-response');
+          token = typeof campo === 'string' ? campo : null;
+        } catch {
+          token = null;
+        }
+        const ip = request.headers.get('CF-Connecting-IP');
+        if (await verificarTurnstile(token, ip, env.TURNSTILE_SECRET)) {
+          return json({ ok: true });
+        }
+        return json({ ok: false, erro: 'Verificação falhou' }, 403);
       }
       return json({ erro: 'Não encontrado' }, 404);
     }
