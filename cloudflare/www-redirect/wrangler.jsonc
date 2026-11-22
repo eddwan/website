@@ -2,7 +2,7 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "eddwan-www-redirect",
-  "account_id": "b3eef8e6bc57c9ea990f64e4be208686",
+  "account_id": "1b3df666d2be7ef806120078f7a032f0",
   "main": "index.js",
   "compatibility_date": "2026-11-01",
   "routes": [{ "pattern": "www.eddwan.com", "custom_domain": true }],

@@ -189,13 +189,13 @@ gh run watch                                       # acompanha o deploy
 
 Também dá para publicar sem merge: Actions → Deploy → *Run workflow* (ou `gh workflow run deploy.yml`).
 
-**Secret obrigatório:** `CLOUDFLARE_API_TOKEN`, criado em dash.cloudflare.com → My Profile → API Tokens → *Create Token* → modelo **Edit Cloudflare Workers**, com *Account Resources* = Hallen Tech e *Zone Resources* = eddwan.com. Guardar no repositório com `gh secret set CLOUDFLARE_API_TOKEN -R eddwan/website` (o comando pede o valor sem mostrar). O ID da conta já está nos `wrangler.jsonc`.
+**Secret obrigatório:** `CLOUDFLARE_API_TOKEN`, criado em dash.cloudflare.com → My Profile → API Tokens → *Create Token* → modelo **Edit Cloudflare Workers**, com *Account Resources* = Eddwan Hallen e *Zone Resources* = eddwan.com. Guardar no repositório com `gh secret set CLOUDFLARE_API_TOKEN -R eddwan/website` (o comando pede o valor sem mostrar). O ID da conta já está nos `wrangler.jsonc`.
 
 **Variável obrigatória:** `PUBLIC_TURNSTILE_SITEKEY`, a sitekey do widget do Turnstile do eddwan.com (dash.cloudflare.com → Turnstile). Ela é pública e vai no HTML, por isso fica nas *variáveis* do Actions, não nos secrets: `gh variable set PUBLIC_TURNSTILE_SITEKEY -R eddwan/website --body <sitekey>`. Sem ela, o deploy para logo no primeiro passo. O CI e os builds locais não precisam dela: sem a variável entra a chave de teste da Cloudflare. O segredo do Turnstile não fica no GitHub: ele vai direto para o Worker com `npx wrangler secret put TURNSTILE_SECRET`.
 
 ## Publicar no Cloudflare Workers
 
-O site roda como **Worker com arquivos estáticos**: o `astro build` gera o `dist/` e o `wrangler` sobe tudo para a conta **Hallen Tech** da Cloudflare. O código do Worker (`worker/index.ts`) só roda em `/api/*` (`run_worker_first`); o resto do site sai direto do `dist/`, sem passar por ele. O plano gratuito cobre com folga: requisições a arquivos estáticos não contam no limite do Worker, só as de `/api/*` (100 mil por dia no plano gratuito).
+O site roda como **Worker com arquivos estáticos**: o `astro build` gera o `dist/` e o `wrangler` sobe tudo para a conta **Eddwan Hallen** da Cloudflare (até 22/11/2026 ficava na conta Hallen Tech). O código do Worker (`worker/index.ts`) só roda em `/api/*` (`run_worker_first`); o resto do site sai direto do `dist/`, sem passar por ele. O plano gratuito cobre com folga: requisições a arquivos estáticos não contam no limite do Worker, só as de `/api/*` (100 mil por dia no plano gratuito).
 **Não publique sem o Eddwan aprovar.**
 
 | Arquivo | Para quê |
@@ -206,7 +206,7 @@ O site roda como **Worker com arquivos estáticos**: o `astro build` gera o `dis
 | `public/_headers` | Cabeçalhos de segurança e cache longo para `/_astro/*` (arquivos com hash) |
 
 ```bash
-npx wrangler login     # uma vez por máquina (conta Hallen Tech)
+npx wrangler login     # uma vez por máquina (conta Eddwan Hallen)
 npm run cf:check       # build + simulação do deploy (não envia nada)
 npm run cf:dev         # build + o site no motor do Cloudflare em http://localhost:8787
 npm run cf:deploy      # build + publica de verdade

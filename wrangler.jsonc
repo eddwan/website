@@ -4,7 +4,7 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "eddwan-website",
-	"account_id": "b3eef8e6bc57c9ea990f64e4be208686",
+	"account_id": "1b3df666d2be7ef806120078f7a032f0",
 	"main": "worker/index.ts",
 	"compatibility_date": "2026-11-01",
 	"assets": {
@@ -37,7 +37,7 @@
 		{
 			"binding": "DB",
 			"database_name": "eddwan-votos",
-			"database_id": "8efc4cb3-40bc-48d3-937a-87846712e1d6",
+			"database_id": "63ea6b79-e84e-4f22-84f3-77a3405d799d",
 			"migrations_dir": "migrations"
 		}
 	],
