@@ -42,7 +42,10 @@
 		}
 	],
 	// Cron Trigger: todo dia às 06:00 UTC o handler scheduled do Worker apaga códigos e sessões vencidos.
-	// Teste local: npm run cf:dev -- --test-scheduled e curl "http://localhost:8787/__scheduled?cron=0+6+*+*+*"
+	// Teste local: npm run cf:dev -- --test-scheduled e
+	// curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=eddwan-website" \
+	//   -H 'Content-Type: application/json' -d '{"cron":"0 6 * * *"}'
+	// (o /__scheduled não serve aqui: com assets, só /api/* chega ao Worker e ele cai no 404 do Astro)
 	"triggers": {
 		"crons": [
 			"0 6 * * *"

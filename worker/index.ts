@@ -64,12 +64,17 @@ export default {
   },
 
   // Cron Trigger diário (triggers.crons no wrangler.jsonc): apaga códigos e sessões vencidos.
-  // Sem rota HTTP: só a Cloudflare dispara (no local, /__scheduled com --test-scheduled).
+  // Códigos só saem se, além de vencidos, tiverem sido criados há mais de uma hora: o limite de
+  // 3 códigos por hora por e-mail conta as linhas com criado_em na última hora, e apagar um código
+  // vencido mais novo que isso zeraria a conta e liberaria novos envios antes da hora.
+  // Sem rota HTTP: só a Cloudflare dispara. No local, com --test-scheduled, o /__scheduled cai nos
+  // arquivos estáticos (run_worker_first só cobre /api/*); use a rota do wrangler (ver wrangler.jsonc).
   async scheduled(controller, env): Promise<void> {
     const agora = Math.floor(controller.scheduledTime / 1000); // segundos Unix, como expira_em
+    const umaHoraAtras = agora - 3600; // mesma janela do limite de códigos por hora
     try {
       const [codigos, sessoes] = await env.DB.batch([
-        env.DB.prepare('DELETE FROM codigos WHERE expira_em < ?').bind(agora),
+        env.DB.prepare('DELETE FROM codigos WHERE expira_em < ? AND criado_em < ?').bind(agora, umaHoraAtras),
         env.DB.prepare('DELETE FROM sessoes WHERE expira_em < ?').bind(agora),
       ]);
       console.log(
