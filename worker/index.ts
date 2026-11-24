@@ -3,8 +3,17 @@
 // Tipos (Env, ExportedHandler): npm run cf:types gera worker/worker-configuration.d.ts.
 // env.DB é o banco D1 eddwan-votos (migrações em migrations/).
 // env.TURNSTILE_SECRET: no ar via wrangler secret put; no local, em .dev.vars (modelo em .dev.vars.example).
+// env.EMAIL_PEPPER, env.EMAIL_MODO e env.RESEND_API_KEY: idem. env.LIMITE_IP: Rate Limiting dos Workers (wrangler.jsonc).
 
+import { gerarCodigo, hmac, normalizarEmail } from './cripto';
+import { enviarCodigo } from './email';
 import { verificarTurnstile } from './turnstile';
+
+const VALIDADE_CODIGO = 600; // 10 minutos, em segundos
+const JANELA_LIMITE_EMAIL = 3600; // 1 hora: no máximo 3 códigos por e-mail nesse período
+const CODIGOS_POR_HORA = 3;
+// Formato mínimo: algo@algo.tld, sem espaços, até 254 caracteres (limite prático de um endereço)
+const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function json(dados: unknown, status = 200, cabecalhos: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(dados), {
@@ -15,6 +24,82 @@ function json(dados: unknown, status = 200, cabecalhos: Record<string, string> =
       ...cabecalhos,
     },
   });
+}
+
+// POST /api/entrar { email, turnstile }: manda um código de 6 dígitos para o e-mail.
+// Checagens das mais baratas para as mais caras. Deu certo: sempre 200 { ok: true }, sem dizer se o
+// e-mail já tem conta (o usuário só é criado no /api/verificar).
+async function entrar(request: Request, env: Env): Promise<Response> {
+  // 1. Limite por IP (5 a cada 60 s). O IP só serve de chave do contador, não vai para o banco.
+  const ip = request.headers.get('CF-Connecting-IP');
+  const { success: dentroDoLimite } = await env.LIMITE_IP.limit({ key: ip ?? 'sem-ip' });
+  if (!dentroDoLimite) {
+    console.warn('/api/entrar: limite por IP atingido');
+    return json({ ok: false, erro: 'Muitos pedidos. Tente de novo em instantes.' }, 429, { 'Retry-After': '60' });
+  }
+
+  // 2. Corpo: JSON com email e turnstile em texto
+  let corpo: unknown;
+  try {
+    corpo = await request.json();
+  } catch {
+    return json({ ok: false, erro: 'Pedido inválido' }, 400);
+  }
+  const { email: emailBruto, turnstile } = (corpo ?? {}) as Record<string, unknown>;
+  if (typeof emailBruto !== 'string' || typeof turnstile !== 'string') {
+    return json({ ok: false, erro: 'Pedido inválido' }, 400);
+  }
+
+  // 3. Formato do e-mail (antes do Turnstile, para não gastar o siteverify com um pedido que já é 400)
+  const email = normalizarEmail(emailBruto);
+  if (email.length > 254 || !FORMATO_EMAIL.test(email)) {
+    return json({ ok: false, erro: 'E-mail inválido' }, 400);
+  }
+
+  // 4. Turnstile
+  if (!(await verificarTurnstile(turnstile, ip, env.TURNSTILE_SECRET))) {
+    return json({ ok: false, erro: 'Verificação falhou' }, 403);
+  }
+
+  if (!env.EMAIL_PEPPER) {
+    console.error('/api/entrar: EMAIL_PEPPER não configurado');
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+
+  try {
+    // 5. Grava o código, respeitando o limite por e-mail. Contagem e INSERT no mesmo comando:
+    // dois pedidos ao mesmo tempo não conseguem passar juntos do terceiro código.
+    const agora = Math.floor(Date.now() / 1000);
+    const emailHmac = await hmac(env.EMAIL_PEPPER, email);
+    const codigo = gerarCodigo();
+    const codigoHash = await hmac(env.EMAIL_PEPPER, `${emailHmac}:${codigo}`);
+    const gravado = await env.DB.prepare(
+      `INSERT INTO codigos (email_hmac, codigo_hash, expira_em, criado_em)
+       SELECT ?1, ?2, ?3, ?4
+       WHERE (SELECT COUNT(*) FROM codigos WHERE email_hmac = ?1 AND criado_em > ?5) < ?6`,
+    )
+      .bind(emailHmac, codigoHash, agora + VALIDADE_CODIGO, agora, agora - JANELA_LIMITE_EMAIL, CODIGOS_POR_HORA)
+      .run();
+    if (gravado.meta.changes === 0) {
+      console.warn('/api/entrar: limite de códigos por e-mail atingido');
+      return json({ ok: false, erro: 'Muitos pedidos. Tente de novo mais tarde.' }, 429, { 'Retry-After': '3600' });
+    }
+
+    // 6. Envio. Falhou: apaga o código, para um erro nosso não gastar um dos 3 da pessoa.
+    try {
+      await enviarCodigo(email, codigo, emailHmac.slice(0, 12), env);
+    } catch (erro) {
+      // Só a mensagem: enviarCodigo já tira o e-mail dela
+      console.error(`/api/entrar: falha ao enviar o código (email_hmac ${emailHmac.slice(0, 12)}…): ${erro instanceof Error ? erro.message : 'erro desconhecido'}`);
+      await env.DB.prepare('DELETE FROM codigos WHERE id = ?').bind(gravado.meta.last_row_id).run();
+      return json({ ok: false, erro: 'Não foi possível enviar o código' }, 503);
+    }
+  } catch (erro) {
+    console.error('/api/entrar: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+
+  return json({ ok: true });
 }
 
 export default {
@@ -55,6 +140,12 @@ export default {
           return json({ ok: true });
         }
         return json({ ok: false, erro: 'Verificação falhou' }, 403);
+      }
+      if (pathname === '/api/entrar') {
+        if (request.method !== 'POST') {
+          return json({ erro: 'Método não permitido' }, 405, { Allow: 'POST' });
+        }
+        return entrar(request, env);
       }
       return json({ erro: 'Não encontrado' }, 404);
     }
