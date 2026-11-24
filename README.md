@@ -25,7 +25,7 @@ No ar em **https://eddwan.com**. Quer ajudar? Leia o [guia de contribuição](CO
 | `/sobre` | Currículo; link para `/cv.pdf` aparece sozinho quando existir `public/cv.pdf` | `src/pages/sobre.astro` |
 | `/rss.xml` | Feed RSS | `src/pages/rss.xml.ts` |
 | `/sitemap-index.xml` | Sitemap (gerado pelo `@astrojs/sitemap`) | `astro.config.mjs` |
-| `/og/<slug>.png` | Imagem Open Graph de cada post (1200×630, gerada no build) | `src/pages/og/[...slug].png.ts`, `src/lib/og.ts` |
+| `/og/<slug>.png` | Imagem Open Graph de cada post (1200×630, gerada só no build do CI; na sua máquina, `OG_IMAGENS=1 npm run build`) | `src/pages/og/[...slug].png.ts`, `src/lib/og.ts` |
 
 ## Rodar
 
