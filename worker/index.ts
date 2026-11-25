@@ -20,6 +20,9 @@ const FORMATO_CODIGO = /^\d{6}$/;
 const FORMATO_TOKEN = /^[A-Za-z0-9_-]{43}$/; // 32 bytes em base64url, como gerarToken()
 // Formato mínimo: algo@algo.tld, sem espaços, até 254 caracteres (limite prático de um endereço)
 const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// dono/nome como no GitHub: dono com letras, números e hífen (até 39); nome com letras, números, . _ - (até 100)
+const FORMATO_REPO = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
+const PREFIXO_VOTO = '/api/votos/';
 
 function json(dados: unknown, status = 200, cabecalhos: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(dados), {
@@ -217,16 +220,161 @@ function codificar(texto: string): Uint8Array {
   return new TextEncoder().encode(texto);
 }
 
+// Sessão válida do cookie: id do usuário e quando a sessão começou (segundos Unix), ou null.
+// Sem cookie válido nem consulta o banco. Erro no banco sobe para quem chamou.
+async function usuarioDaSessao(request: Request, env: Env): Promise<{ usuarioId: number; desde: number } | null> {
+  const token = lerTokenSessao(request);
+  if (!token) return null;
+  const sessao = await env.DB.prepare('SELECT usuario_id, criado_em FROM sessoes WHERE token_hash = ? AND expira_em > ?')
+    .bind(await sha256(token), Math.floor(Date.now() / 1000))
+    .first<{ usuario_id: number; criado_em: number }>();
+  return sessao ? { usuarioId: sessao.usuario_id, desde: sessao.criado_em } : null;
+}
+
+// Rodada aberta: a de maior id com aberta = 1
+const SQL_RODADA_ABERTA = 'SELECT id FROM rodadas WHERE aberta = 1 ORDER BY id DESC LIMIT 1';
+
+// POST /api/votos { repo } (votado = true) e DELETE /api/votos/<dono>/<nome> (votado = false):
+// marca ou desmarca o voto da pessoa num candidato da rodada aberta. Repetir dá a mesma resposta,
+// sem somar nem tirar de novo (a chave primária de votos garante um voto por pessoa e repositório).
+async function mudarVoto(request: Request, env: Env, votado: boolean): Promise<Response> {
+  const rota = votado ? 'POST /api/votos' : 'DELETE /api/votos';
+  try {
+    const sessao = await usuarioDaSessao(request, env);
+    if (!sessao) return json({ ok: false, erro: 'Entre para votar' }, 401);
+
+    let repo: unknown;
+    if (votado) {
+      try {
+        repo = ((await request.json()) as Record<string, unknown> | null)?.repo;
+      } catch {
+        return json({ ok: false, erro: 'Pedido inválido' }, 400);
+      }
+    } else {
+      repo = new URL(request.url).pathname.slice(PREFIXO_VOTO.length);
+    }
+    if (typeof repo !== 'string' || !FORMATO_REPO.test(repo)) {
+      return json({ ok: false, erro: 'Repositório inválido' }, 400);
+    }
+
+    // Rodada aberta e se o repo é candidato dela, numa consulta só
+    const alvo = await env.DB.prepare(
+      `SELECT id, EXISTS (SELECT 1 FROM repositorios WHERE rodada_id = rodadas.id AND repo = ?) AS candidato
+       FROM rodadas WHERE aberta = 1 ORDER BY id DESC LIMIT 1`,
+    )
+      .bind(repo)
+      .first<{ id: number; candidato: number }>();
+    if (!alvo) return json({ ok: false, erro: 'Nenhuma votação aberta' }, 409);
+    if (!alvo.candidato) return json({ ok: false, erro: 'Repositório não está na votação' }, 404);
+
+    // Grava (ou apaga) e conta na mesma transação: o total já inclui a mudança
+    const mudanca = votado
+      ? env.DB.prepare(
+          'INSERT INTO votos (rodada_id, repo, usuario_id, criado_em) VALUES (?, ?, ?, ?) ON CONFLICT DO NOTHING',
+        ).bind(alvo.id, repo, sessao.usuarioId, Math.floor(Date.now() / 1000))
+      : env.DB.prepare('DELETE FROM votos WHERE rodada_id = ? AND repo = ? AND usuario_id = ?').bind(
+          alvo.id,
+          repo,
+          sessao.usuarioId,
+        );
+    const [, total] = await env.DB.batch<{ votos: number }>([
+      mudanca,
+      env.DB.prepare('SELECT COUNT(*) AS votos FROM votos WHERE rodada_id = ? AND repo = ?').bind(alvo.id, repo),
+    ]);
+    return json({ ok: true, repo, votado, votos: total.results[0]?.votos ?? 0 });
+  } catch (erro) {
+    console.error(`${rota}: falha no banco`, erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
+// GET /api/votos: os repos em que a pessoa votou na rodada aberta (lista vazia se não houver rodada aberta)
+async function meusVotos(request: Request, env: Env): Promise<Response> {
+  try {
+    const sessao = await usuarioDaSessao(request, env);
+    if (!sessao) return json({ conectado: false });
+    const { results } = await env.DB.prepare(
+      `SELECT repo FROM votos WHERE usuario_id = ? AND rodada_id = (${SQL_RODADA_ABERTA}) ORDER BY repo`,
+    )
+      .bind(sessao.usuarioId)
+      .all<{ repo: string }>();
+    return json({ conectado: true, votos: results.map((linha) => linha.repo) });
+  } catch (erro) {
+    console.error('GET /api/votos: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
+// GET /api/votacao: placar público da rodada aberta, igual para todo mundo.
+// Por que os votos da pessoa não vêm aqui: esta resposta fica 60 s no cache (caches.default e
+// navegador), com a URL como chave e sem cookie. Se ela dissesse "você votou em X", a resposta de
+// uma pessoa poderia ser servida a outra, ou o cache teria de ser por pessoa, e cada visita voltaria
+// a consultar o D1. Por isso nem lemos o cookie aqui: o que é de cada um fica no GET /api/votos,
+// sempre no-store, e a página junta as duas respostas.
+const CACHE_PLACAR = 60; // segundos
+
+async function placar(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  // Chave só com origem e caminho: query string (?x=1) não cria entradas novas nem fura o cache
+  const url = new URL(request.url);
+  const chave = new Request(`${url.origin}${url.pathname}`, { method: 'GET' });
+  const cache = caches.default;
+
+  const guardada = await cache.match(chave);
+  if (guardada) {
+    console.log('/api/votacao: do cache');
+    return guardada;
+  }
+
+  try {
+    // Uma consulta: rodada aberta, candidatos e contagem de votos. LEFT JOIN em votos para o
+    // candidato sem voto aparecer com 0; LEFT JOIN em repositorios para a rodada sem candidatos
+    // vir numa linha com repo NULL. Sem rodada aberta, nenhuma linha.
+    const { results } = await env.DB.prepare(
+      `WITH aberta AS (SELECT id, titulo FROM rodadas WHERE aberta = 1 ORDER BY id DESC LIMIT 1)
+       SELECT a.id, a.titulo, r.repo, r.nome, r.url, r.resumo, COUNT(v.usuario_id) AS votos
+       FROM aberta a
+       LEFT JOIN repositorios r ON r.rodada_id = a.id
+       LEFT JOIN votos v ON v.rodada_id = r.rodada_id AND v.repo = r.repo
+       GROUP BY a.id, r.repo
+       ORDER BY votos DESC, r.nome COLLATE NOCASE, r.repo`,
+    ).all<{
+      id: number;
+      titulo: string;
+      repo: string | null;
+      nome: string | null;
+      url: string | null;
+      resumo: string | null;
+      votos: number;
+    }>();
+
+    const primeira = results[0];
+    const corpo = primeira
+      ? {
+          rodada: { id: primeira.id, titulo: primeira.titulo },
+          candidatos: results
+            .filter((linha) => linha.repo !== null)
+            .map(({ repo, nome, url, resumo, votos }) => ({ repo, nome, url, resumo, votos })),
+        }
+      : { rodada: null, candidatos: [] };
+
+    const resposta = json(corpo, 200, { 'Cache-Control': `public, max-age=${CACHE_PLACAR}` });
+    // Guarda sem segurar a resposta; o cache respeita o max-age e descarta depois de 60 s
+    ctx.waitUntil(cache.put(chave, resposta.clone()));
+    console.log('/api/votacao: do banco');
+    return resposta;
+  } catch (erro) {
+    // Erro não vai para o cache (json() usa no-store por padrão)
+    console.error('/api/votacao: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
 // GET /api/eu: diz se há sessão válida e desde quando. Nunca devolve e-mail.
 async function eu(request: Request, env: Env): Promise<Response> {
-  const token = lerTokenSessao(request);
-  if (!token) return json({ conectado: false });
   try {
-    const sessao = await env.DB.prepare('SELECT criado_em FROM sessoes WHERE token_hash = ? AND expira_em > ?')
-      .bind(await sha256(token), Math.floor(Date.now() / 1000))
-      .first<{ criado_em: number }>();
+    const sessao = await usuarioDaSessao(request, env);
     if (!sessao) return json({ conectado: false });
-    return json({ conectado: true, desde: new Date(sessao.criado_em * 1000).toISOString() });
+    return json({ conectado: true, desde: new Date(sessao.desde * 1000).toISOString() });
   } catch (erro) {
     console.error('/api/eu: falha no banco', erro);
     return json({ ok: false, erro: 'Erro interno' }, 500);
@@ -248,14 +396,16 @@ async function sair(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request, env): Promise<Response> {
+  async fetch(request, env, ctx): Promise<Response> {
     const { pathname } = new URL(request.url);
 
     if (pathname.startsWith('/api/')) {
-      // CSRF: POST vindo de outro site (Origin presente e diferente do nosso) é recusado.
-      // Sem Origin (curl, alguns clientes antigos) passa: o cookie SameSite=Lax cobre o resto.
+      // CSRF: qualquer método que muda algo (fora GET, HEAD e OPTIONS) vindo de outro site (Origin
+      // presente e diferente do nosso) é recusado. Sem Origin (curl, alguns clientes antigos) passa:
+      // o cookie SameSite=Lax cobre o resto.
       const origem = request.headers.get('Origin');
-      if (request.method === 'POST' && origem !== null && origem !== new URL(request.url).origin) {
+      const metodoSeguro = request.method === 'GET' || request.method === 'HEAD' || request.method === 'OPTIONS';
+      if (!metodoSeguro && origem !== null && origem !== new URL(request.url).origin) {
         return json({ ok: false, erro: 'Origem não permitida' }, 403);
       }
 
@@ -316,6 +466,27 @@ export default {
           return json({ erro: 'Método não permitido' }, 405, { Allow: 'POST' });
         }
         return sair(request, env);
+      }
+      if (pathname === '/api/votacao') {
+        if (request.method === 'HEAD') {
+          const resposta = await placar(request, env, ctx);
+          return new Response(null, resposta);
+        }
+        if (request.method !== 'GET') {
+          return json({ erro: 'Método não permitido' }, 405, { Allow: 'GET, HEAD' });
+        }
+        return placar(request, env, ctx);
+      }
+      if (pathname === '/api/votos') {
+        if (request.method === 'GET' || request.method === 'HEAD') return meusVotos(request, env);
+        if (request.method === 'POST') return mudarVoto(request, env, true);
+        return json({ erro: 'Método não permitido' }, 405, { Allow: 'GET, HEAD, POST' });
+      }
+      if (pathname.startsWith(PREFIXO_VOTO)) {
+        if (request.method !== 'DELETE') {
+          return json({ erro: 'Método não permitido' }, 405, { Allow: 'DELETE' });
+        }
+        return mudarVoto(request, env, false);
       }
       return json({ erro: 'Não encontrado' }, 404);
     }
