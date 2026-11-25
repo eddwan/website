@@ -234,8 +234,8 @@ Na live, vocês também mandaram projetos open source no chat. Ficam aqui para q
 
 Obrigado, Kaleb e André, e obrigado a todos os membros do canal que acompanham as lives, perguntam e mandam projetos. É assim que a lista dos próximos vídeos fica melhor.
 
-## Próxima live
+## A live seguinte
 
-Segunda não tem live. Na terça, 24/11, às 20h, entra o login de verdade: você digita o e-mail, recebe um código de 6 dígitos e ganha uma sessão, usando as tabelas e o HMAC de hoje ([issue #19](https://github.com/eddwan/website/issues/19)). Quer ajudar antes disso? Mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
+A Live 5 foi na terça, 24/11: entrou o login de verdade. Você digita o e-mail, recebe um código de 6 dígitos pelo Resend e fica conectado por 30 dias, usando as tabelas e o HMAC desta live. O que foi feito, a gravação, os prompts e a explicação do cookie da sessão estão no [post da Live 5](/blog/live-5-login-por-codigo-de-6-digitos). Quer contribuir? Mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
 
 O código foi escrito ao vivo com o Claude Code, com cada passo revisado por mim na tela antes do commit.
