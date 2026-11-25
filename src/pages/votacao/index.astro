@@ -1,0 +1,334 @@
+---
+import Base from '../../layouts/Base.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+
+// Votação dos repositórios (Live 6, issue #20). Fora do menu, do sitemap (astro.config.mjs) e dos
+// buscadores (semIndice): a votação só abre na Live 10.
+// Ao abrir, busca ao mesmo tempo o placar público (GET /api/votacao, 60 s em cache) e os votos da
+// pessoa (GET /api/votos, sem cache). Votar e desfazer usam POST /api/votos e DELETE /api/votos/<dono>/<nome>,
+// e o total do cartão vem da resposta da API, sem esperar o cache do placar.
+---
+
+<Base titulo="Votação" descricao="Vote nos repositórios open source do próximo vídeo do canal." semIndice>
+  <CabecalhoPagina
+    eyebrow="Votação open source"
+    titulo="Votação"
+    lead="Vote nos repositórios que você quer ver no próximo vídeo. Pode votar em quantos quiser, um voto por repositório."
+  />
+
+  <section class="container votacao">
+    <noscript><p class="aviso erro">Para votar, ative o JavaScript no navegador.</p></noscript>
+
+    <p class="carregando" data-carregando>Carregando a votação…</p>
+
+    <div class="topo" data-topo hidden>
+      <h2 class="rodada" data-rodada></h2>
+      <p class="muted sessao" data-sessao></p>
+      <p class="muted nota">O placar atualiza a cada minuto; o seu voto conta na hora.</p>
+    </div>
+
+    <div class="grade" data-grade></div>
+
+    <!-- Mensagens (erros e confirmações): lidas pelos leitores de tela sem mover o foco -->
+    <p class="aviso" role="status" aria-live="polite" data-aviso hidden></p>
+
+    <!-- Modelo de cartão: clonado pelo script para cada candidato -->
+    <template data-modelo>
+      <article class="card candidato">
+        <h3><a data-nome rel="noopener"></a></h3>
+        <p class="dono" data-repo></p>
+        <p class="desc" data-resumo></p>
+        <div class="rodape">
+          <p class="votos" data-votos></p>
+          <button class="btn btn-ghost votar" type="button" data-votar></button>
+        </div>
+      </article>
+    </template>
+  </section>
+</Base>
+
+<style>
+  .votacao {
+    padding-block: 2rem 5rem;
+  }
+  .carregando,
+  .nota {
+    color: var(--muted);
+  }
+  .carregando[hidden],
+  .topo[hidden],
+  .aviso[hidden] {
+    display: none;
+  }
+  .topo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1.75rem;
+  }
+  .topo p {
+    margin: 0;
+  }
+  .rodada {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+  .nota {
+    font-size: 0.85rem;
+  }
+  .grade {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  }
+  .candidato {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.25rem 1.35rem 1.35rem;
+  }
+  h3 {
+    font-size: 1.35rem;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  h3 a:hover {
+    color: var(--o1);
+  }
+  .dono {
+    margin: -0.35rem 0 0;
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  .desc {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.96rem;
+    line-height: 1.6;
+  }
+  .rodape {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+  }
+  .votos {
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+  .votos strong {
+    font-size: 1.2rem;
+    color: var(--text);
+  }
+  .votar {
+    min-height: 2.6rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+  .votar.votado {
+    color: #120800;
+    background: var(--g-o);
+    border-color: transparent;
+  }
+  .votar:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .aviso {
+    display: block;
+    max-width: 36rem;
+    margin-top: 1.5rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+  }
+  .aviso.ok {
+    border-color: #3ddc84;
+  }
+  .aviso.erro {
+    border-color: #ff7b72;
+  }
+</style>
+
+<script>
+  interface Candidato {
+    repo: string;
+    nome: string;
+    url: string;
+    resumo: string;
+    votos: number;
+  }
+  interface Placar {
+    rodada: { id: number; titulo: string } | null;
+    candidatos: Candidato[];
+  }
+
+  const ENTRAR = '/entrar?volta=/votacao';
+  const FALHA_DE_REDE = 'Sem conexão com o site. Confira a internet e tente de novo.';
+
+  const carregando = document.querySelector<HTMLElement>('[data-carregando]')!;
+  const topo = document.querySelector<HTMLElement>('[data-topo]')!;
+  const rodada = document.querySelector<HTMLElement>('[data-rodada]')!;
+  const sessao = document.querySelector<HTMLElement>('[data-sessao]')!;
+  const grade = document.querySelector<HTMLElement>('[data-grade]')!;
+  const aviso = document.querySelector<HTMLElement>('[data-aviso]')!;
+  const modelo = document.querySelector<HTMLTemplateElement>('[data-modelo]')!;
+
+  let conectado = false;
+
+  function avisar(texto: string, tipo: 'ok' | 'erro') {
+    aviso.textContent = texto;
+    aviso.className = `aviso ${tipo}`;
+    aviso.hidden = false;
+  }
+
+  const textoVotos = (n: number) => (n === 1 ? '1 voto' : `${n} votos`);
+
+  function mostrarVotos(cartao: HTMLElement, n: number) {
+    const el = cartao.querySelector<HTMLElement>('[data-votos]')!;
+    const numero = document.createElement('strong');
+    numero.textContent = String(n);
+    el.replaceChildren(numero, ` ${n === 1 ? 'voto' : 'votos'}`);
+  }
+
+  // Texto visível curto; o nome do repositório vai num trecho só para leitor de tela
+  function mostrarBotao(botao: HTMLButtonElement, nome: string, votado: boolean) {
+    const oculto = document.createElement('span');
+    oculto.className = 'sr';
+    oculto.textContent = votado ? ` o voto em ${nome}` : ` em ${nome}`;
+    botao.replaceChildren(votado ? 'Votado ✓ · desfazer' : 'Votar', oculto);
+    botao.classList.toggle('votado', votado);
+    botao.dataset.votado = votado ? '1' : '';
+  }
+
+  function montarCartao(c: Candidato, votado: boolean): HTMLElement {
+    const fragmento = modelo.content.cloneNode(true) as DocumentFragment;
+    const cartao = fragmento.querySelector<HTMLElement>('article')!;
+    const link = cartao.querySelector<HTMLAnchorElement>('[data-nome]')!;
+    link.textContent = c.nome;
+    // Só link para o GitHub: um url estranho vindo do banco não vira javascript: na página
+    if (c.url.startsWith('https://github.com/')) link.href = c.url;
+    cartao.querySelector('[data-repo]')!.textContent = c.repo;
+    cartao.querySelector('[data-resumo]')!.textContent = c.resumo;
+    mostrarVotos(cartao, c.votos);
+    const botao = cartao.querySelector<HTMLButtonElement>('[data-votar]')!;
+    mostrarBotao(botao, c.nome, votado);
+    botao.addEventListener('click', () => alternarVoto(cartao, botao, c));
+    return cartao;
+  }
+
+  async function alternarVoto(cartao: HTMLElement, botao: HTMLButtonElement, c: Candidato) {
+    if (!conectado) {
+      location.assign(ENTRAR);
+      return;
+    }
+    const votar = !botao.dataset.votado;
+    botao.disabled = true;
+    try {
+      const resposta = votar
+        ? await fetch('/api/votos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ repo: c.repo }),
+          })
+        : await fetch(`/api/votos/${c.repo}`, { method: 'DELETE' });
+      const dados = (await resposta.json().catch(() => ({}))) as { votado?: boolean; votos?: number; erro?: string };
+
+      if (resposta.ok && typeof dados.votos === 'number') {
+        mostrarBotao(botao, c.nome, dados.votado === true);
+        mostrarVotos(cartao, dados.votos);
+        avisar(
+          dados.votado
+            ? `Voto registrado em ${c.nome}. Agora são ${textoVotos(dados.votos)}.`
+            : `Voto desfeito em ${c.nome}. Agora são ${textoVotos(dados.votos)}.`,
+          'ok',
+        );
+      } else if (resposta.status === 401) {
+        // Sessão venceu entre abrir a página e votar
+        conectado = false;
+        mostrarSessao();
+        avisar('Sua sessão terminou. Entre de novo para votar.', 'erro');
+      } else {
+        const erro = dados.erro ?? 'Algo deu errado. Tente de novo em instantes';
+        avisar(erro.endsWith('.') ? erro : `${erro}.`, 'erro');
+      }
+    } catch {
+      avisar(FALHA_DE_REDE, 'erro');
+    } finally {
+      botao.disabled = false;
+    }
+  }
+
+  function mostrarSessao() {
+    if (conectado) {
+      sessao.textContent = 'Você está conectado. Clique em Votar nos repositórios que quer ver no vídeo.';
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = ENTRAR;
+    link.textContent = 'Entre com o seu e-mail';
+    sessao.replaceChildren(link, ' para votar. Sem senha: você recebe um código de 6 dígitos.');
+  }
+
+  async function iniciar() {
+    // Os dois pedidos saem juntos; a falha do /api/votos não impede de mostrar o placar
+    const [placarRes, votosRes] = await Promise.allSettled([
+      fetch('/api/votacao').then((r) => (r.ok ? (r.json() as Promise<Placar>) : Promise.reject(r.status))),
+      fetch('/api/votos').then((r) =>
+        r.ok ? (r.json() as Promise<{ conectado: boolean; votos?: string[] }>) : Promise.reject(r.status),
+      ),
+    ]);
+    carregando.hidden = true;
+
+    if (placarRes.status === 'rejected') {
+      avisar('Não foi possível carregar a votação. Recarregue a página em instantes.', 'erro');
+      return;
+    }
+    const placar = placarRes.value;
+    if (!placar.rodada) {
+      avisar('Nenhuma votação aberta agora. Volte na próxima live.', 'ok');
+      return;
+    }
+
+    const meus = new Set<string>();
+    if (votosRes.status === 'fulfilled') {
+      conectado = votosRes.value.conectado;
+      for (const repo of votosRes.value.votos ?? []) meus.add(repo);
+    } else {
+      avisar('Não foi possível ver se você já votou. Recarregue a página para tentar de novo.', 'erro');
+    }
+
+    rodada.textContent = placar.rodada.titulo;
+    mostrarSessao();
+    topo.hidden = false;
+    grade.replaceChildren(...placar.candidatos.map((c) => montarCartao(c, meus.has(c.repo))));
+  }
+
+  iniciar().catch(() => {
+    carregando.hidden = true;
+    avisar(FALHA_DE_REDE, 'erro');
+  });
+</script>
