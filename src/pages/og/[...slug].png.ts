@@ -1,12 +1,16 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import { getPosts } from '../../lib/posts';
-import { imagemOg } from '../../lib/og';
 import { TIPOS } from '../../consts';
 
 const host = () => new URL(import.meta.env.SITE).host;
 
+// As imagens só são geradas no CI (o GitHub Actions define CI=true), porque o satori + resvg
+// deixam o build local bem mais lento. Para gerar na sua máquina: OG_IMAGENS=1 npm run build
+const gerarImagens = process.env.CI === 'true' || process.env.OG_IMAGENS === '1';
+
 export const getStaticPaths = (async () => {
+  if (!gerarImagens) return [];
   const posts = await getPosts();
   const repos = await getCollection('repositorios');
   return [
@@ -18,6 +22,8 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 export const GET: APIRoute = async ({ props }) => {
+  // Import dinâmico: sem as imagens, o satori, o resvg e as fontes nem chegam a carregar
+  const { imagemOg } = await import('../../lib/og');
   const png = await imagemOg({ titulo: props.titulo, rotulo: props.rotulo, rodape: host() });
   return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
 };

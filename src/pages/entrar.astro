@@ -1,0 +1,370 @@
+---
+import Base from '../layouts/Base.astro';
+import CabecalhoPagina from '../components/CabecalhoPagina.astro';
+
+// Login por código (Live 5, issue #19). Fora do menu, do sitemap (astro.config.mjs) e dos buscadores (semIndice):
+// a votação só abre na Live 10. Tudo acontece sem recarregar a página, conversando com o Worker:
+// GET /api/eu (estado), POST /api/entrar (manda o código), POST /api/verificar (cria a sessão), POST /api/sair.
+// O script do Turnstile só é carregado quando o passo do e-mail aparece.
+---
+
+<Base titulo="Entrar" descricao="Entre com o seu e-mail e um código de 6 dígitos." semIndice>
+  <CabecalhoPagina
+    eyebrow="Votação · login"
+    titulo="Entrar"
+    lead="Sem senha: você recebe um código de 6 dígitos no e-mail e entra com ele."
+  />
+
+  <section class="container entrar">
+    <noscript><p class="aviso erro">Para entrar, ative o JavaScript no navegador.</p></noscript>
+
+    <p class="carregando" data-carregando>Verificando se você já está conectado…</p>
+
+    <!-- Passo 1: e-mail + Turnstile -->
+    <form class="passo" data-passo="email" novalidate hidden>
+      <h2 class="passo-tit" tabindex="-1">Seu e-mail</h2>
+      <label class="campo">
+        <span class="rotulo">E-mail</span>
+        <input type="email" name="email" autocomplete="email" required maxlength="254" spellcheck="false" />
+      </label>
+      <div class="widget" data-widget></div>
+      <button class="btn" type="submit">Receber código</button>
+    </form>
+
+    <!-- Passo 2: código de 6 dígitos -->
+    <form class="passo" data-passo="codigo" novalidate hidden>
+      <h2 class="passo-tit" tabindex="-1">Digite o código</h2>
+      <p class="muted">Mandamos um código para <strong data-email-enviado></strong>. Ele vale por 10 minutos.</p>
+      <label class="campo">
+        <span class="rotulo">Código de 6 dígitos</span>
+        <input
+          class="codigo"
+          type="text"
+          name="codigo"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          pattern="[0-9]{6}"
+          maxlength="6"
+          required
+        />
+      </label>
+      <div class="acoes">
+        <button class="btn" type="submit">Entrar</button>
+        <button class="btn btn-ghost" type="button" data-voltar>Usar outro e-mail ou pedir outro código</button>
+      </div>
+    </form>
+
+    <!-- Conectado -->
+    <div class="passo" data-passo="conectado" hidden>
+      <h2 class="passo-tit" tabindex="-1">Você está conectado</h2>
+      <p class="muted" data-desde></p>
+      <div class="acoes">
+        <button class="btn btn-ghost" type="button" data-sair>Sair</button>
+      </div>
+    </div>
+
+    <!-- Mensagens (erros e confirmações): lidas pelos leitores de tela sem mover o foco -->
+    <p class="aviso" role="status" aria-live="polite" data-aviso hidden></p>
+  </section>
+</Base>
+
+<style>
+  .entrar {
+    padding-block: 2rem 5rem;
+  }
+  .passo,
+  .aviso,
+  .carregando {
+    max-width: 28rem; /* largura no conteúdo, não no container: fica alinhado ao título */
+  }
+  .passo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+  .passo[hidden],
+  .aviso[hidden],
+  .carregando[hidden] {
+    display: none; /* o display acima anularia o atributo hidden */
+  }
+  .passo-tit {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+  .passo-tit:focus {
+    outline: none; /* recebe foco só para o leitor de tela anunciar o passo novo */
+  }
+  .passo p {
+    margin: 0;
+  }
+  .carregando {
+    color: var(--muted);
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .rotulo {
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+  input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+  input:focus-visible {
+    border-color: var(--o1);
+  }
+  input[aria-invalid='true'] {
+    border-color: #ff7b72;
+  }
+  .codigo {
+    max-width: 12rem;
+    font-family: var(--f-mono);
+    font-size: 1.6rem;
+    letter-spacing: 0.4em;
+  }
+  .widget {
+    min-height: 65px; /* altura do widget, para a página não pular quando ele aparece */
+  }
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .aviso {
+    display: block;
+    margin-top: 1.5rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+  }
+  .aviso.ok {
+    border-color: #3ddc84;
+  }
+  .aviso.erro {
+    border-color: #ff7b72;
+  }
+</style>
+
+<script>
+  import { turnstileSitekey } from '../consts';
+
+  interface Turnstile {
+    render(alvo: HTMLElement, opcoes: { sitekey: string; theme?: string }): string;
+    reset(id?: string): void;
+  }
+  type Passo = 'email' | 'codigo' | 'conectado';
+  const janela = window as Window & { turnstile?: Turnstile; aoCarregarTurnstile?: () => void };
+
+  const carregando = document.querySelector<HTMLElement>('[data-carregando]')!;
+  const passos = {
+    email: document.querySelector<HTMLFormElement>('[data-passo="email"]')!,
+    codigo: document.querySelector<HTMLFormElement>('[data-passo="codigo"]')!,
+    conectado: document.querySelector<HTMLElement>('[data-passo="conectado"]')!,
+  };
+  const campoEmail = passos.email.querySelector<HTMLInputElement>('input[name="email"]')!;
+  const campoCodigo = passos.codigo.querySelector<HTMLInputElement>('input[name="codigo"]')!;
+  const widget = document.querySelector<HTMLElement>('[data-widget]')!;
+  const emailEnviado = document.querySelector<HTMLElement>('[data-email-enviado]')!;
+  const desde = document.querySelector<HTMLElement>('[data-desde]')!;
+  const aviso = document.querySelector<HTMLElement>('[data-aviso]')!;
+
+  let email = '';
+  let widgetId: string | undefined;
+  let turnstilePedido = false;
+
+  function avisar(texto: string, tipo: 'ok' | 'erro') {
+    aviso.textContent = texto;
+    aviso.className = `aviso ${tipo}`;
+    aviso.hidden = false;
+  }
+  function limparAviso() {
+    aviso.hidden = true;
+    aviso.textContent = '';
+  }
+
+  function mostrar(passo: Passo, focar = true) {
+    carregando.hidden = true;
+    for (const [nome, el] of Object.entries(passos)) el.hidden = nome !== passo;
+    if (passo === 'email') carregarTurnstile();
+    if (focar) {
+      // Foco no campo do passo (ou no título, no passo final), para teclado e leitor de tela
+      const alvo = passo === 'email' ? campoEmail : passo === 'codigo' ? campoCodigo : passos.conectado.querySelector('h2');
+      (alvo as HTMLElement | null)?.focus();
+    }
+  }
+
+  // Renderização explícita: chave de teste em localhost (inclusive no cf:dev), a de produção no ar
+  function carregarTurnstile() {
+    if (turnstilePedido) {
+      if (widgetId !== undefined) janela.turnstile?.reset(widgetId);
+      return;
+    }
+    turnstilePedido = true;
+    janela.aoCarregarTurnstile = () => {
+      widgetId = janela.turnstile!.render(widget, { sitekey: turnstileSitekey(location.hostname), theme: 'dark' });
+    };
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=aoCarregarTurnstile';
+    script.async = true;
+    script.onerror = () => avisar('Não foi possível carregar a verificação anti-robô. Recarregue a página.', 'erro');
+    document.head.append(script);
+  }
+
+  // POST em JSON para o Worker. Devolve o status e a mensagem de erro (já em português) da API.
+  async function postar(caminho: string, dados: unknown): Promise<{ status: number; erro?: string }> {
+    const resposta = await fetch(caminho, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados),
+    });
+    let erro: string | undefined;
+    try {
+      erro = ((await resposta.json()) as { erro?: string }).erro;
+    } catch {
+      erro = undefined;
+    }
+    return { status: resposta.status, erro };
+  }
+
+  function mensagemDeErro(status: number, erro?: string): string {
+    if (erro) return erro.endsWith('.') ? erro : `${erro}.`;
+    if (status === 429) return 'Muitos pedidos. Tente de novo em instantes.';
+    return 'Algo deu errado. Tente de novo em instantes.';
+  }
+  const FALHA_DE_REDE = 'Sem conexão com o site. Confira a internet e tente de novo.';
+
+  async function atualizarEstado(focar: boolean) {
+    try {
+      const resposta = await fetch('/api/eu', { headers: { Accept: 'application/json' } });
+      const dados = (await resposta.json()) as { conectado: boolean; desde?: string };
+      if (dados.conectado) {
+        desde.textContent = dados.desde
+          ? `Desde ${new Date(dados.desde).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })}.`
+          : '';
+        mostrar('conectado', focar);
+        return;
+      }
+    } catch {
+      // Sem resposta do /api/eu: segue para o formulário, que avisa se a API continuar fora
+    }
+    mostrar('email', focar);
+  }
+
+  // Passo 1: pede o código
+  passos.email.addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    limparAviso();
+    const valor = campoEmail.value.trim();
+    if (!campoEmail.checkValidity() || !valor) {
+      campoEmail.setAttribute('aria-invalid', 'true');
+      avisar('Digite um e-mail válido, como nome@exemplo.com.', 'erro');
+      campoEmail.focus();
+      return;
+    }
+    campoEmail.removeAttribute('aria-invalid');
+    // O widget põe o token no campo oculto cf-turnstile-response dentro do formulário
+    const token = new FormData(passos.email).get('cf-turnstile-response');
+    if (typeof token !== 'string' || !token) {
+      avisar('Espere a verificação anti-robô terminar e tente de novo.', 'erro');
+      return;
+    }
+
+    const botao = passos.email.querySelector('button')!;
+    botao.disabled = true;
+    try {
+      const { status, erro } = await postar('/api/entrar', { email: valor, turnstile: token });
+      if (status === 200) {
+        email = valor;
+        emailEnviado.textContent = valor;
+        campoCodigo.value = '';
+        campoCodigo.removeAttribute('aria-invalid');
+        mostrar('codigo');
+        avisar('Código enviado. Confira a caixa de entrada (e o spam).', 'ok');
+      } else {
+        if (status === 400) campoEmail.setAttribute('aria-invalid', 'true');
+        avisar(mensagemDeErro(status, erro), 'erro');
+      }
+    } catch {
+      avisar(FALHA_DE_REDE, 'erro');
+    } finally {
+      // Cada token do Turnstile só vale uma vez: gera outro para o próximo envio
+      if (widgetId !== undefined) janela.turnstile?.reset(widgetId);
+      botao.disabled = false;
+    }
+  });
+
+  // Só dígitos no campo do código (colar "123 456" também funciona)
+  campoCodigo.addEventListener('input', () => {
+    campoCodigo.value = campoCodigo.value.replace(/\D/g, '').slice(0, 6);
+  });
+
+  // Passo 2: confere o código
+  passos.codigo.addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    limparAviso();
+    const codigo = campoCodigo.value;
+    if (!/^\d{6}$/.test(codigo)) {
+      campoCodigo.setAttribute('aria-invalid', 'true');
+      avisar('O código tem 6 dígitos.', 'erro');
+      campoCodigo.focus();
+      return;
+    }
+
+    const botao = passos.codigo.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    botao.disabled = true;
+    try {
+      const { status, erro } = await postar('/api/verificar', { email, codigo });
+      if (status === 200) {
+        await atualizarEstado(true);
+        avisar('Pronto, você entrou.', 'ok');
+      } else {
+        campoCodigo.setAttribute('aria-invalid', 'true');
+        avisar(mensagemDeErro(status, erro), 'erro');
+        campoCodigo.select();
+      }
+    } catch {
+      avisar(FALHA_DE_REDE, 'erro');
+    } finally {
+      botao.disabled = false;
+    }
+  });
+
+  passos.codigo.querySelector('[data-voltar]')!.addEventListener('click', () => {
+    limparAviso();
+    mostrar('email');
+  });
+
+  passos.conectado.querySelector('[data-sair]')!.addEventListener('click', async (evento) => {
+    const botao = evento.currentTarget as HTMLButtonElement;
+    botao.disabled = true;
+    limparAviso();
+    try {
+      const { status, erro } = await postar('/api/sair', {});
+      if (status === 200) {
+        campoEmail.value = '';
+        mostrar('email');
+        avisar('Você saiu.', 'ok');
+      } else {
+        avisar(mensagemDeErro(status, erro), 'erro');
+      }
+    } catch {
+      avisar(FALHA_DE_REDE, 'erro');
+    } finally {
+      botao.disabled = false;
+    }
+  });
+
+  // Ao abrir a página: já mostra o estado certo (sem mover o foco, que ainda está no topo)
+  atualizarEstado(false);
+</script>

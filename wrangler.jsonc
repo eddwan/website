@@ -41,8 +41,24 @@
 			"migrations_dir": "migrations"
 		}
 	],
+	// Rate Limiting dos Workers (env.LIMITE_IP): no máximo 5 pedidos a /api/entrar a cada 60 segundos por IP.
+	// O contador é por local da Cloudflare e aproximado: é freio, não garantia. O IP não vai para o banco.
+	// namespace_id: número escolhido por nós, único na conta.
+	"ratelimits": [
+		{
+			"name": "LIMITE_IP",
+			"namespace_id": "1001",
+			"simple": {
+				"limit": 5,
+				"period": 60
+			}
+		}
+	],
 	// Cron Trigger: todo dia às 06:00 UTC o handler scheduled do Worker apaga códigos e sessões vencidos.
-	// Teste local: npm run cf:dev -- --test-scheduled e curl "http://localhost:8787/__scheduled?cron=0+6+*+*+*"
+	// Teste local: npm run cf:dev -- --test-scheduled e
+	// curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=eddwan-website" \
+	//   -H 'Content-Type: application/json' -d '{"cron":"0 6 * * *"}'
+	// (o /__scheduled não serve aqui: com assets, só /api/* chega ao Worker e ele cai no 404 do Astro)
 	"triggers": {
 		"crons": [
 			"0 6 * * *"
