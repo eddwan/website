@@ -3,3 +3,10 @@
 # Chave secreta de TESTE pública da Cloudflare: sempre passa, não precisa de conta.
 # No ar o segredo real vem de: npx wrangler secret put TURNSTILE_SECRET
 TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+
+# Login por código (issue #19)
+# console: o código aparece no terminal do wrangler dev em vez de ir por e-mail.
+# Qualquer outro valor (ex.: resend) manda pelo Resend com RESEND_API_KEY (no ar: npx wrangler secret put RESEND_API_KEY).
+EMAIL_MODO=console
+# Pepper de TESTE, só para rodar local: NÃO é o do ar. No ar: npx wrangler secret put EMAIL_PEPPER
+EMAIL_PEPPER=0000000000000000000000000000000000000000000000000000000000000000
