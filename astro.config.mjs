@@ -10,8 +10,13 @@ export default defineConfig({
   site,
   // URLs sem barra no fim (/sobre), iguais aos links do site; o Cloudflare serve dist/sobre/index.html nelas
   trailingSlash: 'never',
-  // Páginas de teste ficam fora do sitemap (e têm noindex no Base)
-  integrations: [sitemap({ filter: (pagina) => !pagina.includes('/votacao/teste') })],
+  // Fora do sitemap (e com noindex no Base): páginas de teste e o /entrar, que só abre com a votação (Live 10).
+  // /entrar comparado pelo caminho inteiro, para não esconder um post como /blog/entrar-no-git
+  integrations: [
+    sitemap({
+      filter: (pagina) => !pagina.includes('/votacao/teste') && new URL(pagina).pathname !== '/entrar',
+    }),
+  ],
   markdown: {
     shikiConfig: { theme: 'github-dark-dimmed' },
   },
