@@ -305,6 +305,70 @@ async function meusVotos(request: Request, env: Env): Promise<Response> {
   }
 }
 
+// GET /api/votacao: placar público da rodada aberta, igual para todo mundo.
+// Por que os votos da pessoa não vêm aqui: esta resposta fica 60 s no cache (caches.default e
+// navegador), com a URL como chave e sem cookie. Se ela dissesse "você votou em X", a resposta de
+// uma pessoa poderia ser servida a outra, ou o cache teria de ser por pessoa, e cada visita voltaria
+// a consultar o D1. Por isso nem lemos o cookie aqui: o que é de cada um fica no GET /api/votos,
+// sempre no-store, e a página junta as duas respostas.
+const CACHE_PLACAR = 60; // segundos
+
+async function placar(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  // Chave só com origem e caminho: query string (?x=1) não cria entradas novas nem fura o cache
+  const url = new URL(request.url);
+  const chave = new Request(`${url.origin}${url.pathname}`, { method: 'GET' });
+  const cache = caches.default;
+
+  const guardada = await cache.match(chave);
+  if (guardada) {
+    console.log('/api/votacao: do cache');
+    return guardada;
+  }
+
+  try {
+    // Uma consulta: rodada aberta, candidatos e contagem de votos. LEFT JOIN em votos para o
+    // candidato sem voto aparecer com 0; LEFT JOIN em repositorios para a rodada sem candidatos
+    // vir numa linha com repo NULL. Sem rodada aberta, nenhuma linha.
+    const { results } = await env.DB.prepare(
+      `WITH aberta AS (SELECT id, titulo FROM rodadas WHERE aberta = 1 ORDER BY id DESC LIMIT 1)
+       SELECT a.id, a.titulo, r.repo, r.nome, r.url, r.resumo, COUNT(v.usuario_id) AS votos
+       FROM aberta a
+       LEFT JOIN repositorios r ON r.rodada_id = a.id
+       LEFT JOIN votos v ON v.rodada_id = r.rodada_id AND v.repo = r.repo
+       GROUP BY a.id, r.repo
+       ORDER BY votos DESC, r.nome COLLATE NOCASE, r.repo`,
+    ).all<{
+      id: number;
+      titulo: string;
+      repo: string | null;
+      nome: string | null;
+      url: string | null;
+      resumo: string | null;
+      votos: number;
+    }>();
+
+    const primeira = results[0];
+    const corpo = primeira
+      ? {
+          rodada: { id: primeira.id, titulo: primeira.titulo },
+          candidatos: results
+            .filter((linha) => linha.repo !== null)
+            .map(({ repo, nome, url, resumo, votos }) => ({ repo, nome, url, resumo, votos })),
+        }
+      : { rodada: null, candidatos: [] };
+
+    const resposta = json(corpo, 200, { 'Cache-Control': `public, max-age=${CACHE_PLACAR}` });
+    // Guarda sem segurar a resposta; o cache respeita o max-age e descarta depois de 60 s
+    ctx.waitUntil(cache.put(chave, resposta.clone()));
+    console.log('/api/votacao: do banco');
+    return resposta;
+  } catch (erro) {
+    // Erro não vai para o cache (json() usa no-store por padrão)
+    console.error('/api/votacao: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
 // GET /api/eu: diz se há sessão válida e desde quando. Nunca devolve e-mail.
 async function eu(request: Request, env: Env): Promise<Response> {
   try {
@@ -332,7 +396,7 @@ async function sair(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request, env): Promise<Response> {
+  async fetch(request, env, ctx): Promise<Response> {
     const { pathname } = new URL(request.url);
 
     if (pathname.startsWith('/api/')) {
@@ -402,6 +466,16 @@ export default {
           return json({ erro: 'Método não permitido' }, 405, { Allow: 'POST' });
         }
         return sair(request, env);
+      }
+      if (pathname === '/api/votacao') {
+        if (request.method === 'HEAD') {
+          const resposta = await placar(request, env, ctx);
+          return new Response(null, resposta);
+        }
+        if (request.method !== 'GET') {
+          return json({ erro: 'Método não permitido' }, 405, { Allow: 'GET, HEAD' });
+        }
+        return placar(request, env, ctx);
       }
       if (pathname === '/api/votos') {
         if (request.method === 'GET' || request.method === 'HEAD') return meusVotos(request, env);
