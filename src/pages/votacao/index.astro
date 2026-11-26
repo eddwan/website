@@ -7,6 +7,10 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 // Ao abrir, busca ao mesmo tempo o placar público (GET /api/votacao, 60 s em cache) e os votos da
 // pessoa (GET /api/votos, sem cache). Votar e desfazer usam POST /api/votos e DELETE /api/votos/<dono>/<nome>,
 // e o total do cartão vem da resposta da API, sem esperar o cache do placar.
+// Sugestões (Live 7, issue #21): POST /api/sugestoes { link, motivo } e GET /api/sugestoes (as da pessoa).
+// O GET /api/votos já diz se há sessão; sem ela, a seção só mostra o link para entrar.
+// Todo texto vindo da API ou da pessoa entra com textContent, nunca innerHTML.
+const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
 ---
 
 <Base titulo="Votação" descricao="Vote nos repositórios open source do próximo vídeo do canal." semIndice>
@@ -31,6 +35,46 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 
     <!-- Mensagens (erros e confirmações): lidas pelos leitores de tela sem mover o foco -->
     <p class="aviso" role="status" aria-live="polite" data-aviso hidden></p>
+
+    <section class="sugerir" aria-labelledby="tit-sugerir" data-sugerir hidden>
+      <h2 class="sugerir-tit" id="tit-sugerir">Sugerir um repositório</h2>
+      <p class="muted">
+        Conhece um projeto open source que merece aparecer num vídeo? Cole o link do GitHub. Ele precisa ter licença,
+        pelo menos 20 estrelas e um commit no último ano. Até 3 sugestões por dia.
+      </p>
+
+      <p data-sugerir-entrar hidden><a href="/entrar?volta=/votacao">Entre para sugerir</a></p>
+
+      <form class="form-sugerir" data-form-sugerir hidden novalidate>
+        <label class="campo">
+          <span class="rotulo">Link do repositório</span>
+          <input
+            type="text"
+            name="link"
+            placeholder="github.com/dono/nome"
+            inputmode="url"
+            autocomplete="off"
+            spellcheck="false"
+            maxlength="500"
+            required
+          />
+        </label>
+        <label class="campo">
+          <span class="rotulo">Por que ele merece entrar?</span>
+          <textarea name="motivo" rows="3" required aria-describedby="contador-motivo" data-max={MAX_MOTIVO}></textarea>
+          <span class="contador" id="contador-motivo" data-contador>0/{MAX_MOTIVO}</span>
+        </label>
+        <button class="btn" type="submit" data-enviar>Sugerir</button>
+      </form>
+
+      <p class="aviso" role="status" aria-live="polite" data-aviso-sugestao hidden></p>
+
+      <div class="minhas" data-minhas hidden>
+        <h3 class="minhas-tit">Suas sugestões</h3>
+        <ul class="lista" data-lista></ul>
+        <p class="muted" data-lista-vazia hidden>Você ainda não sugeriu nenhum repositório.</p>
+      </div>
+    </section>
 
     <!-- Modelo de cartão: clonado pelo script para cada candidato -->
     <template data-modelo>
@@ -129,7 +173,8 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
     font-size: 0.9rem;
     color: var(--text-2);
   }
-  .votos strong {
+  /* Elementos criados pelo script não ganham o atributo de escopo do Astro: :global() dentro da classe da página */
+  .votos :global(strong) {
     font-size: 1.2rem;
     color: var(--text);
   }
@@ -148,7 +193,7 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
     opacity: 0.6;
     cursor: wait;
   }
-  .sr {
+  .votacao :global(.sr) {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -170,6 +215,129 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
   }
   .aviso.erro {
     border-color: #ff7b72;
+  }
+
+  /* Sugestões */
+  .sugerir {
+    max-width: 36rem;
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--line-2);
+  }
+  .sugerir[hidden],
+  .form-sugerir[hidden],
+  .minhas[hidden] {
+    display: none;
+  }
+  .sugerir-tit {
+    font-size: 1.35rem;
+    margin: 0 0 0.6rem;
+  }
+  .sugerir > p {
+    margin: 0 0 1.25rem;
+  }
+  .form-sugerir {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .rotulo {
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+  textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+  input:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--o1);
+  }
+  input[aria-invalid='true'],
+  textarea[aria-invalid='true'] {
+    border-color: #ff7b72;
+  }
+  .contador {
+    align-self: flex-end;
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .contador.excedeu {
+    color: #ff7b72;
+  }
+  .form-sugerir .btn {
+    cursor: pointer;
+  }
+  .form-sugerir .btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  .minhas {
+    margin-top: 2.5rem;
+  }
+  .minhas-tit {
+    font-size: 1.1rem;
+    margin: 0 0 0.75rem;
+  }
+  .lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .lista :global(li) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.9rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .lista :global(a) {
+    font-family: var(--f-mono);
+    font-size: 0.92rem;
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+  .lista :global(a:hover) {
+    color: var(--o1);
+  }
+  .lista :global(.status) {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    color: var(--text-2);
+  }
+  .lista :global(.status.aprovada) {
+    border-color: #3ddc84;
+  }
+  .lista :global(.status.recusada) {
+    border-color: #ff7b72;
+  }
+  .lista :global(time) {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
   }
 </style>
 
@@ -293,6 +461,173 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
     sessao.replaceChildren(link, ' para votar. Sem senha: você recebe um código de 6 dígitos.');
   }
 
+  // ---- Sugestões ----
+
+  interface Sugestao {
+    nome: string;
+    status: string;
+    criado_em: number;
+  }
+  type Tom = 'ok' | 'erro' | 'neutro';
+
+  const secaoSugerir = document.querySelector<HTMLElement>('[data-sugerir]')!;
+  const sugerirEntrar = document.querySelector<HTMLElement>('[data-sugerir-entrar]')!;
+  const form = document.querySelector<HTMLFormElement>('[data-form-sugerir]')!;
+  const campoLink = form.querySelector<HTMLInputElement>('input[name="link"]')!;
+  const campoMotivo = form.querySelector<HTMLTextAreaElement>('textarea[name="motivo"]')!;
+  const contador = form.querySelector<HTMLElement>('[data-contador]')!;
+  const enviar = form.querySelector<HTMLButtonElement>('[data-enviar]')!;
+  const avisoSugestao = document.querySelector<HTMLElement>('[data-aviso-sugestao]')!;
+  const minhas = document.querySelector<HTMLElement>('[data-minhas]')!;
+  const lista = document.querySelector<HTMLElement>('[data-lista]')!;
+  const listaVazia = document.querySelector<HTMLElement>('[data-lista-vazia]')!;
+
+  const MAX_MOTIVO = Number(campoMotivo.dataset.max);
+  const FORMATO_NOME = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
+  const ROTULO_STATUS: Record<string, string> = { pendente: 'Pendente', aprovada: 'Aprovada', recusada: 'Recusada' };
+  const formatoData = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  // Conta caracteres como o servidor (um emoji é 1, não 2 como no .length)
+  const tamanho = (texto: string) => [...texto.trim()].length;
+
+  // Verde: entrou; neutro: repetida; vermelho: recusada ou erro
+  function avisarSugestao(texto: string, tom: Tom) {
+    avisoSugestao.textContent = texto;
+    avisoSugestao.className = tom === 'neutro' ? 'aviso' : `aviso ${tom}`;
+    avisoSugestao.hidden = false;
+  }
+
+  // Frase da API com inicial maiúscula e ponto final ("esse repositório está arquivado" → "Esse ... arquivado.")
+  function frase(texto: string): string {
+    const t = texto.trim();
+    const maiuscula = t.charAt(0).toUpperCase() + t.slice(1);
+    return /[.!?]$/.test(maiuscula) ? maiuscula : `${maiuscula}.`;
+  }
+
+  function atualizarContador() {
+    const n = tamanho(campoMotivo.value);
+    contador.textContent = `${n}/${MAX_MOTIVO}`;
+    contador.classList.toggle('excedeu', n > MAX_MOTIVO);
+  }
+
+  function mostrarSecaoSugerir() {
+    sugerirEntrar.hidden = conectado;
+    form.hidden = !conectado;
+    if (!conectado) minhas.hidden = true;
+    secaoSugerir.hidden = false;
+  }
+
+  function montarItem(s: Sugestao): HTMLLIElement {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.textContent = s.nome;
+    // Só monta o link se o nome tiver o formato dono/nome (nada de javascript: vindo do banco)
+    if (FORMATO_NOME.test(s.nome)) {
+      link.href = `https://github.com/${s.nome}`;
+      link.rel = 'noopener';
+    }
+    const status = document.createElement('span');
+    status.className = `status ${ROTULO_STATUS[s.status] ? s.status : ''}`;
+    status.textContent = ROTULO_STATUS[s.status] ?? s.status;
+    const data = new Date(s.criado_em * 1000);
+    const quando = document.createElement('time');
+    quando.dateTime = data.toISOString();
+    quando.textContent = formatoData.format(data);
+    item.append(link, status, quando);
+    return item;
+  }
+
+  async function carregarMinhas() {
+    if (!conectado) return;
+    try {
+      const resposta = await fetch('/api/sugestoes');
+      if (!resposta.ok) throw new Error(String(resposta.status));
+      const dados = (await resposta.json()) as { conectado: boolean; sugestoes?: Sugestao[] };
+      if (!dados.conectado) {
+        conectado = false;
+        mostrarSecaoSugerir();
+        return;
+      }
+      const itens = dados.sugestoes ?? [];
+      lista.replaceChildren(...itens.map(montarItem));
+      listaVazia.hidden = itens.length > 0;
+      minhas.hidden = false;
+    } catch {
+      // A lista é um extra: sem ela o formulário continua funcionando
+      minhas.hidden = true;
+    }
+  }
+
+  async function sugerir(evento: SubmitEvent) {
+    evento.preventDefault();
+    const link = campoLink.value.trim();
+    const motivo = campoMotivo.value.trim();
+    campoLink.removeAttribute('aria-invalid');
+    campoMotivo.removeAttribute('aria-invalid');
+
+    // Checagens rápidas no navegador; o servidor confere tudo de novo
+    if (!link) {
+      campoLink.setAttribute('aria-invalid', 'true');
+      campoLink.focus();
+      avisarSugestao('Cole o link de um repositório do GitHub, como github.com/dono/nome.', 'erro');
+      return;
+    }
+    const n = tamanho(motivo);
+    if (n === 0 || n > MAX_MOTIVO) {
+      campoMotivo.setAttribute('aria-invalid', 'true');
+      campoMotivo.focus();
+      avisarSugestao(`Conte por que esse repositório merece entrar, em até ${MAX_MOTIVO} caracteres.`, 'erro');
+      return;
+    }
+
+    enviar.disabled = true;
+    enviar.textContent = 'Conferindo no GitHub…';
+    form.setAttribute('aria-busy', 'true');
+    try {
+      const resposta = await fetch('/api/sugestoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ link, motivo }),
+      });
+      const dados = (await resposta.json().catch(() => ({}))) as {
+        repetida?: boolean;
+        mensagem?: string;
+        repo?: string;
+        erro?: string;
+      };
+
+      if (resposta.status === 201) {
+        avisarSugestao(`${dados.repo ?? 'O repositório'} entrou como sugestão pendente. Obrigado!`, 'ok');
+        form.reset();
+        atualizarContador();
+      } else if (resposta.ok && dados.repetida) {
+        avisarSugestao(dados.mensagem ?? 'Esse já foi sugerido. Obrigado!', 'neutro');
+        form.reset();
+        atualizarContador();
+      } else if (resposta.status === 401) {
+        conectado = false;
+        mostrarSecaoSugerir();
+        mostrarSessao();
+        avisarSugestao('Sua sessão terminou. Entre de novo para sugerir.', 'erro');
+      } else {
+        if (resposta.status === 400 && dados.erro?.startsWith('Cole o link')) {
+          campoLink.setAttribute('aria-invalid', 'true');
+        }
+        avisarSugestao(frase(dados.erro ?? 'Algo deu errado. Tente de novo em instantes'), 'erro');
+      }
+    } catch {
+      avisarSugestao(FALHA_DE_REDE, 'erro');
+    } finally {
+      enviar.disabled = false;
+      enviar.textContent = 'Sugerir';
+      form.removeAttribute('aria-busy');
+      await carregarMinhas();
+    }
+  }
+
+  campoMotivo.addEventListener('input', atualizarContador);
+  form.addEventListener('submit', sugerir);
+
   async function iniciar() {
     // Os dois pedidos saem juntos; a falha do /api/votos não impede de mostrar o placar
     const [placarRes, votosRes] = await Promise.allSettled([
@@ -302,6 +637,11 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
       ),
     ]);
     carregando.hidden = true;
+
+    // Sugestões não dependem da rodada: a seção aparece mesmo sem votação aberta
+    if (votosRes.status === 'fulfilled') conectado = votosRes.value.conectado;
+    mostrarSecaoSugerir();
+    carregarMinhas();
 
     if (placarRes.status === 'rejected') {
       avisar('Não foi possível carregar a votação. Recarregue a página em instantes.', 'erro');
@@ -315,7 +655,6 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 
     const meus = new Set<string>();
     if (votosRes.status === 'fulfilled') {
-      conectado = votosRes.value.conectado;
       for (const repo of votosRes.value.votos ?? []) meus.add(repo);
     } else {
       avisar('Não foi possível ver se você já votou. Recarregue a página para tentar de novo.', 'erro');
