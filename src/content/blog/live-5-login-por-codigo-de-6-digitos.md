@@ -260,8 +260,8 @@ O que funcionou bem nesses pedidos:
 - **Pedir os testes com os casos que têm que falhar.** O 429 da sexta tentativa e o 403 do outro site mostram mais do que o 200 do caminho feliz.
 - **Deixar o Claude Code ir além, mas pedir que ele conte.** A reserva da tentativa antes da comparação e a comparação em tempo constante não estavam no pedido; ele fez e explicou o porquê de cada uma.
 
-## Próxima live
+## A live seguinte
 
-A Live 6 é nesta quarta, 25/11, às 20h, com o login pronto: entram os votos e o placar. Uma pessoa conectada vota nos candidatos do próximo volume, desfaz o voto e vê o placar, sem conseguir votar duas vezes no mesmo repositório ([issue #20](https://github.com/eddwan/website/issues/20)). Quer ajudar antes disso? Mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
+Na [Live 6](/blog/live-6-votos-e-placar-da-votacao), na quarta, 25/11, o login ganhou um motivo para existir: entraram os votos e o placar. Uma pessoa conectada vota nos candidatos, desfaz o voto e vê o placar, sem conseguir votar duas vezes no mesmo repositório ([issue #20](https://github.com/eddwan/website/issues/20)).
 
 O código foi escrito ao vivo com o Claude Code, com cada passo revisado por mim na tela antes do commit.
