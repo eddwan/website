@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["index.ts", "turnstile.ts", "worker-configuration.d.ts"]
+  "include": ["index.ts", "turnstile.ts", "github.ts", "worker-configuration.d.ts"]
 }
