@@ -359,13 +359,14 @@ async function sugerir(request: Request, env: Env): Promise<Response> {
     const repetida = await sugestaoRepetida(env, `${alvo.dono}/${alvo.nome}`.toLowerCase());
     if (repetida) return repetida;
 
-    // 4. Limite por dia. Conferido de novo no INSERT, que é o que vale com pedidos simultâneos;
+    // 4. Limite por dia, contado em envios_sugestao (não em sugestoes: remover uma sugestão não
+    // devolve a vaga). Conferido de novo no INSERT, que é o que vale com pedidos simultâneos;
     // este aqui só evita gastar uma chamada ao GitHub com quem já passou do limite.
     const agora = Math.floor(Date.now() / 1000);
     const limite = json({ ok: false, erro: `Você já sugeriu ${SUGESTOES_POR_DIA} repositórios hoje. Volte amanhã!` }, 429, {
       'Retry-After': '3600',
     });
-    const hoje = await env.DB.prepare('SELECT COUNT(*) AS total FROM sugestoes WHERE usuario_id = ? AND criado_em > ?')
+    const hoje = await env.DB.prepare('SELECT COUNT(*) AS total FROM envios_sugestao WHERE usuario_id = ? AND criado_em > ?')
       .bind(sessao.usuarioId, agora - JANELA_SUGESTOES)
       .first<{ total: number }>();
     if ((hoje?.total ?? 0) >= SUGESTOES_POR_DIA) return limite;
@@ -395,13 +396,15 @@ async function sugerir(request: Request, env: Env): Promise<Response> {
 
     // 6. Grava, com o limite no mesmo comando (como no /api/entrar). ON CONFLICT(repo): duas
     // pessoas sugerindo o mesmo repo ao mesmo tempo, só a primeira entra.
-    const gravado = await env.DB.prepare(
-      `INSERT INTO sugestoes (repo, nome, usuario_id, motivo, licenca, estrelas, ultimo_commit, criado_em)
-       SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8
-       WHERE (SELECT COUNT(*) FROM sugestoes WHERE usuario_id = ?3 AND criado_em > ?9) < ?10
-       ON CONFLICT(repo) DO NOTHING`,
-    )
-      .bind(
+    // Sugestão e envio numa transação só (env.DB.batch): o envio só entra se a sugestão entrou
+    // (changes() é o número de linhas gravadas pela instrução anterior, na mesma conexão).
+    const [gravado] = await env.DB.batch([
+      env.DB.prepare(
+        `INSERT INTO sugestoes (repo, nome, usuario_id, motivo, licenca, estrelas, ultimo_commit, criado_em)
+         SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8
+         WHERE (SELECT COUNT(*) FROM envios_sugestao WHERE usuario_id = ?3 AND criado_em > ?9) < ?10
+         ON CONFLICT(repo) DO NOTHING`,
+      ).bind(
         repo,
         conferencia.nome,
         sessao.usuarioId,
@@ -412,8 +415,12 @@ async function sugerir(request: Request, env: Env): Promise<Response> {
         agora,
         agora - JANELA_SUGESTOES,
         SUGESTOES_POR_DIA,
-      )
-      .run();
+      ),
+      env.DB.prepare('INSERT INTO envios_sugestao (usuario_id, criado_em) SELECT ?1, ?2 WHERE changes() = 1').bind(
+        sessao.usuarioId,
+        agora,
+      ),
+    ]);
     if (gravado.meta.changes === 0) {
       // Não entrou: ou alguém sugeriu o mesmo repo agora há pouco, ou o limite estourou no meio
       return (await sugestaoRepetida(env, repo)) ?? limite;
@@ -430,7 +437,8 @@ async function sugerir(request: Request, env: Env): Promise<Response> {
 // DELETE /api/sugestoes/<dono>/<nome>: a pessoa desiste de uma sugestão sua que ainda está pendente.
 // Aprovada ou recusada já passou pela curadoria (Live 8) e fica. Dono e status vão no próprio
 // DELETE: não há janela entre conferir e apagar em que a curadoria mude o status.
-// Removida, a sugestão sai do limite do dia e o repo fica livre para ser sugerido de novo.
+// Removida, o repo fica livre para ser sugerido de novo, mas o envio continua contando no limite
+// do dia (envios_sugestao): sugerir e remover em loop não abre vaga nova.
 async function removerSugestao(request: Request, env: Env): Promise<Response> {
   try {
     const sessao = await usuarioDaSessao(request, env);
@@ -684,7 +692,8 @@ export default {
     return env.ASSETS.fetch(request);
   },
 
-  // Cron Trigger diário (triggers.crons no wrangler.jsonc): apaga códigos e sessões vencidos.
+  // Cron Trigger diário (triggers.crons no wrangler.jsonc): apaga códigos e sessões vencidos e
+  // envios de sugestão com mais de 2 dias (envios_sugestao, que só serve ao limite de 24 h).
   // Códigos só saem se, além de vencidos, tiverem sido criados há mais de uma hora: o limite de
   // 3 códigos por hora por e-mail conta as linhas com criado_em na última hora, e apagar um código
   // vencido mais novo que isso zeraria a conta e liberaria novos envios antes da hora.
@@ -694,12 +703,15 @@ export default {
     const agora = Math.floor(controller.scheduledTime / 1000); // segundos Unix, como expira_em
     const umaHoraAtras = agora - 3600; // mesma janela do limite de códigos por hora
     try {
-      const [codigos, sessoes] = await env.DB.batch([
+      const [codigos, sessoes, envios] = await env.DB.batch([
         env.DB.prepare('DELETE FROM codigos WHERE expira_em < ? AND criado_em < ?').bind(agora, umaHoraAtras),
         env.DB.prepare('DELETE FROM sessoes WHERE expira_em < ?').bind(agora),
+        // Envios de sugestão com mais de 2 dias: o limite só olha as últimas 24 h
+        env.DB.prepare('DELETE FROM envios_sugestao WHERE criado_em < ?').bind(agora - 2 * JANELA_SUGESTOES),
       ]);
       console.log(
-        `Limpeza (${controller.cron}): ${codigos.meta.changes} código(s) e ${sessoes.meta.changes} sessão(ões) vencidos apagados`,
+        `Limpeza (${controller.cron}): ${codigos.meta.changes} código(s), ${sessoes.meta.changes} sessão(ões) vencidos e ` +
+          `${envios.meta.changes} envio(s) de sugestão antigos apagados`,
       );
     } catch (erro) {
       console.error('Falha na limpeza de códigos e sessões vencidos', erro);
