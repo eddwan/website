@@ -232,6 +232,6 @@ O que funcionou bem nesses pedidos:
 
 ## Próxima live
 
-A Live 7 é nesta quinta, 26/11, às 20h: entram as sugestões. Qualquer pessoa conectada vai poder sugerir um repositório pelo link do GitHub, e o Worker confere sozinho a licença, o último commit e as estrelas antes de aceitar ([issue #21](https://github.com/eddwan/website/issues/21)). Quer ajudar antes disso? Mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
+A Live 7 já aconteceu: entraram as sugestões de repositórios, conferidas na API do GitHub. Veja como foi no [post da Live 7](/blog/live-7-sugestoes-validadas-no-github).
 
 O código foi escrito ao vivo com o Claude Code, com cada passo revisado por mim na tela antes do commit.
