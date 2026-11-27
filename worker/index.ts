@@ -6,11 +6,11 @@
 // env.EMAIL_PEPPER, env.EMAIL_MODO, env.RESEND_API_KEY e env.GITHUB_TOKEN: idem. env.LIMITE_IP: Rate Limiting dos Workers (wrangler.jsonc).
 // env.ACCESS_AUD e env.ACCESS_EQUIPE: vars do wrangler.jsonc (Cloudflare Access, rotas /api/admin/*).
 
-import { verificarAccess } from './access';
-import { gerarCodigo, gerarToken, hmac, normalizarEmail, sha256 } from './cripto';
-import { enviarCodigo } from './email';
-import { conferirRepo, lerRepo } from './github';
-import { verificarTurnstile } from './turnstile';
+import { verificarAccess } from './access.ts';
+import { gerarCodigo, gerarToken, hmac, normalizarEmail, sha256 } from './cripto.ts';
+import { enviarCodigo } from './email.ts';
+import { conferirRepo, lerRepo } from './github.ts';
+import { verificarTurnstile } from './turnstile.ts';
 
 const VALIDADE_CODIGO = 600; // 10 minutos, em segundos
 const JANELA_LIMITE_EMAIL = 3600; // 1 hora: no máximo 3 códigos por e-mail nesse período
@@ -28,6 +28,8 @@ const FORMATO_REPO = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
 const PREFIXO_VOTO = '/api/votos/';
 const PREFIXO_SUGESTAO = '/api/sugestoes/';
 const PREFIXO_ADMIN = '/api/admin/'; // protegido pelo Cloudflare Access (worker/access.ts)
+const PREFIXO_ADMIN_SUGESTAO = '/api/admin/sugestoes/'; // + <dono>/<nome>/aprovar ou /recusar
+const MAX_RESUMO = 200; // caracteres do resumo de um candidato aprovado
 const MAX_MOTIVO = 280; // caracteres, igual ao CHECK da tabela sugestoes
 const SUGESTOES_POR_DIA = 3; // por pessoa, numa janela de 24 horas
 const JANELA_SUGESTOES = 86_400; // 24 horas, em segundos
@@ -477,16 +479,17 @@ async function removerSugestao(request: Request, env: Env): Promise<Response> {
   }
 }
 
-// GET /api/sugestoes: as sugestões da pessoa, da mais nova para a mais velha (criado_em em segundos Unix)
+// GET /api/sugestoes: as sugestões da pessoa, da mais nova para a mais velha (criado_em em segundos Unix).
+// motivo_recusa vem preenchido só nas recusadas (null nas outras): quem sugeriu sabe por quê.
 async function minhasSugestoes(request: Request, env: Env): Promise<Response> {
   try {
     const sessao = await usuarioDaSessao(request, env);
     if (!sessao) return json({ conectado: false });
     const { results } = await env.DB.prepare(
-      'SELECT nome, status, criado_em FROM sugestoes WHERE usuario_id = ? ORDER BY criado_em DESC, id DESC',
+      'SELECT nome, status, motivo_recusa, criado_em FROM sugestoes WHERE usuario_id = ? ORDER BY criado_em DESC, id DESC',
     )
       .bind(sessao.usuarioId)
-      .all<{ nome: string; status: string; criado_em: number }>();
+      .all<{ nome: string; status: string; motivo_recusa: string | null; criado_em: number }>();
     return json({ conectado: true, sugestoes: results });
   } catch (erro) {
     console.error('GET /api/sugestoes: falha no banco', erro);
@@ -584,6 +587,147 @@ async function sair(request: Request, env: Env): Promise<Response> {
   return json({ ok: true }, 200, { 'Set-Cookie': cookieSessao('', 0) });
 }
 
+// CSRF: qualquer método que muda algo (fora GET, HEAD e OPTIONS) vindo de outro site (Origin
+// presente e diferente do nosso) é recusado. Sem Origin (curl, alguns clientes antigos) passa:
+// o cookie SameSite=Lax cobre o resto (e, no admin, o Access).
+function origemDeFora(request: Request): boolean {
+  const origem = request.headers.get('Origin');
+  const metodoSeguro = request.method === 'GET' || request.method === 'HEAD' || request.method === 'OPTIONS';
+  return !metodoSeguro && origem !== null && origem !== new URL(request.url).origin;
+}
+
+// --- Administração (issue #22). Só chega aqui quem passou pelo verificarAccess. ---
+// Logs só com o repo: nunca o e-mail de quem moderou, nem o resumo ou o motivo.
+
+// Corpo { [campo]: texto } com 1 a max caracteres depois do trim (contados como o length() do SQLite).
+// Devolve o texto, ou a resposta 400.
+async function lerTextoDoCorpo(request: Request, campo: string, max: number, erro: string): Promise<string | Response> {
+  let corpo: unknown;
+  try {
+    corpo = await request.json();
+  } catch {
+    return json({ ok: false, erro: 'Pedido inválido' }, 400);
+  }
+  const valor = ((corpo ?? {}) as Record<string, unknown>)[campo];
+  const texto = typeof valor === 'string' ? valor.trim() : '';
+  const tamanho = [...texto].length;
+  if (tamanho === 0 || tamanho > max) return json({ ok: false, erro }, 400);
+  return texto;
+}
+
+// Nada mudou no UPDATE: diz por quê. Inexistente, 404; já decidida, 409. null: ainda pendente
+// (no aprovar, quer dizer que faltou a rodada aberta).
+async function sugestaoNaoPendente(env: Env, repo: string): Promise<Response | null> {
+  const sugestao = await env.DB.prepare('SELECT status FROM sugestoes WHERE repo = ?').bind(repo).first<{ status: string }>();
+  if (!sugestao) return json({ ok: false, erro: 'Sugestão não encontrada' }, 404);
+  if (sugestao.status !== 'pendente') {
+    return json({ ok: false, erro: `Essa sugestão já foi ${sugestao.status}.`, status: sugestao.status }, 409);
+  }
+  return null;
+}
+
+// GET /api/admin/sugestoes: a fila de pendentes, da mais velha para a mais nova. Sem e-mail nem
+// usuario_id: a curadoria decide pelo repositório, não por quem sugeriu. no-store (padrão do json()).
+async function filaDeSugestoes(env: Env): Promise<Response> {
+  try {
+    const { results } = await env.DB.prepare(
+      `SELECT nome, motivo, licenca, estrelas, ultimo_commit, criado_em
+       FROM sugestoes WHERE status = 'pendente' ORDER BY criado_em, id`,
+    ).all();
+    return json({ ok: true, sugestoes: results });
+  } catch (erro) {
+    console.error('GET /api/admin/sugestoes: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
+// POST /api/admin/sugestoes/<dono>/<nome>/aprovar { resumo }: a sugestão vira candidato da rodada aberta.
+// Atômico: as duas instruções vão num env.DB.batch, que o D1 roda numa transação só (tudo ou nada,
+// em sequência, sem outra escrita no meio). O UPDATE só muda a linha se ela ainda estiver pendente
+// e houver rodada aberta. O INSERT só acontece se o UPDATE mudou exatamente uma linha:
+// changes() = 1 lê o resultado da instrução anterior, e status = 'aprovada' AND revisado_em = ?2
+// pega justamente a linha que ele acabou de aprovar. Duas aprovações ao mesmo tempo: a segunda
+// encontra status 'aprovada', o UPDATE dela muda 0 linhas e o INSERT dela não roda (409).
+// repositorios.repo leva a grafia do GitHub (sugestoes.nome), como os outros candidatos.
+async function aprovarSugestao(request: Request, env: Env, repo: string): Promise<Response> {
+  const resumo = await lerTextoDoCorpo(request, 'resumo', MAX_RESUMO, `Escreva um resumo de 1 a ${MAX_RESUMO} caracteres`);
+  if (resumo instanceof Response) return resumo;
+  try {
+    const agora = Math.floor(Date.now() / 1000);
+    const [aprovada, candidato] = await env.DB.batch([
+      env.DB.prepare(
+        `UPDATE sugestoes SET status = 'aprovada', revisado_em = ?2
+         WHERE repo = ?1 AND status = 'pendente' AND EXISTS (${SQL_RODADA_ABERTA})`,
+      ).bind(repo, agora),
+      // ON CONFLICT: se o repo já virou candidato por outro caminho, aprova sem duplicar
+      env.DB.prepare(
+        `INSERT INTO repositorios (rodada_id, repo, nome, url, resumo, criado_em)
+         SELECT (${SQL_RODADA_ABERTA}), s.nome, substr(s.nome, instr(s.nome, '/') + 1), 'https://github.com/' || s.nome, ?3, ?2
+         FROM sugestoes s
+         WHERE changes() = 1 AND s.repo = ?1 AND s.status = 'aprovada' AND s.revisado_em = ?2
+         ON CONFLICT (rodada_id, repo) DO NOTHING`,
+      ).bind(repo, agora, resumo),
+    ]);
+    if (aprovada.meta.changes === 0) {
+      return (
+        (await sugestaoNaoPendente(env, repo)) ??
+        json({ ok: false, erro: 'Não há rodada aberta para receber o candidato.' }, 409)
+      );
+    }
+    // O placar fica 60 s em cache: apaga a cópia deste local para o candidato aparecer já
+    // (nos outros locais da Cloudflare aparece em até 60 s)
+    await caches.default.delete(new Request(`${new URL(request.url).origin}/api/votacao`)).catch(() => false);
+    console.log(`POST /api/admin: ${repo} aprovado${candidato.meta.changes === 0 ? ' (já era candidato)' : ''}`);
+    return json({ ok: true, repo, status: 'aprovada', candidato: candidato.meta.changes === 1 });
+  } catch (erro) {
+    console.error('POST /api/admin aprovar: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
+// POST /api/admin/sugestoes/<dono>/<nome>/recusar { motivo }: recusa com o motivo, que quem sugeriu
+// vê no GET /api/sugestoes. Uma instrução só, condicionada a status = 'pendente'.
+async function recusarSugestao(request: Request, env: Env, repo: string): Promise<Response> {
+  const motivo = await lerTextoDoCorpo(request, 'motivo', MAX_MOTIVO, `Escreva o motivo da recusa em 1 a ${MAX_MOTIVO} caracteres`);
+  if (motivo instanceof Response) return motivo;
+  try {
+    const agora = Math.floor(Date.now() / 1000);
+    const recusada = await env.DB.prepare(
+      `UPDATE sugestoes SET status = 'recusada', motivo_recusa = ?2, revisado_em = ?3
+       WHERE repo = ?1 AND status = 'pendente'`,
+    )
+      .bind(repo, motivo, agora)
+      .run();
+    if (recusada.meta.changes === 0) {
+      return (await sugestaoNaoPendente(env, repo)) ?? json({ ok: false, erro: 'Erro interno' }, 500);
+    }
+    console.log(`POST /api/admin: ${repo} recusado`);
+    return json({ ok: true, repo, status: 'recusada' });
+  } catch (erro) {
+    console.error('POST /api/admin recusar: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
+// Roteador do /api/admin/*. Caminho conhecido com método errado: 405; caminho desconhecido: 404.
+async function rotasAdmin(request: Request, env: Env, pathname: string): Promise<Response> {
+  if (pathname === '/api/admin/sugestoes') {
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      return json({ erro: 'Método não permitido' }, 405, { Allow: 'GET, HEAD' });
+    }
+    return filaDeSugestoes(env);
+  }
+  if (pathname.startsWith(PREFIXO_ADMIN_SUGESTAO)) {
+    const acao = /^(.+)\/(aprovar|recusar)$/.exec(pathname.slice(PREFIXO_ADMIN_SUGESTAO.length));
+    if (acao && FORMATO_REPO.test(acao[1])) {
+      if (request.method !== 'POST') return json({ erro: 'Método não permitido' }, 405, { Allow: 'POST' });
+      const repo = acao[1].toLowerCase();
+      return acao[2] === 'aprovar' ? aprovarSugestao(request, env, repo) : recusarSugestao(request, env, repo);
+    }
+  }
+  return json({ erro: 'Não encontrado' }, 404);
+}
+
 export default {
   async fetch(request, env, ctx): Promise<Response> {
     const { pathname } = new URL(request.url);
@@ -599,18 +743,12 @@ export default {
         }
         const admin = await verificarAccess(request, env);
         if (!admin) return json({ ok: false, erro: 'Acesso negado' }, 403);
-        // Rotas da administração entram aqui (fila de sugestões, aprovar, recusar)
-        return json({ erro: 'Não encontrado' }, 404);
+        // Depois do Access, o mesmo CSRF por Origin das outras rotas
+        if (origemDeFora(request)) return json({ ok: false, erro: 'Origem não permitida' }, 403);
+        return rotasAdmin(request, env, pathname);
       }
 
-      // CSRF: qualquer método que muda algo (fora GET, HEAD e OPTIONS) vindo de outro site (Origin
-      // presente e diferente do nosso) é recusado. Sem Origin (curl, alguns clientes antigos) passa:
-      // o cookie SameSite=Lax cobre o resto.
-      const origem = request.headers.get('Origin');
-      const metodoSeguro = request.method === 'GET' || request.method === 'HEAD' || request.method === 'OPTIONS';
-      if (!metodoSeguro && origem !== null && origem !== new URL(request.url).origin) {
-        return json({ ok: false, erro: 'Origem não permitida' }, 403);
-      }
+      if (origemDeFora(request)) return json({ ok: false, erro: 'Origem não permitida' }, 403);
 
       if (pathname === '/api/saude') {
         if (request.method !== 'GET' && request.method !== 'HEAD') {

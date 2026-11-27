@@ -6,6 +6,7 @@
     "module": "es2022",
     "moduleResolution": "bundler",
     "strict": true,
+    "allowImportingTsExtensions": true, // imports com .ts: o Node roda os testes direto, sem build
     "noEmit": true,
     "skipLibCheck": true,
     "types": []

@@ -5,15 +5,12 @@
 import assert from 'node:assert/strict';
 import { afterEach, before, beforeEach, mock, test } from 'node:test';
 import { verificarAccess, type ChaveJwk } from './access.ts';
+import { assinar, b64json, corpoValido as corpoDoToken, EQUIPE, ISS, AUD, novoPar, type Par } from './teste-jwt.ts';
 
-const EQUIPE = 'equipe-teste';
-const AUD = 'aud-teste-0123456789abcdef';
-const ISS = `https://${EQUIPE}.cloudflareaccess.com`;
 const EMAIL = 'admin@exemplo.com';
 const ENV = { ACCESS_AUD: AUD, ACCESS_EQUIPE: EQUIPE } as unknown as Env;
-const ALGORITMO = { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' } as const;
+const corpoValido = (extra: Record<string, unknown> = {}) => corpoDoToken(EMAIL, extra);
 
-type Par = { kid: string; privada: CryptoKey; publica: ChaveJwk };
 let chaveA: Par; // publicada pelo "Access"
 let chaveB: Par; // de fora: não publicada (até o teste da rotação)
 let publicadas: ChaveJwk[] = [];
@@ -24,30 +21,6 @@ const buscar = async (url: string): Promise<ChaveJwk[]> => {
   urlsBuscadas.push(url);
   return publicadas;
 };
-
-async function novoPar(kid: string): Promise<Par> {
-  const par = await crypto.subtle.generateKey(
-    { ...ALGORITMO, modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]) },
-    true,
-    ['sign', 'verify'],
-  );
-  const publica = await crypto.subtle.exportKey('jwk', par.publicKey);
-  return { kid, privada: par.privateKey, publica: { ...publica, kid } };
-}
-
-const b64url = (bytes: Uint8Array) => Buffer.from(bytes).toString('base64url');
-const b64json = (valor: unknown) => b64url(new TextEncoder().encode(JSON.stringify(valor)));
-
-function corpoValido(extra: Record<string, unknown> = {}) {
-  const agora = Math.floor(Date.now() / 1000);
-  return { aud: [AUD], iss: ISS, email: EMAIL, iat: agora - 10, nbf: agora - 10, exp: agora + 600, ...extra };
-}
-
-async function assinar(par: Par, corpo: Record<string, unknown>, cabecalho: Record<string, unknown> = {}) {
-  const inicio = `${b64json({ alg: 'RS256', kid: par.kid, typ: 'JWT', ...cabecalho })}.${b64json(corpo)}`;
-  const assinatura = await crypto.subtle.sign(ALGORITMO, par.privada, new TextEncoder().encode(inicio));
-  return `${inicio}.${b64url(new Uint8Array(assinatura))}`;
-}
 
 function pedido(token?: string): Request {
   const headers = new Headers();

@@ -60,6 +60,12 @@ O `npm run dev` do Astro (porta 4321) só serve as páginas: ele não roda o Wor
   rm -rf .wrangler/state/v3/d1
   npx wrangler d1 migrations apply eddwan-votos --local
   ```
+- **Administração (`/api/admin/*`):** fica atrás do Cloudflare Access, e o Worker confere o JWT do cabeçalho `Cf-Access-Jwt-Assertion` (`worker/access.ts`) com as vars `ACCESS_AUD` e `ACCESS_EQUIPE` do `wrangler.jsonc`. Sem as vars, responde 503; sem token válido, 403. Não há modo local que pule a conferência: no `cf:dev` essas rotas sempre recusam, e quem testa são os testes (abaixo). Rotas:
+  - `GET /api/admin/sugestoes`: as sugestões pendentes, da mais velha para a mais nova (sem dados de quem sugeriu).
+  - `POST /api/admin/sugestoes/<dono>/<nome>/aprovar` com `{ "resumo": "..." }` (1 a 200 caracteres): a sugestão vira candidato da rodada aberta.
+  - `POST /api/admin/sugestoes/<dono>/<nome>/recusar` com `{ "motivo": "..." }` (1 a 280): quem sugeriu vê o motivo em `GET /api/sugestoes` (`motivo_recusa`).
+  - Sugestão inexistente: 404; já decidida ou sem rodada aberta: 409; outro método: 405.
+- **Testes:** `npm test` (node:test, sem dependência). Os de `/api/admin/*` passam pelo Worker de verdade, com um D1 descartável numa pasta temporária e tokens assinados por uma chave RSA gerada na hora; o banco do `cf:dev` não é tocado.
 - **Migração nova:** `npx wrangler d1 migrations create eddwan-votos <nome>`, escreva o SQL no arquivo criado em `migrations/` e aplique com `--local`. No ar, o deploy aplica sozinho (`deploy.yml`).
 
 ## Escrever um post
@@ -201,7 +207,7 @@ O site roda como **Worker com arquivos estáticos**: o `astro build` gera o `dis
 | Arquivo | Para quê |
 | --- | --- |
 | `wrangler.jsonc` | Nome do Worker (`eddwan-website`), conta, entrada `worker/index.ts`, pasta `dist/` (binding `ASSETS`), domínio `eddwan.com`, 404 do Astro, URLs sem barra no fim |
-| `worker/index.ts` | A API: `GET /api/saude` responde `{ "ok": true }`; outra rota de `/api` dá 404 em JSON |
+| `worker/index.ts` | A API (`/api/*`): login, votação, sugestões e administração; rota desconhecida dá 404 em JSON |
 | `worker/worker-configuration.d.ts` | Tipos do Worker (`Env`, runtime), gerados por `npm run cf:types`; rode de novo ao mudar o `wrangler.jsonc` |
 | `public/_headers` | Cabeçalhos de segurança e cache longo para `/_astro/*` (arquivos com hash) |
 
