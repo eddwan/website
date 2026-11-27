@@ -3,10 +3,11 @@
 // Tipos (Env, ExportedHandler): npm run cf:types gera worker/worker-configuration.d.ts.
 // env.DB é o banco D1 eddwan-votos (migrações em migrations/).
 // env.TURNSTILE_SECRET: no ar via wrangler secret put; no local, em .dev.vars (modelo em .dev.vars.example).
-// env.EMAIL_PEPPER, env.EMAIL_MODO e env.RESEND_API_KEY: idem. env.LIMITE_IP: Rate Limiting dos Workers (wrangler.jsonc).
+// env.EMAIL_PEPPER, env.EMAIL_MODO, env.RESEND_API_KEY e env.GITHUB_TOKEN: idem. env.LIMITE_IP: Rate Limiting dos Workers (wrangler.jsonc).
 
 import { gerarCodigo, gerarToken, hmac, normalizarEmail, sha256 } from './cripto';
 import { enviarCodigo } from './email';
+import { conferirRepo, lerRepo } from './github';
 import { verificarTurnstile } from './turnstile';
 
 const VALIDADE_CODIGO = 600; // 10 minutos, em segundos
@@ -23,6 +24,10 @@ const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // dono/nome como no GitHub: dono com letras, números e hífen (até 39); nome com letras, números, . _ - (até 100)
 const FORMATO_REPO = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
 const PREFIXO_VOTO = '/api/votos/';
+const PREFIXO_SUGESTAO = '/api/sugestoes/';
+const MAX_MOTIVO = 280; // caracteres, igual ao CHECK da tabela sugestoes
+const SUGESTOES_POR_DIA = 3; // por pessoa, numa janela de 24 horas
+const JANELA_SUGESTOES = 86_400; // 24 horas, em segundos
 
 function json(dados: unknown, status = 200, cabecalhos: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(dados), {
@@ -305,6 +310,179 @@ async function meusVotos(request: Request, env: Env): Promise<Response> {
   }
 }
 
+// Repo (dono/nome em minúsculas) já sugerido ou já candidato da rodada aberta: devolve a resposta
+// de "repetida" (200), ou null se for novo. repositorios.repo guarda a grafia do GitHub, daí o lower().
+async function sugestaoRepetida(env: Env, repo: string): Promise<Response | null> {
+  const conhecido = await env.DB.prepare(
+    `SELECT EXISTS (SELECT 1 FROM sugestoes WHERE repo = ?1) AS sugerida,
+            EXISTS (SELECT 1 FROM repositorios WHERE rodada_id = (${SQL_RODADA_ABERTA}) AND lower(repo) = ?1) AS candidato`,
+  )
+    .bind(repo)
+    .first<{ sugerida: number; candidato: number }>();
+  if (conhecido?.sugerida) return json({ ok: true, repetida: true, mensagem: 'Esse já foi sugerido. Obrigado!' });
+  if (conhecido?.candidato) return json({ ok: true, repetida: true, mensagem: 'Esse já está na votação: vote nele!' });
+  return null;
+}
+
+// POST /api/sugestoes { link, motivo }: sugere um repositório para as próximas rodadas.
+// Checagens da mais barata para a mais cara; o GitHub só é chamado no fim, se tudo o mais passou.
+// Logs só com o repo: nunca o motivo (texto livre de quem sugeriu) nem dado da pessoa.
+async function sugerir(request: Request, env: Env): Promise<Response> {
+  try {
+    // 1. Sessão
+    const sessao = await usuarioDaSessao(request, env);
+    if (!sessao) return json({ ok: false, erro: 'Entre para sugerir' }, 401);
+
+    // 2. Corpo: link e motivo em texto
+    let corpo: unknown;
+    try {
+      corpo = await request.json();
+    } catch {
+      return json({ ok: false, erro: 'Pedido inválido' }, 400);
+    }
+    const { link, motivo: motivoBruto } = (corpo ?? {}) as Record<string, unknown>;
+    if (typeof link !== 'string' || typeof motivoBruto !== 'string') {
+      return json({ ok: false, erro: 'Pedido inválido' }, 400);
+    }
+    // Conta caracteres como o length() do SQLite (um emoji é 1, não 2 como no .length do JS)
+    const motivo = motivoBruto.trim();
+    const tamanho = [...motivo].length;
+    if (tamanho === 0 || tamanho > MAX_MOTIVO) {
+      return json({ ok: false, erro: `Conte por que esse repositório merece entrar, em até ${MAX_MOTIVO} caracteres` }, 400);
+    }
+    const alvo = lerRepo(link);
+    if (!alvo) {
+      return json({ ok: false, erro: 'Cole o link de um repositório do GitHub, como github.com/dono/nome' }, 400);
+    }
+
+    // 3. Já sugerido ou já na votação (antes do limite: repetir não gasta uma das 3 do dia)
+    const repetida = await sugestaoRepetida(env, `${alvo.dono}/${alvo.nome}`.toLowerCase());
+    if (repetida) return repetida;
+
+    // 4. Limite por dia. Conferido de novo no INSERT, que é o que vale com pedidos simultâneos;
+    // este aqui só evita gastar uma chamada ao GitHub com quem já passou do limite.
+    const agora = Math.floor(Date.now() / 1000);
+    const limite = json({ ok: false, erro: `Você já sugeriu ${SUGESTOES_POR_DIA} repositórios hoje. Volte amanhã!` }, 429, {
+      'Retry-After': '3600',
+    });
+    const hoje = await env.DB.prepare('SELECT COUNT(*) AS total FROM sugestoes WHERE usuario_id = ? AND criado_em > ?')
+      .bind(sessao.usuarioId, agora - JANELA_SUGESTOES)
+      .first<{ total: number }>();
+    if ((hoje?.total ?? 0) >= SUGESTOES_POR_DIA) return limite;
+
+    // 5. GitHub
+    if (!env.GITHUB_TOKEN) {
+      console.error('POST /api/sugestoes: GITHUB_TOKEN não configurado');
+      return json({ ok: false, erro: 'Erro interno' }, 500);
+    }
+    const conferencia = await conferirRepo(alvo.dono, alvo.nome, env.GITHUB_TOKEN);
+    if (!conferencia.ok) {
+      if (conferencia.indisponivel) {
+        return json({ ok: false, erro: 'Não consegui falar com o GitHub agora. Tente de novo em instantes.' }, 503, {
+          'Retry-After': '60',
+        });
+      }
+      console.log(`POST /api/sugestoes: ${alvo.dono}/${alvo.nome} recusado (${conferencia.motivo})`);
+      return json({ ok: false, erro: conferencia.motivo }, 422);
+    }
+
+    // O GitHub segue repositórios renomeados: o full_name pode ser outro. Nesse caso, confere de novo.
+    const repo = conferencia.nome.toLowerCase();
+    if (repo !== `${alvo.dono}/${alvo.nome}`.toLowerCase()) {
+      const renomeado = await sugestaoRepetida(env, repo);
+      if (renomeado) return renomeado;
+    }
+
+    // 6. Grava, com o limite no mesmo comando (como no /api/entrar). ON CONFLICT(repo): duas
+    // pessoas sugerindo o mesmo repo ao mesmo tempo, só a primeira entra.
+    const gravado = await env.DB.prepare(
+      `INSERT INTO sugestoes (repo, nome, usuario_id, motivo, licenca, estrelas, ultimo_commit, criado_em)
+       SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8
+       WHERE (SELECT COUNT(*) FROM sugestoes WHERE usuario_id = ?3 AND criado_em > ?9) < ?10
+       ON CONFLICT(repo) DO NOTHING`,
+    )
+      .bind(
+        repo,
+        conferencia.nome,
+        sessao.usuarioId,
+        motivo,
+        conferencia.licenca,
+        conferencia.estrelas,
+        conferencia.ultimoCommit,
+        agora,
+        agora - JANELA_SUGESTOES,
+        SUGESTOES_POR_DIA,
+      )
+      .run();
+    if (gravado.meta.changes === 0) {
+      // Não entrou: ou alguém sugeriu o mesmo repo agora há pouco, ou o limite estourou no meio
+      return (await sugestaoRepetida(env, repo)) ?? limite;
+    }
+
+    console.log(`POST /api/sugestoes: ${conferencia.nome} gravado como pendente`);
+    return json({ ok: true, repo: conferencia.nome, status: 'pendente' }, 201);
+  } catch (erro) {
+    console.error('POST /api/sugestoes: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
+// DELETE /api/sugestoes/<dono>/<nome>: a pessoa desiste de uma sugestão sua que ainda está pendente.
+// Aprovada ou recusada já passou pela curadoria (Live 8) e fica. Dono e status vão no próprio
+// DELETE: não há janela entre conferir e apagar em que a curadoria mude o status.
+// Removida, a sugestão sai do limite do dia e o repo fica livre para ser sugerido de novo.
+async function removerSugestao(request: Request, env: Env): Promise<Response> {
+  try {
+    const sessao = await usuarioDaSessao(request, env);
+    if (!sessao) return json({ ok: false, erro: 'Entre para remover' }, 401);
+
+    const caminho = new URL(request.url).pathname.slice(PREFIXO_SUGESTAO.length);
+    if (!FORMATO_REPO.test(caminho)) return json({ ok: false, erro: 'Repositório inválido' }, 400);
+    const repo = caminho.toLowerCase();
+
+    const removida = await env.DB.prepare(
+      "DELETE FROM sugestoes WHERE repo = ? AND usuario_id = ? AND status = 'pendente' RETURNING nome",
+    )
+      .bind(repo, sessao.usuarioId)
+      .first<{ nome: string }>();
+    if (removida) {
+      console.log(`DELETE /api/sugestoes: ${removida.nome} removido por quem sugeriu`);
+      return json({ ok: true, repo: removida.nome, removida: true });
+    }
+
+    // Não apagou: ou não existe, ou é de outra pessoa (os dois viram 404, sem dizer qual),
+    // ou já passou pela curadoria
+    const sua = await env.DB.prepare('SELECT status FROM sugestoes WHERE repo = ? AND usuario_id = ?')
+      .bind(repo, sessao.usuarioId)
+      .first<{ status: string }>();
+    if (!sua) return json({ ok: false, erro: 'Sugestão não encontrada' }, 404);
+    return json(
+      { ok: false, erro: `Essa sugestão já foi ${sua.status} na curadoria e não pode mais ser removida.`, status: sua.status },
+      409,
+    );
+  } catch (erro) {
+    console.error('DELETE /api/sugestoes: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
+// GET /api/sugestoes: as sugestões da pessoa, da mais nova para a mais velha (criado_em em segundos Unix)
+async function minhasSugestoes(request: Request, env: Env): Promise<Response> {
+  try {
+    const sessao = await usuarioDaSessao(request, env);
+    if (!sessao) return json({ conectado: false });
+    const { results } = await env.DB.prepare(
+      'SELECT nome, status, criado_em FROM sugestoes WHERE usuario_id = ? ORDER BY criado_em DESC, id DESC',
+    )
+      .bind(sessao.usuarioId)
+      .all<{ nome: string; status: string; criado_em: number }>();
+    return json({ conectado: true, sugestoes: results });
+  } catch (erro) {
+    console.error('GET /api/sugestoes: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
 // GET /api/votacao: placar público da rodada aberta, igual para todo mundo.
 // Por que os votos da pessoa não vêm aqui: esta resposta fica 60 s no cache (caches.default e
 // navegador), com a URL como chave e sem cookie. Se ela dissesse "você votou em X", a resposta de
@@ -481,6 +659,17 @@ export default {
         if (request.method === 'GET' || request.method === 'HEAD') return meusVotos(request, env);
         if (request.method === 'POST') return mudarVoto(request, env, true);
         return json({ erro: 'Método não permitido' }, 405, { Allow: 'GET, HEAD, POST' });
+      }
+      if (pathname === '/api/sugestoes') {
+        if (request.method === 'GET' || request.method === 'HEAD') return minhasSugestoes(request, env);
+        if (request.method === 'POST') return sugerir(request, env);
+        return json({ erro: 'Método não permitido' }, 405, { Allow: 'GET, HEAD, POST' });
+      }
+      if (pathname.startsWith(PREFIXO_SUGESTAO)) {
+        if (request.method !== 'DELETE') {
+          return json({ erro: 'Método não permitido' }, 405, { Allow: 'DELETE' });
+        }
+        return removerSugestao(request, env);
       }
       if (pathname.startsWith(PREFIXO_VOTO)) {
         if (request.method !== 'DELETE') {

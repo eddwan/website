@@ -10,3 +10,7 @@ TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 EMAIL_MODO=console
 # Pepper de TESTE, só para rodar local: NÃO é o do ar. No ar: npx wrangler secret put EMAIL_PEPPER
 EMAIL_PEPPER=0000000000000000000000000000000000000000000000000000000000000000
+
+# Sugestões validadas no GitHub (issue #21): token fine-grained só de leitura de repositórios públicos.
+# Crie em https://github.com/settings/personal-access-tokens e cole aqui. No ar: npx wrangler secret put GITHUB_TOKEN
+GITHUB_TOKEN=
