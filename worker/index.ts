@@ -4,7 +4,9 @@
 // env.DB é o banco D1 eddwan-votos (migrações em migrations/).
 // env.TURNSTILE_SECRET: no ar via wrangler secret put; no local, em .dev.vars (modelo em .dev.vars.example).
 // env.EMAIL_PEPPER, env.EMAIL_MODO, env.RESEND_API_KEY e env.GITHUB_TOKEN: idem. env.LIMITE_IP: Rate Limiting dos Workers (wrangler.jsonc).
+// env.ACCESS_AUD e env.ACCESS_EQUIPE: vars do wrangler.jsonc (Cloudflare Access, rotas /api/admin/*).
 
+import { verificarAccess } from './access';
 import { gerarCodigo, gerarToken, hmac, normalizarEmail, sha256 } from './cripto';
 import { enviarCodigo } from './email';
 import { conferirRepo, lerRepo } from './github';
@@ -25,6 +27,7 @@ const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const FORMATO_REPO = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
 const PREFIXO_VOTO = '/api/votos/';
 const PREFIXO_SUGESTAO = '/api/sugestoes/';
+const PREFIXO_ADMIN = '/api/admin/'; // protegido pelo Cloudflare Access (worker/access.ts)
 const MAX_MOTIVO = 280; // caracteres, igual ao CHECK da tabela sugestoes
 const SUGESTOES_POR_DIA = 3; // por pessoa, numa janela de 24 horas
 const JANELA_SUGESTOES = 86_400; // 24 horas, em segundos
@@ -586,6 +589,20 @@ export default {
     const { pathname } = new URL(request.url);
 
     if (pathname.startsWith('/api/')) {
+      // Administração: antes de qualquer outra coisa, o JWT do Cloudflare Access (worker/access.ts).
+      // Sem as vars, 503 (configuração faltando); token ausente ou inválido, 403. O motivo vai para o
+      // log dentro de verificarAccess, sem o token nem o e-mail.
+      if (pathname === '/api/admin' || pathname.startsWith(PREFIXO_ADMIN)) {
+        if (!env.ACCESS_AUD || !env.ACCESS_EQUIPE) {
+          console.error('/api/admin: ACCESS_AUD ou ACCESS_EQUIPE não configurados');
+          return json({ ok: false, erro: 'Administração indisponível' }, 503);
+        }
+        const admin = await verificarAccess(request, env);
+        if (!admin) return json({ ok: false, erro: 'Acesso negado' }, 403);
+        // Rotas da administração entram aqui (fila de sugestões, aprovar, recusar)
+        return json({ erro: 'Não encontrado' }, 404);
+      }
+
       // CSRF: qualquer método que muda algo (fora GET, HEAD e OPTIONS) vindo de outro site (Origin
       // presente e diferente do nosso) é recusado. Sem Origin (curl, alguns clientes antigos) passa:
       // o cookie SameSite=Lax cobre o resto.
