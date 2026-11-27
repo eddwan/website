@@ -11,6 +11,7 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 // O GET /api/votos já diz se há sessão; sem ela, a seção só mostra o link para entrar.
 // Todo texto vindo da API ou da pessoa entra com textContent, nunca innerHTML.
 const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
+const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas faltam; quem limita é a API)
 ---
 
 <Base titulo="Votação" descricao="Vote nos repositórios open source do próximo vídeo do canal." semIndice>
@@ -36,43 +37,75 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
     <!-- Mensagens (erros e confirmações): lidas pelos leitores de tela sem mover o foco -->
     <p class="aviso" role="status" aria-live="polite" data-aviso hidden></p>
 
-    <section class="sugerir" aria-labelledby="tit-sugerir" data-sugerir hidden>
-      <h2 class="sugerir-tit" id="tit-sugerir">Sugerir um repositório</h2>
-      <p class="muted">
-        Conhece um projeto open source que merece aparecer num vídeo? Cole o link do GitHub. Ele precisa ter licença,
-        pelo menos 20 estrelas e um commit no último ano. Até 3 sugestões por dia.
-      </p>
+    <section class="sugestoes" aria-labelledby="tit-sugerir" data-sugerir hidden>
+      <header class="sugestoes-topo">
+        <span class="eyebrow">Sugestões</span>
+        <h2 class="sugestoes-tit" id="tit-sugerir">Sugira o próximo repositório</h2>
+        <p class="muted">
+          Conhece um projeto open source que merece aparecer num vídeo? Mande o link: a gente confere no GitHub na hora,
+          e cada sugestão passa pela curadoria antes de entrar na votação. Até {SUGESTOES_POR_DIA} sugestões por dia.
+        </p>
+      </header>
 
-      <p data-sugerir-entrar hidden><a href="/entrar?volta=/votacao">Entre para sugerir</a></p>
+      <div class="sugestoes-grade" data-sugestoes-grade>
+        <!-- Cartão 1: nova sugestão (ou o convite para entrar) -->
+        <div class="painel">
+          <div class="painel-cab">
+            <h3 class="painel-tit">Nova sugestão</h3>
+            <span class="cota" data-cota data-limite={SUGESTOES_POR_DIA} hidden></span>
+          </div>
 
-      <form class="form-sugerir" data-form-sugerir hidden novalidate>
-        <label class="campo">
-          <span class="rotulo">Link do repositório</span>
-          <input
-            type="text"
-            name="link"
-            placeholder="github.com/dono/nome"
-            inputmode="url"
-            autocomplete="off"
-            spellcheck="false"
-            maxlength="500"
-            required
-          />
-        </label>
-        <label class="campo">
-          <span class="rotulo">Por que ele merece entrar?</span>
-          <textarea name="motivo" rows="3" required aria-describedby="contador-motivo" data-max={MAX_MOTIVO}></textarea>
-          <span class="contador" id="contador-motivo" data-contador>0/{MAX_MOTIVO}</span>
-        </label>
-        <button class="btn" type="submit" data-enviar>Sugerir</button>
-      </form>
+          <ul class="criterios" aria-label="O que o repositório precisa ter">
+            <li>Licença open source</li>
+            <li>20 estrelas ou mais</li>
+            <li>Commit no último ano</li>
+            <li>Não arquivado</li>
+          </ul>
 
-      <p class="aviso" role="status" aria-live="polite" data-aviso-sugestao hidden></p>
+          <div class="entrar-sugerir" data-sugerir-entrar hidden>
+            <p class="muted">Entre com o seu e-mail para sugerir. Sem senha: você recebe um código de 6 dígitos.</p>
+            <a class="btn" href="/entrar?volta=/votacao">Entrar para sugerir</a>
+          </div>
 
-      <div class="minhas" data-minhas hidden>
-        <h3 class="minhas-tit" tabindex="-1" data-minhas-tit>Suas sugestões</h3>
-        <ul class="lista" data-lista></ul>
-        <p class="muted" data-lista-vazia hidden>Você ainda não sugeriu nenhum repositório.</p>
+          <form class="form-sugerir" data-form-sugerir hidden novalidate>
+            <label class="campo">
+              <span class="rotulo">Link do repositório</span>
+              <input
+                type="text"
+                name="link"
+                placeholder="github.com/dono/nome"
+                inputmode="url"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="500"
+                required
+              />
+            </label>
+            <label class="campo">
+              <span class="rotulo-linha">
+                <span class="rotulo">Por que ele merece entrar?</span>
+                <span class="contador" id="contador-motivo" data-contador>0/{MAX_MOTIVO}</span>
+              </span>
+              <textarea name="motivo" rows="3" required aria-describedby="contador-motivo" data-max={MAX_MOTIVO}></textarea>
+            </label>
+            <button class="btn" type="submit" data-enviar>Sugerir</button>
+          </form>
+
+          <p class="aviso" role="status" aria-live="polite" data-aviso-sugestao hidden></p>
+        </div>
+
+        <!-- Cartão 2: as sugestões da pessoa (só com sessão) -->
+        <div class="painel" data-minhas hidden>
+          <div class="painel-cab">
+            <h3 class="painel-tit" tabindex="-1" data-minhas-tit>Suas sugestões</h3>
+            <span class="total" data-total></span>
+          </div>
+          <ul class="lista" data-lista></ul>
+          <div class="vazio" data-lista-vazia hidden>
+            <p>Você ainda não sugeriu nenhum repositório.</p>
+            <p class="muted">As suas sugestões aparecem aqui, com o status da curadoria.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -232,36 +265,151 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
     border-color: #ff7b72;
   }
 
-  /* Sugestões */
-  .sugerir {
-    max-width: 36rem;
-    margin-top: 4rem;
-    padding-top: 2.5rem;
-    border-top: 1px solid var(--line-2);
+  /* Sugestões: cabeçalho da seção e dois cartões (nova sugestão | suas sugestões) */
+  .sugestoes {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+    padding-top: clamp(2.5rem, 6vw, 3.5rem);
+    border-top: 1px solid var(--line);
   }
-  .sugerir[hidden],
+  .sugestoes[hidden],
   .form-sugerir[hidden],
-  .minhas[hidden] {
+  .entrar-sugerir[hidden],
+  .painel[hidden],
+  .cota[hidden],
+  .vazio[hidden] {
     display: none;
   }
-  .sugerir-tit {
-    font-size: 1.35rem;
-    margin: 0 0 0.6rem;
+  .sugestoes-topo {
+    max-width: var(--w-text);
+    margin-bottom: 2rem;
   }
-  .sugerir > p {
-    margin: 0 0 1.25rem;
+  .sugestoes-tit {
+    font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0.6rem 0 0.75rem;
+  }
+  .sugestoes-topo p {
+    margin: 0;
+    line-height: 1.6;
+  }
+  .sugestoes-grade {
+    display: grid;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  /* Lado a lado só com os dois cartões e espaço; sem sessão, o cartão único não estica demais */
+  @media (min-width: 60rem) {
+    .sugestoes-grade.duas {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+  .sugestoes-grade:not(.duas) {
+    max-width: 38rem;
+  }
+  /* Mesmo fundo e borda do .card, sem o movimento no hover (cartão de formulário não é clicável) */
+  .painel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--surface), var(--surface)) padding-box,
+      linear-gradient(140deg, var(--line-2), var(--line) 40%, var(--line)) border-box;
+  }
+  .painel-cab {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .painel-tit {
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .painel-tit:focus {
+    outline: none; /* recebe foco só para o leitor de tela, depois de uma remoção */
+  }
+  .cota,
+  .total {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    color: var(--text-2);
+  }
+  .cota.esgotada {
+    border-color: #ff7b72;
+    color: #ff7b72;
+  }
+  .criterios {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+    gap: 0.5rem 1rem;
+  }
+  .criterios li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.88rem;
+    color: var(--text-2);
+  }
+  .criterios li::before {
+    content: '✓';
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #120800;
+    background: var(--g-o);
+  }
+  .entrar-sugerir {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-top: 0.25rem;
+  }
+  .entrar-sugerir p {
+    margin: 0;
   }
   .form-sugerir {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1.25rem;
+    gap: 1.1rem;
+  }
+  .form-sugerir .btn {
+    align-self: flex-start;
+    cursor: pointer;
+  }
+  .form-sugerir .btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
   }
   .campo {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    width: 100%;
+  }
+  .rotulo-linha {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
   }
   .rotulo {
     font-size: 0.9rem;
@@ -273,12 +421,13 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
     padding: 0.8rem 1rem;
     border-radius: var(--r-sm);
     border: 1px solid var(--line-2);
-    background: var(--surface);
+    background: var(--bg-2);
     color: var(--text);
     font: inherit;
   }
   textarea {
     resize: vertical;
+    min-height: 6rem;
     line-height: 1.5;
   }
   input:focus-visible,
@@ -290,7 +439,6 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
     border-color: #ff7b72;
   }
   .contador {
-    align-self: flex-end;
     font-family: var(--f-mono);
     font-size: 0.75rem;
     color: var(--muted);
@@ -298,61 +446,90 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
   .contador.excedeu {
     color: #ff7b72;
   }
-  .form-sugerir .btn {
-    cursor: pointer;
+  .painel .aviso {
+    max-width: none;
+    margin-top: 0;
+    background: var(--bg-2);
   }
-  .form-sugerir .btn:disabled {
-    opacity: 0.6;
-    cursor: wait;
-  }
-  .minhas {
-    margin-top: 2.5rem;
-  }
-  .minhas-tit {
-    font-size: 1.1rem;
-    margin: 0 0 0.75rem;
-  }
+
+  /* Lista: uma linha por sugestão (nome e data à esquerda, status e ação à direita) */
   .lista {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
   }
   .lista :global(li) {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     align-items: center;
-    gap: 0.4rem 0.9rem;
-    padding: 0.7rem 0;
-    border-bottom: 1px solid var(--line-2);
+    gap: 0.5rem 0.9rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line);
   }
-  .lista :global(a) {
+  .lista :global(li:first-child) {
+    padding-top: 0;
+  }
+  .lista :global(li:last-child) {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .lista :global(.item-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .lista :global(.item-nome) {
     font-family: var(--f-mono);
     font-size: 0.92rem;
+    font-weight: 600;
     color: var(--text);
+    text-decoration: none;
     overflow-wrap: anywhere;
   }
-  .lista :global(a:hover) {
+  .lista :global(a.item-nome:hover) {
     color: var(--o1);
   }
+  .lista :global(.item-data) {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
   .lista :global(.status) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     font-size: 0.75rem;
-    padding: 0.15rem 0.55rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
     border-radius: 999px;
     border: 1px solid var(--line-2);
     color: var(--text-2);
+    white-space: nowrap;
+  }
+  .lista :global(.status::before) {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .lista :global(.status.pendente) {
+    color: var(--o1);
+    border-color: rgb(255 195 1 / 0.35);
   }
   .lista :global(.status.aprovada) {
-    border-color: #3ddc84;
+    color: #3ddc84;
+    border-color: rgb(61 220 132 / 0.35);
   }
   .lista :global(.status.recusada) {
-    border-color: #ff7b72;
+    color: #ff7b72;
+    border-color: rgb(255 123 114 / 0.35);
   }
-  .lista :global(time) {
-    margin-left: auto;
-    font-size: 0.8rem;
-    color: var(--muted);
+  /* Itens sem botão: a coluna da ação fica vazia, e o status continua alinhado com os demais */
+  .lista :global(.acao) {
+    min-width: 5.5rem;
+    display: flex;
+    justify-content: flex-end;
   }
   .lista :global(.remover) {
     padding: 0.3rem 0.8rem;
@@ -364,8 +541,30 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
     border-color: #ff7b72;
     color: #ff7b72;
   }
-  .minhas-tit:focus {
-    outline: none; /* recebe foco só para o leitor de tela, depois de uma remoção */
+  /* Celular: nome e data numa linha; status e ação embaixo */
+  @media (max-width: 30rem) {
+    .lista :global(li) {
+      grid-template-columns: auto 1fr;
+    }
+    .lista :global(.item-info) {
+      grid-column: 1 / -1;
+    }
+    .lista :global(.acao) {
+      min-width: 0;
+    }
+  }
+  .vazio {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border: 1px dashed var(--line-2);
+    border-radius: var(--r-sm);
+  }
+  .vazio p {
+    margin: 0;
+  }
+  .vazio p + p {
+    margin-top: 0.35rem;
+    font-size: 0.88rem;
   }
 
   /* Modal de confirmação */
@@ -561,6 +760,10 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
   const minhas = document.querySelector<HTMLElement>('[data-minhas]')!;
   const lista = document.querySelector<HTMLElement>('[data-lista]')!;
   const listaVazia = document.querySelector<HTMLElement>('[data-lista-vazia]')!;
+  const gradeSugestoes = document.querySelector<HTMLElement>('[data-sugestoes-grade]')!;
+  const cota = document.querySelector<HTMLElement>('[data-cota]')!;
+  const total = document.querySelector<HTMLElement>('[data-total]')!;
+  const LIMITE_DIA = Number(cota.dataset.limite);
 
   const MAX_MOTIVO = Number(campoMotivo.dataset.max);
   const FORMATO_NOME = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
@@ -593,27 +796,50 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
   function mostrarSecaoSugerir() {
     sugerirEntrar.hidden = conectado;
     form.hidden = !conectado;
-    if (!conectado) minhas.hidden = true;
+    if (!conectado) {
+      minhas.hidden = true;
+      cota.hidden = true;
+    }
+    gradeSugestoes.classList.toggle('duas', !minhas.hidden);
     secaoSugerir.hidden = false;
   }
 
+  // Quantas ainda cabem hoje, contando como a API: sugestões das últimas 24 horas (as removidas já saíram)
+  function mostrarCota(itens: Sugestao[]) {
+    const desde = Date.now() / 1000 - 86_400;
+    const restantes = Math.max(0, LIMITE_DIA - itens.filter((s) => s.criado_em > desde).length);
+    cota.textContent = restantes > 0 ? `${restantes} de ${LIMITE_DIA} disponíveis hoje` : 'Limite de hoje atingido';
+    cota.classList.toggle('esgotada', restantes === 0);
+    cota.hidden = false;
+  }
+
+  // Linha da lista: nome (link para o GitHub) e data à esquerda; status e ação à direita
   function montarItem(s: Sugestao): HTMLLIElement {
     const item = document.createElement('li');
-    const link = document.createElement('a');
-    link.textContent = s.nome;
-    // Só monta o link se o nome tiver o formato dono/nome (nada de javascript: vindo do banco)
-    if (FORMATO_NOME.test(s.nome)) {
-      link.href = `https://github.com/${s.nome}`;
-      link.rel = 'noopener';
+
+    const info = document.createElement('div');
+    info.className = 'item-info';
+    // Só vira link se o nome tiver o formato dono/nome (nada de javascript: vindo do banco)
+    const nome = document.createElement(FORMATO_NOME.test(s.nome) ? 'a' : 'span');
+    nome.className = 'item-nome';
+    nome.textContent = s.nome;
+    if (nome instanceof HTMLAnchorElement) {
+      nome.href = `https://github.com/${s.nome}`;
+      nome.rel = 'noopener';
     }
+    const data = new Date(s.criado_em * 1000);
+    const quando = document.createElement('time');
+    quando.className = 'item-data';
+    quando.dateTime = data.toISOString();
+    quando.textContent = `Enviada em ${formatoData.format(data)}`;
+    info.append(nome, quando);
+
     const status = document.createElement('span');
     status.className = `status ${ROTULO_STATUS[s.status] ? s.status : ''}`;
     status.textContent = ROTULO_STATUS[s.status] ?? s.status;
-    const data = new Date(s.criado_em * 1000);
-    const quando = document.createElement('time');
-    quando.dateTime = data.toISOString();
-    quando.textContent = formatoData.format(data);
-    item.append(link, status, quando);
+
+    const acao = document.createElement('div');
+    acao.className = 'acao';
     // Só pendente pode ser removida (o servidor confere de novo: dono e status)
     if (s.status === 'pendente') {
       const remover = document.createElement('button');
@@ -624,8 +850,10 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
       oculto.textContent = ` ${s.nome}`;
       remover.append('Remover', oculto);
       remover.addEventListener('click', () => pedirRemocao(s.nome));
-      item.append(remover);
+      acao.append(remover);
     }
+
+    item.append(info, status, acao);
     return item;
   }
 
@@ -699,11 +927,16 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
       }
       const itens = dados.sugestoes ?? [];
       lista.replaceChildren(...itens.map(montarItem));
+      lista.hidden = itens.length === 0;
       listaVazia.hidden = itens.length > 0;
+      total.textContent = itens.length === 1 ? '1 sugestão' : `${itens.length} sugestões`;
+      mostrarCota(itens);
       minhas.hidden = false;
+      gradeSugestoes.classList.add('duas');
     } catch {
       // A lista é um extra: sem ela o formulário continua funcionando
       minhas.hidden = true;
+      gradeSugestoes.classList.remove('duas');
     }
   }
 
