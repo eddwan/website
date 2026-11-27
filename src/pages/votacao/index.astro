@@ -70,11 +70,26 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
       <p class="aviso" role="status" aria-live="polite" data-aviso-sugestao hidden></p>
 
       <div class="minhas" data-minhas hidden>
-        <h3 class="minhas-tit">Suas sugestões</h3>
+        <h3 class="minhas-tit" tabindex="-1" data-minhas-tit>Suas sugestões</h3>
         <ul class="lista" data-lista></ul>
         <p class="muted" data-lista-vazia hidden>Você ainda não sugeriu nenhum repositório.</p>
       </div>
     </section>
+
+    <!-- Confirmação de remoção: <dialog> nativo (prende o foco, fecha com Esc, devolve o foco ao fechar) -->
+    <dialog class="modal" aria-labelledby="tit-remover" aria-describedby="desc-remover" data-modal-remover>
+      <form method="dialog" class="modal-corpo">
+        <h2 class="modal-tit" id="tit-remover">Remover sugestão?</h2>
+        <p id="desc-remover">
+          <strong data-modal-nome></strong> sai das suas sugestões. Ela ainda não passou pela curadoria, então você
+          pode sugerir de novo depois.
+        </p>
+        <div class="modal-acoes">
+          <button class="btn btn-ghost" type="submit" value="cancelar" autofocus>Cancelar</button>
+          <button class="btn remover-confirmar" type="button" data-modal-confirmar>Remover</button>
+        </div>
+      </form>
+    </dialog>
 
     <!-- Modelo de cartão: clonado pelo script para cada candidato -->
     <template data-modelo>
@@ -339,6 +354,71 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
     font-size: 0.8rem;
     color: var(--muted);
   }
+  .lista :global(.remover) {
+    padding: 0.3rem 0.8rem;
+    min-height: 2rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .lista :global(.remover:hover) {
+    border-color: #ff7b72;
+    color: #ff7b72;
+  }
+  .minhas-tit:focus {
+    outline: none; /* recebe foco só para o leitor de tela, depois de uma remoção */
+  }
+
+  /* Modal de confirmação */
+  .modal {
+    width: min(100% - 2rem, 26rem);
+    padding: 0;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .modal::backdrop {
+    background: rgb(0 0 0 / 0.6);
+    backdrop-filter: blur(2px);
+  }
+  .modal-corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  .modal-tit {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .modal-corpo p {
+    margin: 0;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .modal-corpo strong {
+    color: var(--text);
+    font-family: var(--f-mono);
+    overflow-wrap: anywhere;
+  }
+  .modal-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+  .modal-acoes .btn {
+    cursor: pointer;
+  }
+  .remover-confirmar {
+    color: #fff;
+    background: #d1453b;
+    border-color: transparent;
+  }
+  .remover-confirmar:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
 </style>
 
 <script>
@@ -534,8 +614,77 @@ const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
     quando.dateTime = data.toISOString();
     quando.textContent = formatoData.format(data);
     item.append(link, status, quando);
+    // Só pendente pode ser removida (o servidor confere de novo: dono e status)
+    if (s.status === 'pendente') {
+      const remover = document.createElement('button');
+      remover.type = 'button';
+      remover.className = 'btn btn-ghost remover';
+      const oculto = document.createElement('span');
+      oculto.className = 'sr';
+      oculto.textContent = ` ${s.nome}`;
+      remover.append('Remover', oculto);
+      remover.addEventListener('click', () => pedirRemocao(s.nome));
+      item.append(remover);
+    }
     return item;
   }
+
+  // ---- Remoção (modal de confirmação) ----
+
+  const modal = document.querySelector<HTMLDialogElement>('[data-modal-remover]')!;
+  const modalNome = modal.querySelector<HTMLElement>('[data-modal-nome]')!;
+  const confirmar = modal.querySelector<HTMLButtonElement>('[data-modal-confirmar]')!;
+  const minhasTit = document.querySelector<HTMLElement>('[data-minhas-tit]')!;
+  let aRemover: string | null = null;
+
+  function pedirRemocao(nome: string) {
+    aRemover = nome;
+    modalNome.textContent = nome;
+    confirmar.disabled = false;
+    confirmar.textContent = 'Remover';
+    modal.showModal();
+  }
+
+  // Clique fora da caixa (no fundo escurecido) também cancela
+  modal.addEventListener('click', (evento) => {
+    if (evento.target === modal && !confirmar.disabled) modal.close();
+  });
+  // Esc durante o envio não fecha: espera a resposta
+  modal.addEventListener('cancel', (evento) => {
+    if (confirmar.disabled) evento.preventDefault();
+  });
+
+  confirmar.addEventListener('click', async () => {
+    const nome = aRemover;
+    if (!nome) return;
+    confirmar.disabled = true;
+    confirmar.textContent = 'Removendo…';
+    try {
+      const resposta = await fetch(`/api/sugestoes/${nome}`, { method: 'DELETE' });
+      const dados = (await resposta.json().catch(() => ({}))) as { repo?: string; erro?: string };
+      if (resposta.ok) {
+        avisarSugestao(`${dados.repo ?? nome} foi removido das suas sugestões.`, 'ok');
+      } else if (resposta.status === 401) {
+        conectado = false;
+        mostrarSecaoSugerir();
+        mostrarSessao();
+        avisarSugestao('Sua sessão terminou. Entre de novo para remover.', 'erro');
+      } else if (resposta.status === 404) {
+        avisarSugestao(`Não encontrei ${nome} nas suas sugestões. A lista foi atualizada.`, 'erro');
+      } else {
+        avisarSugestao(frase(dados.erro ?? 'Algo deu errado. Tente de novo em instantes'), 'erro');
+      }
+    } catch {
+      avisarSugestao(FALHA_DE_REDE, 'erro');
+    } finally {
+      aRemover = null;
+      confirmar.disabled = false;
+      modal.close();
+      await carregarMinhas();
+      // O botão que abriu o modal sumiu com a lista nova: o foco vai para o título da lista
+      if (!minhas.hidden) minhasTit.focus();
+    }
+  });
 
   async function carregarMinhas() {
     if (!conectado) return;

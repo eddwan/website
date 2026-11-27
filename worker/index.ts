@@ -24,6 +24,7 @@ const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // dono/nome como no GitHub: dono com letras, números e hífen (até 39); nome com letras, números, . _ - (até 100)
 const FORMATO_REPO = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
 const PREFIXO_VOTO = '/api/votos/';
+const PREFIXO_SUGESTAO = '/api/sugestoes/';
 const MAX_MOTIVO = 280; // caracteres, igual ao CHECK da tabela sugestoes
 const SUGESTOES_POR_DIA = 3; // por pessoa, numa janela de 24 horas
 const JANELA_SUGESTOES = 86_400; // 24 horas, em segundos
@@ -426,6 +427,45 @@ async function sugerir(request: Request, env: Env): Promise<Response> {
   }
 }
 
+// DELETE /api/sugestoes/<dono>/<nome>: a pessoa desiste de uma sugestão sua que ainda está pendente.
+// Aprovada ou recusada já passou pela curadoria (Live 8) e fica. Dono e status vão no próprio
+// DELETE: não há janela entre conferir e apagar em que a curadoria mude o status.
+// Removida, a sugestão sai do limite do dia e o repo fica livre para ser sugerido de novo.
+async function removerSugestao(request: Request, env: Env): Promise<Response> {
+  try {
+    const sessao = await usuarioDaSessao(request, env);
+    if (!sessao) return json({ ok: false, erro: 'Entre para remover' }, 401);
+
+    const caminho = new URL(request.url).pathname.slice(PREFIXO_SUGESTAO.length);
+    if (!FORMATO_REPO.test(caminho)) return json({ ok: false, erro: 'Repositório inválido' }, 400);
+    const repo = caminho.toLowerCase();
+
+    const removida = await env.DB.prepare(
+      "DELETE FROM sugestoes WHERE repo = ? AND usuario_id = ? AND status = 'pendente' RETURNING nome",
+    )
+      .bind(repo, sessao.usuarioId)
+      .first<{ nome: string }>();
+    if (removida) {
+      console.log(`DELETE /api/sugestoes: ${removida.nome} removido por quem sugeriu`);
+      return json({ ok: true, repo: removida.nome, removida: true });
+    }
+
+    // Não apagou: ou não existe, ou é de outra pessoa (os dois viram 404, sem dizer qual),
+    // ou já passou pela curadoria
+    const sua = await env.DB.prepare('SELECT status FROM sugestoes WHERE repo = ? AND usuario_id = ?')
+      .bind(repo, sessao.usuarioId)
+      .first<{ status: string }>();
+    if (!sua) return json({ ok: false, erro: 'Sugestão não encontrada' }, 404);
+    return json(
+      { ok: false, erro: `Essa sugestão já foi ${sua.status} na curadoria e não pode mais ser removida.`, status: sua.status },
+      409,
+    );
+  } catch (erro) {
+    console.error('DELETE /api/sugestoes: falha no banco', erro);
+    return json({ ok: false, erro: 'Erro interno' }, 500);
+  }
+}
+
 // GET /api/sugestoes: as sugestões da pessoa, da mais nova para a mais velha (criado_em em segundos Unix)
 async function minhasSugestoes(request: Request, env: Env): Promise<Response> {
   try {
@@ -624,6 +664,12 @@ export default {
         if (request.method === 'GET' || request.method === 'HEAD') return minhasSugestoes(request, env);
         if (request.method === 'POST') return sugerir(request, env);
         return json({ erro: 'Método não permitido' }, 405, { Allow: 'GET, HEAD, POST' });
+      }
+      if (pathname.startsWith(PREFIXO_SUGESTAO)) {
+        if (request.method !== 'DELETE') {
+          return json({ erro: 'Método não permitido' }, 405, { Allow: 'DELETE' });
+        }
+        return removerSugestao(request, env);
       }
       if (pathname.startsWith(PREFIXO_VOTO)) {
         if (request.method !== 'DELETE') {
