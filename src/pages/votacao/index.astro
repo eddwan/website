@@ -7,6 +7,11 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 // Ao abrir, busca ao mesmo tempo o placar público (GET /api/votacao, 60 s em cache) e os votos da
 // pessoa (GET /api/votos, sem cache). Votar e desfazer usam POST /api/votos e DELETE /api/votos/<dono>/<nome>,
 // e o total do cartão vem da resposta da API, sem esperar o cache do placar.
+// Sugestões (Live 7, issue #21): POST /api/sugestoes { link, motivo } e GET /api/sugestoes (as da pessoa).
+// O GET /api/votos já diz se há sessão; sem ela, a seção só mostra o link para entrar.
+// Todo texto vindo da API ou da pessoa entra com textContent, nunca innerHTML.
+const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
+const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas faltam; quem limita é a API)
 ---
 
 <Base titulo="Votação" descricao="Vote nos repositórios open source do próximo vídeo do canal." semIndice>
@@ -31,6 +36,93 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 
     <!-- Mensagens (erros e confirmações): lidas pelos leitores de tela sem mover o foco -->
     <p class="aviso" role="status" aria-live="polite" data-aviso hidden></p>
+
+    <section class="sugestoes" aria-labelledby="tit-sugerir" data-sugerir hidden>
+      <header class="sugestoes-topo">
+        <span class="eyebrow">Sugestões</span>
+        <h2 class="sugestoes-tit" id="tit-sugerir">Sugira o próximo repositório</h2>
+        <p class="muted">
+          Conhece um projeto open source que merece aparecer num vídeo? Mande o link: a gente confere no GitHub na hora,
+          e cada sugestão passa pela curadoria antes de entrar na votação. Até {SUGESTOES_POR_DIA} sugestões por dia.
+        </p>
+      </header>
+
+      <div class="sugestoes-grade" data-sugestoes-grade>
+        <!-- Cartão 1: nova sugestão (ou o convite para entrar) -->
+        <div class="painel">
+          <div class="painel-cab">
+            <h3 class="painel-tit">Nova sugestão</h3>
+            <span class="cota" data-cota data-limite={SUGESTOES_POR_DIA} hidden></span>
+          </div>
+
+          <ul class="criterios" aria-label="O que o repositório precisa ter">
+            <li>Licença open source</li>
+            <li>20 estrelas ou mais</li>
+            <li>Commit no último ano</li>
+            <li>Não arquivado</li>
+          </ul>
+
+          <div class="entrar-sugerir" data-sugerir-entrar hidden>
+            <p class="muted">Entre com o seu e-mail para sugerir. Sem senha: você recebe um código de 6 dígitos.</p>
+            <a class="btn" href="/entrar?volta=/votacao">Entrar para sugerir</a>
+          </div>
+
+          <form class="form-sugerir" data-form-sugerir hidden novalidate>
+            <label class="campo">
+              <span class="rotulo">Link do repositório</span>
+              <input
+                type="text"
+                name="link"
+                placeholder="github.com/dono/nome"
+                inputmode="url"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="500"
+                required
+              />
+            </label>
+            <label class="campo">
+              <span class="rotulo-linha">
+                <span class="rotulo">Por que ele merece entrar?</span>
+                <span class="contador" id="contador-motivo" data-contador>0/{MAX_MOTIVO}</span>
+              </span>
+              <textarea name="motivo" rows="3" required aria-describedby="contador-motivo" data-max={MAX_MOTIVO}></textarea>
+            </label>
+            <button class="btn" type="submit" data-enviar>Sugerir</button>
+          </form>
+
+          <p class="aviso" role="status" aria-live="polite" data-aviso-sugestao hidden></p>
+        </div>
+
+        <!-- Cartão 2: as sugestões da pessoa (só com sessão) -->
+        <div class="painel" data-minhas hidden>
+          <div class="painel-cab">
+            <h3 class="painel-tit" tabindex="-1" data-minhas-tit>Suas sugestões</h3>
+            <span class="total" data-total></span>
+          </div>
+          <ul class="lista" data-lista></ul>
+          <div class="vazio" data-lista-vazia hidden>
+            <p>Você ainda não sugeriu nenhum repositório.</p>
+            <p class="muted">As suas sugestões aparecem aqui, com o status da curadoria.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Confirmação de remoção: <dialog> nativo (prende o foco, fecha com Esc, devolve o foco ao fechar) -->
+    <dialog class="modal" aria-labelledby="tit-remover" aria-describedby="desc-remover" data-modal-remover>
+      <form method="dialog" class="modal-corpo">
+        <h2 class="modal-tit" id="tit-remover">Remover sugestão?</h2>
+        <p id="desc-remover">
+          <strong data-modal-nome></strong> sai das suas sugestões. Ela ainda não passou pela curadoria, então você
+          pode sugerir de novo depois.
+        </p>
+        <div class="modal-acoes">
+          <button class="btn btn-ghost" type="submit" value="cancelar" autofocus>Cancelar</button>
+          <button class="btn remover-confirmar" type="button" data-modal-confirmar>Remover</button>
+        </div>
+      </form>
+    </dialog>
 
     <!-- Modelo de cartão: clonado pelo script para cada candidato -->
     <template data-modelo>
@@ -129,7 +221,8 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
     font-size: 0.9rem;
     color: var(--text-2);
   }
-  .votos strong {
+  /* Elementos criados pelo script não ganham o atributo de escopo do Astro: :global() dentro da classe da página */
+  .votos :global(strong) {
     font-size: 1.2rem;
     color: var(--text);
   }
@@ -148,7 +241,7 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
     opacity: 0.6;
     cursor: wait;
   }
-  .sr {
+  .votacao :global(.sr) {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -170,6 +263,360 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
   }
   .aviso.erro {
     border-color: #ff7b72;
+  }
+
+  /* Sugestões: cabeçalho da seção e dois cartões (nova sugestão | suas sugestões) */
+  .sugestoes {
+    margin-top: clamp(3.5rem, 8vw, 5.5rem);
+    padding-top: clamp(2.5rem, 6vw, 3.5rem);
+    border-top: 1px solid var(--line);
+  }
+  .sugestoes[hidden],
+  .form-sugerir[hidden],
+  .entrar-sugerir[hidden],
+  .painel[hidden],
+  .cota[hidden],
+  .vazio[hidden] {
+    display: none;
+  }
+  .sugestoes-topo {
+    max-width: var(--w-text);
+    margin-bottom: 2rem;
+  }
+  .sugestoes-tit {
+    font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0.6rem 0 0.75rem;
+  }
+  .sugestoes-topo p {
+    margin: 0;
+    line-height: 1.6;
+  }
+  .sugestoes-grade {
+    display: grid;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  /* Lado a lado só com os dois cartões e espaço; sem sessão, o cartão único não estica demais */
+  @media (min-width: 60rem) {
+    .sugestoes-grade.duas {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+  .sugestoes-grade:not(.duas) {
+    max-width: 38rem;
+  }
+  /* Mesmo fundo e borda do .card, sem o movimento no hover (cartão de formulário não é clicável) */
+  .painel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--surface), var(--surface)) padding-box,
+      linear-gradient(140deg, var(--line-2), var(--line) 40%, var(--line)) border-box;
+  }
+  .painel-cab {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .painel-tit {
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .painel-tit:focus {
+    outline: none; /* recebe foco só para o leitor de tela, depois de uma remoção */
+  }
+  .cota,
+  .total {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    color: var(--text-2);
+  }
+  .cota.esgotada {
+    border-color: #ff7b72;
+    color: #ff7b72;
+  }
+  .criterios {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+    gap: 0.5rem 1rem;
+  }
+  .criterios li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.88rem;
+    color: var(--text-2);
+  }
+  .criterios li::before {
+    content: '✓';
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #120800;
+    background: var(--g-o);
+  }
+  .entrar-sugerir {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-top: 0.25rem;
+  }
+  .entrar-sugerir p {
+    margin: 0;
+  }
+  .form-sugerir {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .form-sugerir .btn {
+    align-self: flex-start;
+    cursor: pointer;
+  }
+  .form-sugerir .btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .rotulo-linha {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .rotulo {
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--bg-2);
+    color: var(--text);
+    font: inherit;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 6rem;
+    line-height: 1.5;
+  }
+  input:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--o1);
+  }
+  input[aria-invalid='true'],
+  textarea[aria-invalid='true'] {
+    border-color: #ff7b72;
+  }
+  .contador {
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .contador.excedeu {
+    color: #ff7b72;
+  }
+  .painel .aviso {
+    max-width: none;
+    margin-top: 0;
+    background: var(--bg-2);
+  }
+
+  /* Lista: uma linha por sugestão (nome e data à esquerda, status e ação à direita) */
+  .lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .lista :global(li) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .lista :global(li:first-child) {
+    padding-top: 0;
+  }
+  .lista :global(li:last-child) {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .lista :global(.item-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .lista :global(.item-nome) {
+    font-family: var(--f-mono);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .lista :global(a.item-nome:hover) {
+    color: var(--o1);
+  }
+  .lista :global(.item-data) {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .lista :global(.status) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+  .lista :global(.status::before) {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .lista :global(.status.pendente) {
+    color: var(--o1);
+    border-color: rgb(255 195 1 / 0.35);
+  }
+  .lista :global(.status.aprovada) {
+    color: #3ddc84;
+    border-color: rgb(61 220 132 / 0.35);
+  }
+  .lista :global(.status.recusada) {
+    color: #ff7b72;
+    border-color: rgb(255 123 114 / 0.35);
+  }
+  /* Itens sem botão: a coluna da ação fica vazia, e o status continua alinhado com os demais */
+  .lista :global(.acao) {
+    min-width: 5.5rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .lista :global(.remover) {
+    padding: 0.3rem 0.8rem;
+    min-height: 2rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .lista :global(.remover:hover) {
+    border-color: #ff7b72;
+    color: #ff7b72;
+  }
+  /* Celular: nome e data numa linha; status e ação embaixo */
+  @media (max-width: 30rem) {
+    .lista :global(li) {
+      grid-template-columns: auto 1fr;
+    }
+    .lista :global(.item-info) {
+      grid-column: 1 / -1;
+    }
+    .lista :global(.acao) {
+      min-width: 0;
+    }
+  }
+  .vazio {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border: 1px dashed var(--line-2);
+    border-radius: var(--r-sm);
+  }
+  .vazio p {
+    margin: 0;
+  }
+  .vazio p + p {
+    margin-top: 0.35rem;
+    font-size: 0.88rem;
+  }
+
+  /* Modal de confirmação */
+  .modal {
+    width: min(100% - 2rem, 26rem);
+    padding: 0;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .modal::backdrop {
+    background: rgb(0 0 0 / 0.6);
+    backdrop-filter: blur(2px);
+  }
+  .modal-corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  .modal-tit {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .modal-corpo p {
+    margin: 0;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .modal-corpo strong {
+    color: var(--text);
+    font-family: var(--f-mono);
+    overflow-wrap: anywhere;
+  }
+  .modal-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+  .modal-acoes .btn {
+    cursor: pointer;
+  }
+  .remover-confirmar {
+    color: #fff;
+    background: #d1453b;
+    border-color: transparent;
+  }
+  .remover-confirmar:disabled {
+    opacity: 0.6;
+    cursor: wait;
   }
 </style>
 
@@ -293,6 +740,276 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
     sessao.replaceChildren(link, ' para votar. Sem senha: você recebe um código de 6 dígitos.');
   }
 
+  // ---- Sugestões ----
+
+  interface Sugestao {
+    nome: string;
+    status: string;
+    criado_em: number;
+  }
+  type Tom = 'ok' | 'erro' | 'neutro';
+
+  const secaoSugerir = document.querySelector<HTMLElement>('[data-sugerir]')!;
+  const sugerirEntrar = document.querySelector<HTMLElement>('[data-sugerir-entrar]')!;
+  const form = document.querySelector<HTMLFormElement>('[data-form-sugerir]')!;
+  const campoLink = form.querySelector<HTMLInputElement>('input[name="link"]')!;
+  const campoMotivo = form.querySelector<HTMLTextAreaElement>('textarea[name="motivo"]')!;
+  const contador = form.querySelector<HTMLElement>('[data-contador]')!;
+  const enviar = form.querySelector<HTMLButtonElement>('[data-enviar]')!;
+  const avisoSugestao = document.querySelector<HTMLElement>('[data-aviso-sugestao]')!;
+  const minhas = document.querySelector<HTMLElement>('[data-minhas]')!;
+  const lista = document.querySelector<HTMLElement>('[data-lista]')!;
+  const listaVazia = document.querySelector<HTMLElement>('[data-lista-vazia]')!;
+  const gradeSugestoes = document.querySelector<HTMLElement>('[data-sugestoes-grade]')!;
+  const cota = document.querySelector<HTMLElement>('[data-cota]')!;
+  const total = document.querySelector<HTMLElement>('[data-total]')!;
+  const LIMITE_DIA = Number(cota.dataset.limite);
+
+  const MAX_MOTIVO = Number(campoMotivo.dataset.max);
+  const FORMATO_NOME = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
+  const ROTULO_STATUS: Record<string, string> = { pendente: 'Pendente', aprovada: 'Aprovada', recusada: 'Recusada' };
+  const formatoData = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  // Conta caracteres como o servidor (um emoji é 1, não 2 como no .length)
+  const tamanho = (texto: string) => [...texto.trim()].length;
+
+  // Verde: entrou; neutro: repetida; vermelho: recusada ou erro
+  function avisarSugestao(texto: string, tom: Tom) {
+    avisoSugestao.textContent = texto;
+    avisoSugestao.className = tom === 'neutro' ? 'aviso' : `aviso ${tom}`;
+    avisoSugestao.hidden = false;
+  }
+
+  // Frase da API com inicial maiúscula e ponto final ("esse repositório está arquivado" → "Esse ... arquivado.")
+  function frase(texto: string): string {
+    const t = texto.trim();
+    const maiuscula = t.charAt(0).toUpperCase() + t.slice(1);
+    return /[.!?]$/.test(maiuscula) ? maiuscula : `${maiuscula}.`;
+  }
+
+  function atualizarContador() {
+    const n = tamanho(campoMotivo.value);
+    contador.textContent = `${n}/${MAX_MOTIVO}`;
+    contador.classList.toggle('excedeu', n > MAX_MOTIVO);
+  }
+
+  function mostrarSecaoSugerir() {
+    sugerirEntrar.hidden = conectado;
+    form.hidden = !conectado;
+    if (!conectado) {
+      minhas.hidden = true;
+      cota.hidden = true;
+    }
+    gradeSugestoes.classList.toggle('duas', !minhas.hidden);
+    secaoSugerir.hidden = false;
+  }
+
+  // Quantas ainda cabem hoje, contando como a API: sugestões das últimas 24 horas (as removidas já saíram)
+  function mostrarCota(itens: Sugestao[]) {
+    const desde = Date.now() / 1000 - 86_400;
+    const restantes = Math.max(0, LIMITE_DIA - itens.filter((s) => s.criado_em > desde).length);
+    cota.textContent = restantes > 0 ? `${restantes} de ${LIMITE_DIA} disponíveis hoje` : 'Limite de hoje atingido';
+    cota.classList.toggle('esgotada', restantes === 0);
+    cota.hidden = false;
+  }
+
+  // Linha da lista: nome (link para o GitHub) e data à esquerda; status e ação à direita
+  function montarItem(s: Sugestao): HTMLLIElement {
+    const item = document.createElement('li');
+
+    const info = document.createElement('div');
+    info.className = 'item-info';
+    // Só vira link se o nome tiver o formato dono/nome (nada de javascript: vindo do banco)
+    const nome = document.createElement(FORMATO_NOME.test(s.nome) ? 'a' : 'span');
+    nome.className = 'item-nome';
+    nome.textContent = s.nome;
+    if (nome instanceof HTMLAnchorElement) {
+      nome.href = `https://github.com/${s.nome}`;
+      nome.rel = 'noopener';
+    }
+    const data = new Date(s.criado_em * 1000);
+    const quando = document.createElement('time');
+    quando.className = 'item-data';
+    quando.dateTime = data.toISOString();
+    quando.textContent = `Enviada em ${formatoData.format(data)}`;
+    info.append(nome, quando);
+
+    const status = document.createElement('span');
+    status.className = `status ${ROTULO_STATUS[s.status] ? s.status : ''}`;
+    status.textContent = ROTULO_STATUS[s.status] ?? s.status;
+
+    const acao = document.createElement('div');
+    acao.className = 'acao';
+    // Só pendente pode ser removida (o servidor confere de novo: dono e status)
+    if (s.status === 'pendente') {
+      const remover = document.createElement('button');
+      remover.type = 'button';
+      remover.className = 'btn btn-ghost remover';
+      const oculto = document.createElement('span');
+      oculto.className = 'sr';
+      oculto.textContent = ` ${s.nome}`;
+      remover.append('Remover', oculto);
+      remover.addEventListener('click', () => pedirRemocao(s.nome));
+      acao.append(remover);
+    }
+
+    item.append(info, status, acao);
+    return item;
+  }
+
+  // ---- Remoção (modal de confirmação) ----
+
+  const modal = document.querySelector<HTMLDialogElement>('[data-modal-remover]')!;
+  const modalNome = modal.querySelector<HTMLElement>('[data-modal-nome]')!;
+  const confirmar = modal.querySelector<HTMLButtonElement>('[data-modal-confirmar]')!;
+  const minhasTit = document.querySelector<HTMLElement>('[data-minhas-tit]')!;
+  let aRemover: string | null = null;
+
+  function pedirRemocao(nome: string) {
+    aRemover = nome;
+    modalNome.textContent = nome;
+    confirmar.disabled = false;
+    confirmar.textContent = 'Remover';
+    modal.showModal();
+  }
+
+  // Clique fora da caixa (no fundo escurecido) também cancela
+  modal.addEventListener('click', (evento) => {
+    if (evento.target === modal && !confirmar.disabled) modal.close();
+  });
+  // Esc durante o envio não fecha: espera a resposta
+  modal.addEventListener('cancel', (evento) => {
+    if (confirmar.disabled) evento.preventDefault();
+  });
+
+  confirmar.addEventListener('click', async () => {
+    const nome = aRemover;
+    if (!nome) return;
+    confirmar.disabled = true;
+    confirmar.textContent = 'Removendo…';
+    try {
+      const resposta = await fetch(`/api/sugestoes/${nome}`, { method: 'DELETE' });
+      const dados = (await resposta.json().catch(() => ({}))) as { repo?: string; erro?: string };
+      if (resposta.ok) {
+        avisarSugestao(`${dados.repo ?? nome} foi removido das suas sugestões.`, 'ok');
+      } else if (resposta.status === 401) {
+        conectado = false;
+        mostrarSecaoSugerir();
+        mostrarSessao();
+        avisarSugestao('Sua sessão terminou. Entre de novo para remover.', 'erro');
+      } else if (resposta.status === 404) {
+        avisarSugestao(`Não encontrei ${nome} nas suas sugestões. A lista foi atualizada.`, 'erro');
+      } else {
+        avisarSugestao(frase(dados.erro ?? 'Algo deu errado. Tente de novo em instantes'), 'erro');
+      }
+    } catch {
+      avisarSugestao(FALHA_DE_REDE, 'erro');
+    } finally {
+      aRemover = null;
+      confirmar.disabled = false;
+      modal.close();
+      await carregarMinhas();
+      // O botão que abriu o modal sumiu com a lista nova: o foco vai para o título da lista
+      if (!minhas.hidden) minhasTit.focus();
+    }
+  });
+
+  async function carregarMinhas() {
+    if (!conectado) return;
+    try {
+      const resposta = await fetch('/api/sugestoes');
+      if (!resposta.ok) throw new Error(String(resposta.status));
+      const dados = (await resposta.json()) as { conectado: boolean; sugestoes?: Sugestao[] };
+      if (!dados.conectado) {
+        conectado = false;
+        mostrarSecaoSugerir();
+        return;
+      }
+      const itens = dados.sugestoes ?? [];
+      lista.replaceChildren(...itens.map(montarItem));
+      lista.hidden = itens.length === 0;
+      listaVazia.hidden = itens.length > 0;
+      total.textContent = itens.length === 1 ? '1 sugestão' : `${itens.length} sugestões`;
+      mostrarCota(itens);
+      minhas.hidden = false;
+      gradeSugestoes.classList.add('duas');
+    } catch {
+      // A lista é um extra: sem ela o formulário continua funcionando
+      minhas.hidden = true;
+      gradeSugestoes.classList.remove('duas');
+    }
+  }
+
+  async function sugerir(evento: SubmitEvent) {
+    evento.preventDefault();
+    const link = campoLink.value.trim();
+    const motivo = campoMotivo.value.trim();
+    campoLink.removeAttribute('aria-invalid');
+    campoMotivo.removeAttribute('aria-invalid');
+
+    // Checagens rápidas no navegador; o servidor confere tudo de novo
+    if (!link) {
+      campoLink.setAttribute('aria-invalid', 'true');
+      campoLink.focus();
+      avisarSugestao('Cole o link de um repositório do GitHub, como github.com/dono/nome.', 'erro');
+      return;
+    }
+    const n = tamanho(motivo);
+    if (n === 0 || n > MAX_MOTIVO) {
+      campoMotivo.setAttribute('aria-invalid', 'true');
+      campoMotivo.focus();
+      avisarSugestao(`Conte por que esse repositório merece entrar, em até ${MAX_MOTIVO} caracteres.`, 'erro');
+      return;
+    }
+
+    enviar.disabled = true;
+    enviar.textContent = 'Conferindo no GitHub…';
+    form.setAttribute('aria-busy', 'true');
+    try {
+      const resposta = await fetch('/api/sugestoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ link, motivo }),
+      });
+      const dados = (await resposta.json().catch(() => ({}))) as {
+        repetida?: boolean;
+        mensagem?: string;
+        repo?: string;
+        erro?: string;
+      };
+
+      if (resposta.status === 201) {
+        avisarSugestao(`${dados.repo ?? 'O repositório'} entrou como sugestão pendente. Obrigado!`, 'ok');
+        form.reset();
+        atualizarContador();
+      } else if (resposta.ok && dados.repetida) {
+        avisarSugestao(dados.mensagem ?? 'Esse já foi sugerido. Obrigado!', 'neutro');
+        form.reset();
+        atualizarContador();
+      } else if (resposta.status === 401) {
+        conectado = false;
+        mostrarSecaoSugerir();
+        mostrarSessao();
+        avisarSugestao('Sua sessão terminou. Entre de novo para sugerir.', 'erro');
+      } else {
+        if (resposta.status === 400 && dados.erro?.startsWith('Cole o link')) {
+          campoLink.setAttribute('aria-invalid', 'true');
+        }
+        avisarSugestao(frase(dados.erro ?? 'Algo deu errado. Tente de novo em instantes'), 'erro');
+      }
+    } catch {
+      avisarSugestao(FALHA_DE_REDE, 'erro');
+    } finally {
+      enviar.disabled = false;
+      enviar.textContent = 'Sugerir';
+      form.removeAttribute('aria-busy');
+      await carregarMinhas();
+    }
+  }
+
+  campoMotivo.addEventListener('input', atualizarContador);
+  form.addEventListener('submit', sugerir);
+
   async function iniciar() {
     // Os dois pedidos saem juntos; a falha do /api/votos não impede de mostrar o placar
     const [placarRes, votosRes] = await Promise.allSettled([
@@ -302,6 +1019,11 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
       ),
     ]);
     carregando.hidden = true;
+
+    // Sugestões não dependem da rodada: a seção aparece mesmo sem votação aberta
+    if (votosRes.status === 'fulfilled') conectado = votosRes.value.conectado;
+    mostrarSecaoSugerir();
+    carregarMinhas();
 
     if (placarRes.status === 'rejected') {
       avisar('Não foi possível carregar a votação. Recarregue a página em instantes.', 'erro');
@@ -315,7 +1037,6 @@ import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
 
     const meus = new Set<string>();
     if (votosRes.status === 'fulfilled') {
-      conectado = votosRes.value.conectado;
       for (const repo of votosRes.value.votos ?? []) meus.add(repo);
     } else {
       avisar('Não foi possível ver se você já votou. Recarregue a página para tentar de novo.', 'erro');
