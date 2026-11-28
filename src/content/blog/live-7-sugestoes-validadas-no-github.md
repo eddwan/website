@@ -288,6 +288,6 @@ O que funcionou bem nesses pedidos:
 
 ## Próxima live
 
-A Live 8 é nesta sexta, 27/11, às 20h: a curadoria. Uma página `/admin`, protegida pelo Cloudflare Access, com a fila das sugestões pendentes, onde eu aprovo (e a sugestão vira candidata da votação) ou recuso com um motivo. E, como em toda sexta, a revisão ao vivo dos PRs da semana ([issue #22](https://github.com/eddwan/website/issues/22)). Quer ajudar antes disso? Mande um PR para a `develop` (veja o [CONTRIBUTING.md](https://github.com/eddwan/website/blob/main/CONTRIBUTING.md)).
+A Live 8 já aconteceu: entrou a página de administração, atrás do Cloudflare Access, e o furo do limite de sugestões foi fechado. Veja como foi no [post da Live 8](/blog/live-8-pagina-de-admin-com-cloudflare-access).
 
 O código foi escrito ao vivo com o Claude Code, com cada passo revisado por mim na tela antes do commit.
