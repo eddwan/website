@@ -1,0 +1,682 @@
+---
+import Base from '../../layouts/Base.astro';
+import CabecalhoPagina from '../../components/CabecalhoPagina.astro';
+
+// Moderação das sugestões (Live 8, issue #22). Fora do menu, do sitemap (astro.config.mjs) e dos buscadores
+// (semIndice). No ar, o Cloudflare Access protege /admin e /api/admin: só o Eddwan chega aqui, e o Worker
+// confere o token do Access de novo em cada pedido a /api/admin/*. No local não há Access: a API responde
+// 403 e a página mostra "Acesso negado".
+// Prévia: em localhost, /admin?previa mostra cartões de exemplo e simula aprovar e recusar, sem chamar a API.
+// Todo texto vindo da API (nome, motivo, mensagens) entra com textContent, nunca innerHTML.
+const MAX_RESUMO = 200; // igual ao do worker (MAX_RESUMO)
+const MAX_MOTIVO = 280; // igual ao do worker e ao CHECK da tabela sugestoes
+---
+
+<Base titulo="Moderação" descricao="Fila de sugestões de repositórios para a curadoria." semIndice>
+  <CabecalhoPagina
+    eyebrow="Administração"
+    titulo="Moderação"
+    lead="Sugestões pendentes, da mais velha para a mais nova. Aprovada, vira candidato da votação aberta; recusada, quem sugeriu vê o motivo."
+  />
+
+  <section class="container admin">
+    <noscript><p class="aviso erro">A moderação precisa do JavaScript ativado.</p></noscript>
+
+    <p class="previa" data-previa hidden>Prévia com dados de exemplo: nada é enviado para a API.</p>
+    <p class="carregando" data-carregando>Carregando a fila…</p>
+
+    <div class="topo" data-topo hidden>
+      <h2 class="fila-tit" tabindex="-1" data-fila-tit>Fila de sugestões</h2>
+      <span class="total" data-total></span>
+    </div>
+
+    <!-- Mensagens (erros e confirmações): lidas pelos leitores de tela sem mover o foco -->
+    <p class="aviso" role="status" aria-live="polite" data-aviso hidden></p>
+
+    <div class="grade" data-grade></div>
+    <div class="vazio" data-vazio hidden>
+      <p>Nenhuma sugestão pendente.</p>
+      <p class="muted">As novas aparecem aqui assim que alguém sugerir.</p>
+    </div>
+
+    <!-- Aprovar: <dialog> nativo (prende o foco, fecha com Esc, devolve o foco ao fechar) -->
+    <dialog class="modal" aria-labelledby="tit-aprovar" data-modal="aprovar">
+      <form class="modal-corpo" novalidate>
+        <h2 class="modal-tit" id="tit-aprovar">Aprovar <span data-modal-nome></span></h2>
+        <p>Ele entra como candidato na votação aberta, com este resumo no cartão.</p>
+        <label class="campo">
+          <span class="rotulo-linha">
+            <span class="rotulo">Resumo</span>
+            <span class="contador" id="contador-resumo" data-contador>0/{MAX_RESUMO}</span>
+          </span>
+          <textarea name="texto" rows="3" required aria-describedby="contador-resumo" data-max={MAX_RESUMO}></textarea>
+        </label>
+        <p class="aviso erro" role="alert" data-modal-erro hidden></p>
+        <div class="modal-acoes">
+          <button class="btn btn-ghost" type="button" data-cancelar>Cancelar</button>
+          <button class="btn" type="submit" data-confirmar>Aprovar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" aria-labelledby="tit-recusar" data-modal="recusar">
+      <form class="modal-corpo" novalidate>
+        <h2 class="modal-tit" id="tit-recusar">Recusar <span data-modal-nome></span></h2>
+        <p>Quem sugeriu vê este motivo em “Suas sugestões”.</p>
+        <label class="campo">
+          <span class="rotulo-linha">
+            <span class="rotulo">Motivo da recusa</span>
+            <span class="contador" id="contador-recusa" data-contador>0/{MAX_MOTIVO}</span>
+          </span>
+          <textarea name="texto" rows="3" required aria-describedby="contador-recusa" data-max={MAX_MOTIVO}></textarea>
+        </label>
+        <p class="aviso erro" role="alert" data-modal-erro hidden></p>
+        <div class="modal-acoes">
+          <button class="btn btn-ghost" type="button" data-cancelar>Cancelar</button>
+          <button class="btn recusar-confirmar" type="submit" data-confirmar>Recusar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Modelo de cartão: clonado pelo script para cada sugestão -->
+    <template data-modelo>
+      <article class="card sugestao">
+        <h3><a data-nome rel="noopener"></a></h3>
+        <ul class="fatos">
+          <li><span class="sr">Estrelas: </span><span aria-hidden="true">★ </span><span data-estrelas></span></li>
+          <li><span class="sr">Licença: </span><span data-licenca></span></li>
+          <li>último commit <time data-commit></time></li>
+        </ul>
+        <blockquote class="motivo">
+          <p data-motivo></p>
+        </blockquote>
+        <p class="quando">Sugerida <time data-sugerida></time></p>
+        <div class="acoes">
+          <button class="btn btn-ghost" type="button" data-acao="recusar"></button>
+          <button class="btn" type="button" data-acao="aprovar"></button>
+        </div>
+      </article>
+    </template>
+  </section>
+</Base>
+
+<style>
+  .admin {
+    padding-block: 2rem 5rem;
+  }
+  .carregando {
+    color: var(--muted);
+  }
+  .carregando[hidden],
+  .topo[hidden],
+  .aviso[hidden],
+  .vazio[hidden],
+  .previa[hidden] {
+    display: none;
+  }
+  .previa {
+    display: inline-block;
+    margin: 0 0 1.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    border: 1px dashed var(--o1);
+    color: var(--o1);
+    font-family: var(--f-mono);
+    font-size: 0.78rem;
+  }
+  .topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .fila-tit {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+  .fila-tit:focus {
+    outline: none; /* recebe foco só para o leitor de tela, quando o último cartão sai */
+  }
+  .total {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    color: var(--text-2);
+  }
+  .grade {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  }
+  .grade:empty {
+    display: none;
+  }
+  .sugestao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1.25rem 1.35rem 1.35rem;
+  }
+  h3 {
+    font-family: var(--f-mono);
+    font-size: 1.05rem;
+    line-height: 1.3;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  h3 a:hover {
+    color: var(--o1);
+  }
+  .fatos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .fatos li {
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    color: var(--text-2);
+  }
+  .motivo {
+    margin: 0;
+    padding: 0.75rem 0.9rem;
+    border-left: 3px solid var(--o1);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    background: var(--bg-2);
+  }
+  .motivo p {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    white-space: pre-line; /* quebras de linha do motivo, sem HTML */
+  }
+  .quando {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+  .acoes .btn {
+    min-height: 2.6rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+  .acoes [data-acao='recusar']:hover {
+    border-color: #ff7b72;
+    color: #ff7b72;
+  }
+  /* Elementos criados pelo script não ganham o atributo de escopo do Astro: :global() dentro da classe da página */
+  .admin :global(.sr) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .aviso {
+    display: block;
+    max-width: 36rem;
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+  }
+  .aviso.ok {
+    border-color: #3ddc84;
+  }
+  .aviso.erro {
+    border-color: #ff7b72;
+  }
+  .vazio {
+    max-width: 36rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border: 1px dashed var(--line-2);
+    border-radius: var(--r-sm);
+  }
+  .vazio p {
+    margin: 0;
+  }
+  .vazio p + p {
+    margin-top: 0.35rem;
+    font-size: 0.88rem;
+  }
+
+  /* Modais de aprovar e recusar (mesmo visual do modal da /votacao) */
+  .modal {
+    width: min(100% - 2rem, 30rem);
+    padding: 0;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .modal::backdrop {
+    background: rgb(0 0 0 / 0.6);
+    backdrop-filter: blur(2px);
+  }
+  .modal-corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  .modal-tit {
+    font-size: 1.2rem;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .modal-tit span {
+    font-family: var(--f-mono);
+  }
+  .modal-corpo > p {
+    margin: 0;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .modal .aviso {
+    max-width: none;
+    margin: 0;
+    background: var(--bg-2);
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .rotulo-linha {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .rotulo {
+    font-size: 0.9rem;
+    color: var(--text-2);
+  }
+  textarea {
+    width: 100%;
+    min-height: 6rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-2);
+    background: var(--bg-2);
+    color: var(--text);
+    font: inherit;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  textarea:focus-visible {
+    border-color: var(--o1);
+  }
+  textarea[aria-invalid='true'] {
+    border-color: #ff7b72;
+  }
+  .contador {
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .contador.excedeu {
+    color: #ff7b72;
+  }
+  .modal-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+  .modal-acoes .btn {
+    cursor: pointer;
+  }
+  .modal-acoes .btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  .recusar-confirmar {
+    color: #fff;
+    background: #d1453b;
+    border-color: transparent;
+  }
+</style>
+
+<script>
+  interface Pendente {
+    nome: string;
+    motivo: string;
+    licenca: string;
+    estrelas: number;
+    ultimo_commit: number; // segundos Unix
+    criado_em: number; // segundos Unix
+  }
+  type Acao = 'aprovar' | 'recusar';
+
+  const FALHA_DE_REDE =
+    'Não consegui falar com o site. Confira a internet; se a sessão do Access venceu, recarregue a página para entrar de novo.';
+  const FORMATO_NOME = /^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/;
+
+  const carregando = document.querySelector<HTMLElement>('[data-carregando]')!;
+  const topo = document.querySelector<HTMLElement>('[data-topo]')!;
+  const filaTit = document.querySelector<HTMLElement>('[data-fila-tit]')!;
+  const total = document.querySelector<HTMLElement>('[data-total]')!;
+  const aviso = document.querySelector<HTMLElement>('[data-aviso]')!;
+  const grade = document.querySelector<HTMLElement>('[data-grade]')!;
+  const vazio = document.querySelector<HTMLElement>('[data-vazio]')!;
+  const modelo = document.querySelector<HTMLTemplateElement>('[data-modelo]')!;
+
+  // Prévia só em localhost: dados de exemplo e ações simuladas, sem nenhum pedido à API
+  const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const previa = local && new URLSearchParams(location.search).has('previa');
+
+  const numero = new Intl.NumberFormat('pt-BR');
+  // 'always': "há 1 ano", "há 2 dias" (com 'auto' viria "ano passado", "anteontem")
+  const relativo = new Intl.RelativeTimeFormat('pt-BR', { numeric: 'always' });
+  const dataCompleta = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long', timeStyle: 'short' });
+
+  // "há 3 dias", "há 2 meses": a maior unidade que couber
+  function haQuanto(segundosUnix: number): string {
+    const diferenca = segundosUnix - Date.now() / 1000; // negativo: passado
+    const unidades: [Intl.RelativeTimeFormatUnit, number][] = [
+      ['year', 31_536_000],
+      ['month', 2_592_000],
+      ['week', 604_800],
+      ['day', 86_400],
+      ['hour', 3600],
+      ['minute', 60],
+    ];
+    for (const [unidade, segundos] of unidades) {
+      if (Math.abs(diferenca) >= segundos) return relativo.format(Math.round(diferenca / segundos), unidade);
+    }
+    return 'agora há pouco';
+  }
+
+  function preencherTempo(el: HTMLTimeElement, segundosUnix: number) {
+    const data = new Date(segundosUnix * 1000);
+    el.dateTime = data.toISOString();
+    el.title = dataCompleta.format(data);
+    el.textContent = haQuanto(segundosUnix);
+  }
+
+  function avisar(texto: string, tipo: 'ok' | 'erro') {
+    aviso.textContent = texto;
+    aviso.className = `aviso ${tipo}`;
+    aviso.hidden = false;
+  }
+
+  // Frase da API com ponto final ("Acesso negado" → "Acesso negado.")
+  const frase = (texto: string) => (/[.!?]$/.test(texto.trim()) ? texto.trim() : `${texto.trim()}.`);
+  const tamanho = (texto: string) => [...texto.trim()].length;
+
+  function atualizarTotal() {
+    const n = grade.children.length;
+    total.textContent = n === 1 ? '1 pendente' : `${n} pendentes`;
+    vazio.hidden = n > 0;
+  }
+
+  function botaoComNome(botao: HTMLButtonElement, rotulo: string, nome: string) {
+    const oculto = document.createElement('span');
+    oculto.className = 'sr';
+    oculto.textContent = ` ${nome}`;
+    botao.replaceChildren(rotulo, oculto);
+  }
+
+  function montarCartao(s: Pendente): HTMLElement {
+    const fragmento = modelo.content.cloneNode(true) as DocumentFragment;
+    const cartao = fragmento.querySelector<HTMLElement>('article')!;
+    cartao.dataset.nome = s.nome;
+    const link = cartao.querySelector<HTMLAnchorElement>('[data-nome]')!;
+    link.textContent = s.nome;
+    // Só vira link com o formato dono/nome (nada de javascript: vindo do banco)
+    if (FORMATO_NOME.test(s.nome)) link.href = `https://github.com/${s.nome}`;
+    cartao.querySelector('[data-estrelas]')!.textContent = numero.format(s.estrelas);
+    cartao.querySelector('[data-licenca]')!.textContent = s.licenca;
+    preencherTempo(cartao.querySelector<HTMLTimeElement>('[data-commit]')!, s.ultimo_commit);
+    preencherTempo(cartao.querySelector<HTMLTimeElement>('[data-sugerida]')!, s.criado_em);
+    cartao.querySelector('[data-motivo]')!.textContent = s.motivo;
+    for (const botao of cartao.querySelectorAll<HTMLButtonElement>('[data-acao]')) {
+      const acao = botao.dataset.acao as Acao;
+      botaoComNome(botao, acao === 'aprovar' ? 'Aprovar' : 'Recusar', s.nome);
+      botao.addEventListener('click', () => abrirModal(acao, s.nome, cartao));
+    }
+    return cartao;
+  }
+
+  // Tira o cartão da fila e leva o foco ao próximo (ou ao título, se a fila acabou)
+  function tirarDaFila(cartao: HTMLElement) {
+    const proximo = (cartao.nextElementSibling ?? cartao.previousElementSibling) as HTMLElement | null;
+    cartao.remove();
+    atualizarTotal();
+    const alvo = proximo?.querySelector<HTMLButtonElement>('[data-acao="aprovar"]');
+    if (alvo) alvo.focus();
+    else filaTit.focus();
+  }
+
+  // ---- Modais de aprovar e recusar ----
+
+  const CAMPO: Record<Acao, string> = { aprovar: 'resumo', recusar: 'motivo' };
+  const PROCESSANDO: Record<Acao, string> = { aprovar: 'Aprovando…', recusar: 'Recusando…' };
+  const ROTULO: Record<Acao, string> = { aprovar: 'Aprovar', recusar: 'Recusar' };
+
+  const modais = {} as Record<
+    Acao,
+    {
+      dialogo: HTMLDialogElement;
+      nome: HTMLElement;
+      texto: HTMLTextAreaElement;
+      contador: HTMLElement;
+      erro: HTMLElement;
+      confirmar: HTMLButtonElement;
+      max: number;
+    }
+  >;
+  let alvo: { acao: Acao; nome: string; cartao: HTMLElement } | null = null;
+
+  for (const acao of ['aprovar', 'recusar'] as const) {
+    const dialogo = document.querySelector<HTMLDialogElement>(`[data-modal="${acao}"]`)!;
+    const texto = dialogo.querySelector<HTMLTextAreaElement>('textarea')!;
+    const m = {
+      dialogo,
+      nome: dialogo.querySelector<HTMLElement>('[data-modal-nome]')!,
+      texto,
+      contador: dialogo.querySelector<HTMLElement>('[data-contador]')!,
+      erro: dialogo.querySelector<HTMLElement>('[data-modal-erro]')!,
+      confirmar: dialogo.querySelector<HTMLButtonElement>('[data-confirmar]')!,
+      max: Number(texto.dataset.max),
+    };
+    modais[acao] = m;
+
+    texto.addEventListener('input', () => {
+      const n = tamanho(texto.value);
+      m.contador.textContent = `${n}/${m.max}`;
+      m.contador.classList.toggle('excedeu', n > m.max);
+      texto.removeAttribute('aria-invalid');
+    });
+    dialogo.querySelector('[data-cancelar]')!.addEventListener('click', () => dialogo.close());
+    // Clique no fundo escurecido cancela; Esc e clique fora não fecham durante o envio
+    dialogo.addEventListener('click', (evento) => {
+      if (evento.target === dialogo && !m.confirmar.disabled) dialogo.close();
+    });
+    dialogo.addEventListener('cancel', (evento) => {
+      if (m.confirmar.disabled) evento.preventDefault();
+    });
+    dialogo.querySelector('form')!.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      confirmarAcao(acao);
+    });
+  }
+
+  function abrirModal(acao: Acao, nome: string, cartao: HTMLElement) {
+    const m = modais[acao];
+    alvo = { acao, nome, cartao };
+    m.nome.textContent = nome;
+    m.texto.value = '';
+    m.texto.removeAttribute('aria-invalid');
+    m.contador.textContent = `0/${m.max}`;
+    m.contador.classList.remove('excedeu');
+    m.erro.hidden = true;
+    m.confirmar.disabled = false;
+    m.confirmar.textContent = ROTULO[acao];
+    m.dialogo.showModal();
+    m.texto.focus();
+  }
+
+  function erroNoModal(acao: Acao, texto: string) {
+    const m = modais[acao];
+    m.erro.textContent = texto;
+    m.erro.hidden = false;
+  }
+
+  async function confirmarAcao(acao: Acao) {
+    if (!alvo || alvo.acao !== acao) return;
+    const { nome, cartao } = alvo;
+    const m = modais[acao];
+    const texto = m.texto.value.trim();
+    const n = tamanho(texto);
+    if (n === 0 || n > m.max) {
+      m.texto.setAttribute('aria-invalid', 'true');
+      m.texto.focus();
+      erroNoModal(acao, acao === 'aprovar' ? `Escreva um resumo de 1 a ${m.max} caracteres.` : `Escreva o motivo em 1 a ${m.max} caracteres.`);
+      return;
+    }
+
+    m.confirmar.disabled = true;
+    m.confirmar.textContent = PROCESSANDO[acao];
+    try {
+      let status: number;
+      let dados: { erro?: string; candidato?: boolean };
+      if (previa) {
+        await new Promise((r) => setTimeout(r, 400));
+        status = 200;
+        dados = { candidato: true };
+      } else {
+        const resposta = await fetch(`/api/admin/sugestoes/${nome}/${acao}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ [CAMPO[acao]]: texto }),
+        });
+        status = resposta.status;
+        dados = (await resposta.json().catch(() => ({}))) as typeof dados;
+      }
+
+      if (status === 200) {
+        m.dialogo.close();
+        tirarDaFila(cartao);
+        avisar(
+          acao === 'aprovar'
+            ? `${nome} foi aprovado${dados.candidato === false ? ' (já era candidato)' : ' e já está na votação'}.`
+            : `${nome} foi recusado. Quem sugeriu vai ver o motivo.`,
+          'ok',
+        );
+      } else if (status === 404 || status === 409) {
+        // Sumiu ou já foi decidida (outra aba, por exemplo): sai da fila do mesmo jeito.
+        // Sem rodada aberta também é 409, mas aí a sugestão continua pendente e o cartão fica.
+        const semRodada = status === 409 && /rodada aberta/i.test(dados.erro ?? '');
+        m.dialogo.close();
+        if (!semRodada) tirarDaFila(cartao);
+        avisar(frase(dados.erro ?? 'Essa sugestão não está mais pendente'), 'erro');
+      } else if (status === 400) {
+        m.texto.setAttribute('aria-invalid', 'true');
+        erroNoModal(acao, frase(dados.erro ?? 'Pedido inválido'));
+      } else {
+        m.dialogo.close();
+        avisar(frase(dados.erro ?? 'Algo deu errado. Tente de novo em instantes'), 'erro');
+      }
+    } catch {
+      m.dialogo.close();
+      avisar(FALHA_DE_REDE, 'erro');
+    } finally {
+      m.confirmar.disabled = false;
+      m.confirmar.textContent = ROTULO[acao];
+      if (!m.dialogo.open) alvo = null;
+    }
+  }
+
+  // ---- Carga da fila ----
+
+  function exemplos(): Pendente[] {
+    const agora = Math.floor(Date.now() / 1000);
+    return [
+      {
+        nome: 'exemplo-org/painel-de-casa',
+        motivo: 'Painel para o servidor de casa que junta os serviços num lugar só. Dá um bom vídeo de self-hosting.',
+        licenca: 'MIT',
+        estrelas: 12_480,
+        ultimo_commit: agora - 3 * 86_400,
+        criado_em: agora - 2 * 86_400,
+      },
+      {
+        nome: 'exemplo/<b>sem-html</b>',
+        motivo: 'Este exemplo tem <img src=x onerror=alert(1)> no texto: tem de aparecer como texto, sem executar.',
+        licenca: 'Apache-2.0',
+        estrelas: 87,
+        ultimo_commit: agora - 40 * 86_400,
+        criado_em: agora - 5 * 3600,
+      },
+      {
+        nome: 'exemplo/notas-locais',
+        motivo: 'App de notas que funciona sem internet e sincroniza pelo seu próprio servidor.',
+        licenca: 'AGPL-3.0',
+        estrelas: 3_210,
+        ultimo_commit: agora - 400 * 86_400,
+        criado_em: agora - 20 * 60,
+      },
+    ];
+  }
+
+  async function iniciar() {
+    let sugestoes: Pendente[];
+    if (previa) {
+      document.querySelector<HTMLElement>('[data-previa]')!.hidden = false;
+      sugestoes = exemplos();
+    } else {
+      const resposta = await fetch('/api/admin/sugestoes');
+      const dados = (await resposta.json().catch(() => ({}))) as { sugestoes?: Pendente[]; erro?: string };
+      if (resposta.status === 403) {
+        carregando.hidden = true;
+        // No ar o Access nem deixa chegar aqui; no local (sem Access) é o normal
+        avisar(local ? 'Acesso negado. No local não há Cloudflare Access; use /admin?previa para ver a página.' : 'Acesso negado.', 'erro');
+        return;
+      }
+      if (!resposta.ok || !Array.isArray(dados.sugestoes)) {
+        carregando.hidden = true;
+        avisar(frase(dados.erro ?? 'Não foi possível carregar a fila. Recarregue a página em instantes'), 'erro');
+        return;
+      }
+      sugestoes = dados.sugestoes;
+    }
+    carregando.hidden = true;
+    topo.hidden = false;
+    grade.replaceChildren(...sugestoes.map(montarCartao));
+    atualizarTotal();
+  }
+
+  iniciar().catch(() => {
+    carregando.hidden = true;
+    avisar(FALHA_DE_REDE, 'erro');
+  });
+</script>

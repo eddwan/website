@@ -54,6 +54,17 @@
 			}
 		}
 	],
+	// Cloudflare Access na frente de eddwan.com/admin e eddwan.com/api/admin (issue #22). O Worker confere
+	// o JWT do cabeçalho Cf-Access-Jwt-Assertion (worker/access.ts). Os dois valores são públicos (não são segredo):
+	// - ACCESS_AUD: o "Application Audience (AUD) Tag" do aplicativo, em Zero Trust → Access → Applications →
+	//   (o aplicativo do admin) → Overview.
+	// - ACCESS_EQUIPE: o nome da equipe do Zero Trust, a parte antes de .cloudflareaccess.com no "Team domain"
+	//   (Zero Trust → Settings → Custom Pages). Só o nome, sem https:// nem o domínio.
+	// Vazios, /api/admin/* responde 503.
+	"vars": {
+		"ACCESS_AUD": "",
+		"ACCESS_EQUIPE": ""
+	},
 	// Cron Trigger: todo dia às 06:00 UTC o handler scheduled do Worker apaga códigos e sessões vencidos.
 	// Teste local: npm run cf:dev -- --test-scheduled e
 	// curl -X POST "http://localhost:8787/cdn-cgi/local/explorer/api/local/scheduled?worker=eddwan-website" \
