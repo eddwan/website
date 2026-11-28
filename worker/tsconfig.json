@@ -6,9 +6,10 @@
     "module": "es2022",
     "moduleResolution": "bundler",
     "strict": true,
+    "allowImportingTsExtensions": true, // imports com .ts: o Node roda os testes direto, sem build
     "noEmit": true,
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["index.ts", "turnstile.ts", "github.ts", "worker-configuration.d.ts"]
+  "include": ["index.ts", "access.ts", "turnstile.ts", "github.ts", "worker-configuration.d.ts"]
 }

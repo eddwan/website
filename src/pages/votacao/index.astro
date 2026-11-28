@@ -494,6 +494,16 @@ const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas fal
     font-size: 0.78rem;
     color: var(--muted);
   }
+  .lista :global(.item-nota) {
+    margin: 0.2rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-2);
+    overflow-wrap: anywhere;
+  }
+  .lista :global(.item-nota.aprovada) {
+    color: #3ddc84;
+  }
   .lista :global(.status) {
     display: inline-flex;
     align-items: center;
@@ -745,6 +755,7 @@ const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas fal
   interface Sugestao {
     nome: string;
     status: string;
+    motivo_recusa: string | null; // só nas recusadas (moderação, Live 8)
     criado_em: number;
   }
   type Tom = 'ok' | 'erro' | 'neutro';
@@ -804,10 +815,9 @@ const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas fal
     secaoSugerir.hidden = false;
   }
 
-  // Quantas ainda cabem hoje, contando como a API: sugestões das últimas 24 horas (as removidas já saíram)
-  function mostrarCota(itens: Sugestao[]) {
-    const desde = Date.now() / 1000 - 86_400;
-    const restantes = Math.max(0, LIMITE_DIA - itens.filter((s) => s.criado_em > desde).length);
+  // Quantas ainda cabem hoje: o número vem da API (restantes), que conta os envios das últimas 24 h.
+  // A lista não serve para isso: uma sugestão removida sai dela, mas continua contando no limite.
+  function mostrarCota(restantes: number) {
     cota.textContent = restantes > 0 ? `${restantes} de ${LIMITE_DIA} disponíveis hoje` : 'Limite de hoje atingido';
     cota.classList.toggle('esgotada', restantes === 0);
     cota.hidden = false;
@@ -833,6 +843,13 @@ const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas fal
     quando.dateTime = data.toISOString();
     quando.textContent = `Enviada em ${formatoData.format(data)}`;
     info.append(nome, quando);
+    // Resultado da curadoria: aprovada já é candidato; recusada mostra o motivo (texto da API, com textContent)
+    if (s.status === 'aprovada' || (s.status === 'recusada' && s.motivo_recusa)) {
+      const nota = document.createElement('p');
+      nota.className = `item-nota ${s.status}`;
+      nota.textContent = s.status === 'aprovada' ? 'Aprovada: já está na votação.' : `Motivo: ${s.motivo_recusa}`;
+      info.append(nota);
+    }
 
     const status = document.createElement('span');
     status.className = `status ${ROTULO_STATUS[s.status] ? s.status : ''}`;
@@ -919,7 +936,7 @@ const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas fal
     try {
       const resposta = await fetch('/api/sugestoes');
       if (!resposta.ok) throw new Error(String(resposta.status));
-      const dados = (await resposta.json()) as { conectado: boolean; sugestoes?: Sugestao[] };
+      const dados = (await resposta.json()) as { conectado: boolean; sugestoes?: Sugestao[]; restantes?: number };
       if (!dados.conectado) {
         conectado = false;
         mostrarSecaoSugerir();
@@ -930,7 +947,7 @@ const SUGESTOES_POR_DIA = 3; // igual ao do worker (só para mostrar quantas fal
       lista.hidden = itens.length === 0;
       listaVazia.hidden = itens.length > 0;
       total.textContent = itens.length === 1 ? '1 sugestão' : `${itens.length} sugestões`;
-      mostrarCota(itens);
+      mostrarCota(Math.max(0, Math.min(LIMITE_DIA, dados.restantes ?? LIMITE_DIA)));
       minhas.hidden = false;
       gradeSugestoes.classList.add('duas');
     } catch {
