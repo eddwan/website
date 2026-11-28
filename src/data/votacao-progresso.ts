@@ -47,7 +47,7 @@ export const LIVES: Live[] = [
   { n: 5, data: '2026-11-24', titulo: 'Login por código', resumo: 'Entrar com o e-mail e um código de 6 dígitos enviado pelo Resend, com sessão de 30 dias.', issue: 19, video: 'wM2llZxqlw0', post: '/blog/live-5-login-por-codigo-de-6-digitos', concluida: true },
   { n: 6, data: '2026-11-25', titulo: 'Votos e placar', resumo: 'Votar nos candidatos do próximo volume, desfazer o voto e ver o placar.', issue: 20, video: 'XaWnU-gF8Ek', post: '/blog/live-6-votos-e-placar-da-votacao', concluida: true },
   { n: 7, data: '2026-11-26', titulo: 'Sugestões validadas', resumo: 'Sugerir um repositório pelo link do GitHub, com validação automática de licença, último commit e estrelas.', issue: 21, video: 'jnrvzi6fhCA', post: '/blog/live-7-sugestoes-validadas-no-github', concluida: true },
-  { n: 8, data: '2026-11-27', titulo: 'Admin e revisão de PRs', resumo: 'Moderar as sugestões numa página protegida pelo Cloudflare Access e revisar os PRs da semana.', issue: 22, concluida: false },
+  { n: 8, data: '2026-11-27', titulo: 'A página de admin', resumo: 'Moderar as sugestões numa página protegida pelo Cloudflare Access, com o token conferido no Worker, e fechar o furo do limite de sugestões.', issue: 22, video: '69roVH-0ptQ', post: '/blog/live-8-pagina-de-admin-com-cloudflare-access', concluida: true },
   { n: 9, data: '2026-12-01', titulo: 'Votos na planilha', resumo: 'Levar os votos e as sugestões aprovadas para a planilha do canal e fechar a primeira rodada.', issue: 23, concluida: false },
   { n: 10, data: '2026-12-02', titulo: 'Votação aberta', resumo: 'E-mail de reserva, bloqueio de e-mails descartáveis, página de privacidade, revisão de segurança e abertura ao público.', issue: 24, concluida: false },
 ];
