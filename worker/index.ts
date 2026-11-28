@@ -481,16 +481,23 @@ async function removerSugestao(request: Request, env: Env): Promise<Response> {
 
 // GET /api/sugestoes: as sugestões da pessoa, da mais nova para a mais velha (criado_em em segundos Unix).
 // motivo_recusa vem preenchido só nas recusadas (null nas outras): quem sugeriu sabe por quê.
+// restantes: quantas ainda cabem hoje, contadas em envios_sugestao como no POST (uma sugestão
+// removida continua contando, então a página não pode calcular isso pela lista).
 async function minhasSugestoes(request: Request, env: Env): Promise<Response> {
   try {
     const sessao = await usuarioDaSessao(request, env);
     if (!sessao) return json({ conectado: false });
-    const { results } = await env.DB.prepare(
-      'SELECT nome, status, motivo_recusa, criado_em FROM sugestoes WHERE usuario_id = ? ORDER BY criado_em DESC, id DESC',
-    )
-      .bind(sessao.usuarioId)
-      .all<{ nome: string; status: string; motivo_recusa: string | null; criado_em: number }>();
-    return json({ conectado: true, sugestoes: results });
+    const [lista, envios] = await env.DB.batch([
+      env.DB.prepare(
+        'SELECT nome, status, motivo_recusa, criado_em FROM sugestoes WHERE usuario_id = ? ORDER BY criado_em DESC, id DESC',
+      ).bind(sessao.usuarioId),
+      env.DB.prepare('SELECT COUNT(*) AS total FROM envios_sugestao WHERE usuario_id = ? AND criado_em > ?').bind(
+        sessao.usuarioId,
+        Math.floor(Date.now() / 1000) - JANELA_SUGESTOES,
+      ),
+    ]);
+    const hoje = (envios.results[0] as { total: number } | undefined)?.total ?? 0;
+    return json({ conectado: true, sugestoes: lista.results, restantes: Math.max(0, SUGESTOES_POR_DIA - hoje) });
   } catch (erro) {
     console.error('GET /api/sugestoes: falha no banco', erro);
     return json({ ok: false, erro: 'Erro interno' }, 500);

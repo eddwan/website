@@ -162,6 +162,28 @@ test('GET /api/sugestoes de quem sugeriu traz motivo_recusa', async () => {
   assert.equal(porNome['Dono/Aprovado'].motivo_recusa, null);
 });
 
+// restantes conta envios_sugestao, não a lista: dois envios hoje (um de uma sugestão já removida,
+// que não aparece na lista) e um de 3 dias atrás (fora da janela) deixam 1 vaga.
+test('GET /api/sugestoes devolve restantes contando os envios, mesmo de sugestões removidas', async () => {
+  const sessao = gerarToken();
+  const agora = Math.floor(Date.now() / 1000);
+  await env.DB.batch([
+    env.DB.prepare('INSERT INTO sessoes (token_hash, usuario_id, expira_em, criado_em) VALUES (?, 900, ?, ?)').bind(
+      await sha256(sessao),
+      agora + 3600,
+      agora,
+    ),
+    env.DB.prepare('INSERT INTO envios_sugestao (usuario_id, criado_em) VALUES (900, ?), (900, ?), (900, ?)').bind(
+      agora - 60,
+      agora - 30,
+      agora - 3 * 86_400,
+    ),
+  ]);
+  const request = new Request(`${BASE}/api/sugestoes`, { headers: { Cookie: `__Host-sessao=${sessao}` } });
+  const corpo = (await (await worker.fetch!(request as never, env, proxy.ctx as never)).json()) as { restantes: number };
+  assert.equal(corpo.restantes, 1);
+});
+
 // Sem o cabeçalho do Access: 403 antes de qualquer outra coisa, nas três rotas.
 test('sem token dá 403', async () => {
   for (const [caminho, metodo] of [
